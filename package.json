@@ -1,0 +1,33 @@
+{
+  "name": "NewTube",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
+    "nuxt": "^4.4.2",
+    "vue": "^3.5.32",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.102",
+    "@iconify-json/ph": "^1.2.2",
+    "@nuxtjs/i18n": "^10.2.4",
+    "@nuxtjs/supabase": "^2.0.5",
+    "@unocss/nuxt": "^66.6.8",
+    "@unocss/preset-attributify": "^66.6.8",
+    "@unocss/preset-icons": "^66.6.8",
+    "@unocss/preset-uno": "^66.6.8",
+    "@vueuse/core": "^14.2.1",
+    "@vueuse/motion": "^3.0.3",
+    "@vueuse/nuxt": "^14.2.1",
+    "unocss": "^66.6.8"
+  }
+}
