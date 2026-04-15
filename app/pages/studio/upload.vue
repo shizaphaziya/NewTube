@@ -115,9 +115,9 @@ const handleUpload = async () => {
       .insert({
         user_id: user.value.id,
         title: title.value,
-        description: description.value,
+        description: description.value || null,
         video_url: videoUrl,
-        thumbnail_url: thumbnailUrl,
+        thumbnail_url: thumbnailUrl || null,
         status: 'published'
       })
 
