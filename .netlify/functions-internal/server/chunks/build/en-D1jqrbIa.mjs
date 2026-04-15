@@ -1,0 +1,97 @@
+const resource = {
+  "nav": {
+    "home": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Home" } },
+    "studio": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Studio" } },
+    "admin": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Admin" } },
+    "login": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Login" } },
+    "logout": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Logout" } },
+    "upload": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Upload" } },
+    "search": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Search..." } }
+  },
+  "home": {
+    "quick_actions": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Quick Access" } },
+    "trending": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Trending" } },
+    "latest": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Latest" } },
+    "subscriptions": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Subscriptions" } },
+    "library": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Library" } },
+    "no_videos": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "No videos found" } }
+  },
+  "watch": {
+    "likes": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "likes" } },
+    "views": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "views" } },
+    "comments": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "comments" } },
+    "add_comment": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Add a comment..." } },
+    "reply": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Reply" } },
+    "discard": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Discard" } },
+    "transmitting": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Transmitting..." } },
+    "post_message": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Post Message" } },
+    "impression_units": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Impression Units" } },
+    "logged": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Logged" } },
+    "up_next": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Up Next" } },
+    "verified_architect": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Verified Architect" } },
+    "membership_active": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Membership Active" } },
+    "join_collective": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Join Collective" } },
+    "no_metadata": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "No detailed metadata available." } },
+    "protocol_feed": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Protocol: Feed" } },
+    "analytics_units": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Units" } }
+  },
+  "studio": {
+    "command_center": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Command Center" } },
+    "elite_operator": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Elite Operator" } },
+    "publish_record": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Publish Record" } },
+    "total_impressions": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Total Impressions" } },
+    "signal_fragments": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Signal Fragments" } },
+    "synapse_response": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Synapse Response" } },
+    "active_records": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Active Records" } },
+    "no_records": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "No signal fragments identified." } },
+    "impressions": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Impressions" } },
+    "terminate_confirm": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Are you absolutely sure you want to terminate this record?" } },
+    "upload": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Publish Content" } },
+    "title": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Stream Title" } },
+    "description": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Metadata & Description" } },
+    "select_file": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Select Master File" } },
+    "cover_artwork": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Cover Artwork" } },
+    "select_thumbnail": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Select Thumbnail" } },
+    "processing_signal": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Optimizing Signal" } },
+    "cinematic_protocols": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Applying cinematic compression protocols" } },
+    "broadcasting": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Broadcasting Content" } },
+    "streaming_nodes": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Streaming master file to secure nodes" } },
+    "processing": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Processing" } },
+    "uploading": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Uploading" } },
+    "publish": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Publish Content" } },
+    "success": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Broadcast Established!" } },
+    "success_subtitle": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Deployment Successful • Redirecting" } },
+    "entry_name_placeholder": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "ENTRY NAME" } },
+    "description_placeholder": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Content data and metadata description..." } },
+    "optimizing": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Optimizing Signal" } },
+    "ffmpeg_note": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Applying cinematic compression" } },
+    "uploading_note": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Streaming to secure storage nodes" } }
+  },
+  "admin": {
+    "moderation": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Content Moderation" } },
+    "status": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Status" } },
+    "actions": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Actions" } },
+    "publish": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Publish" } },
+    "hide": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Hide" } },
+    "block": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Block" } }
+  },
+  "auth": {
+    "welcome_back": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Welcome Back" } },
+    "join_community": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Join Community" } },
+    "subtitle": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "A new dimension of video content" } },
+    "email": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Email" } },
+    "password": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Password" } },
+    "sign_in": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Sign In" } },
+    "sign_up": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Sign Up" } },
+    "create_account": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Create Account" } },
+    "already_have_account": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Already have an account? Log in" } },
+    "no_account": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Don't have an account? Sign up" } },
+    "check_email": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Check your email for confirmation!" } },
+    "authentication_locked": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Authentication Locked" } },
+    "auth_required_desc": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "The Elite Studio requires validated credentials to access content management protocols." } },
+    "authorize_identity": { "t": 0, "b": { "t": 2, "i": [{ "t": 3 }], "s": "Authorize Identity" } }
+  }
+};
+
+export { resource as default };
+//# sourceMappingURL=en-D1jqrbIa.mjs.map
