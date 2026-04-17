@@ -7,7 +7,7 @@ const { t } = useI18n()
 const { data: video } = await useAsyncData(`video-${route.params.id}`, async () => {
   const { data } = await supabase
     .from('videos')
-    .select('*, profiles(id, display_name, avatar_url)')
+    .select('*, profiles:profiles!videos_user_id_fkey(id, display_name, avatar_url)')
     .eq('id', route.params.id)
     .single()
   return data
@@ -61,7 +61,7 @@ onMounted(() => {
 const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${route.params.id}`, async () => {
   const { data } = await supabase
     .from('comments')
-    .select('*, profiles(display_name, avatar_url)')
+    .select('*, profiles:profiles!comments_user_id_fkey(display_name, avatar_url)')
     .eq('video_id', route.params.id)
     .order('created_at', { ascending: false })
   return data || []
