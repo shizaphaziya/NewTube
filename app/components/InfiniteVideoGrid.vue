@@ -17,7 +17,7 @@ const fetchVideos = async () => {
 
   const { data, error } = await supabase
     .from('videos')
-    .select('*, profiles(display_name, avatar_url)')
+    .select('*, profiles:profiles!videos_user_id_fkey(display_name, avatar_url)')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
     .range(from, to)
