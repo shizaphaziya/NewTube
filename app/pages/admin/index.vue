@@ -9,7 +9,7 @@ const { t } = useI18n()
 const { data: videos, refresh } = await useAsyncData('admin-videos', async () => {
   const { data } = await supabase
     .from('videos')
-    .select('*, profiles(display_name)')
+    .select('*, profiles:profiles!videos_user_id_fkey(display_name)')
     .order('created_at', { ascending: false })
   return data
 })
