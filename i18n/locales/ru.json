@@ -18,31 +18,26 @@
   },
   "watch": {
     "likes": "лайков",
-    "views": "просмотров",
+    "views": "Просмотры",
     "comments": "комментариев",
     "add_comment": "Оставить комментарий...",
     "reply": "Ответить",
     "discard": "Отмена",
     "transmitting": "Отправка...",
     "post_message": "Отправить",
-    "impression_units": "Просмотры",
     "logged": "Загружено",
     "up_next": "Далее",
-    "verified_architect": "Верифицированный пользователь",
     "membership_active": "Вы подписаны",
     "join_collective": "Подписаться",
     "no_metadata": "Описание отсутствует.",
-    "protocol_feed": "Комментарии",
-    "analytics_units": "просмотры"
+    "analytics_units": "просмотры",
+    "verified_user": "Верифицированный пользователь",
+    "comments_title": "Комментарии"
   },
   "studio": {
     "command_center": "Панель управления",
-    "elite_operator": "Автор",
     "publish_record": "Загрузить видео",
     "total_impressions": "Всего просмотров",
-    "signal_fragments": "Видео",
-    "synapse_response": "Вовлеченность",
-    "active_records": "Активные записи",
     "no_records": "Видео не найдены.",
     "impressions": "просмотров",
     "terminate_confirm": "Вы уверены, что хотите удалить это видео?",
@@ -52,10 +47,7 @@
     "select_file": "Выберите видео",
     "cover_artwork": "Превью",
     "select_thumbnail": "Выбрать превью",
-    "processing_signal": "Обработка видео",
-    "cinematic_protocols": "Сжатие видео",
     "broadcasting": "Загрузка",
-    "streaming_nodes": "Загрузка видео на сервер",
     "processing": "Обработка",
     "uploading": "Загрузка",
     "publish": "Опубликовать",
@@ -65,7 +57,14 @@
     "description_placeholder": "Описание видео...",
     "optimizing": "Оптимизация видео",
     "ffmpeg_note": "Сжатие видео",
-    "uploading_note": "Загрузка на сервер"
+    "uploading_note": "Загрузка на сервер",
+    "creator": "Автор",
+    "engagement": "Вовлеченность",
+    "videos": "Видео",
+    "compressing": "Сжатие видео",
+    "uploading_storage": "Загрузка видео на сервер",
+    "active_videos": "Активные записи",
+    "processing_video": "Обработка видео"
   },
   "admin": {
     "moderation": "Модерация контента",
@@ -88,7 +87,7 @@
     "no_account": "Нет аккаунта? Зарегистрироваться",
     "check_email": "Проверьте почту для подтверждения!",
     "authentication_locked": "Требуется авторизация",
-    "auth_required_desc": "Вам нужно войти в систему для доступа к студии.",
-    "authorize_identity": "Войти"
+    "authorize_identity": "Войти",
+    "login_required": "Вам нужно войти в систему для доступа к студии."
   }
 }

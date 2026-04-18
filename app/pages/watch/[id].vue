@@ -115,7 +115,7 @@ const togglePlay = () => {
           class="space-y-12"
           :class="isCinemaMode ? 'w-full max-w-6xl' : 'lg:col-span-2'"
         >
-          <!-- Premium Player Container -->
+          <!-- Player Container -->
           <div 
             v-motion
             :initial="{ opacity: 0, scale: 0.95 }"
@@ -159,7 +159,7 @@ const togglePlay = () => {
                 <img :src="video.profiles.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-14 h-14 rounded-full border border-white/10 p-1 bg-void-card ring-1 ring-white/5" />
                 <div class="space-y-1">
                   <div class="font-brand text-lg text-white tracking-tight">{{ video.profiles.display_name }}</div>
-                  <div class="text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">{{ t('watch.verified_architect') }}</div>
+                  <div class="text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">{{ t('watch.verified_user') }}</div>
                 </div>
                 <button 
                   @click="toggleSubscribe"
@@ -191,7 +191,7 @@ const togglePlay = () => {
 
             <div class="p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
               <div class="flex items-center gap-4 mb-6 text-[10px] font-bold text-white/40 uppercase tracking-[0.4em]">
-                <span>{{ video.view_count }} {{ t('watch.impression_units') }}</span>
+                <span>{{ video.view_count }} {{ t('watch.views') }}</span>
                 <span class="w-1 h-1 rounded-full bg-white/10"></span>
                 <span>{{ t('watch.logged') }}: {{ new Date(video.created_at).toLocaleDateString() }}</span>
               </div>
@@ -204,7 +204,7 @@ const togglePlay = () => {
             <div class="flex items-center gap-4">
               <div class="w-2 h-2 rounded-full bg-white"></div>
               <h2 class="text-xl font-brand font-bold tracking-tight uppercase italic">
-                {{ t('watch.protocol_feed') }} ({{ comments?.length || 0 }})
+                {{ t('watch.comments_title') }} ({{ comments?.length || 0 }})
               </h2>
             </div>
 
@@ -276,8 +276,8 @@ const togglePlay = () => {
           </div>
           
           <div class="space-y-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div v-for="n in 6" :key="n" class="flex gap-5 group cursor-pointer transition-all duration-500 hover:translate-x-1">
-              <div class="w-44 aspect-video rounded-2xl bg-void-card shrink-0 overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-white/20 shadow-xl">
+            <div v-for="n in 6" :key="n" class="flex flex-col sm:flex-row gap-4 sm:gap-5 group cursor-pointer transition-all duration-500 hover:translate-x-1">
+              <div class="w-full sm:w-44 aspect-video rounded-2xl bg-void-card shrink-0 overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-white/20 shadow-xl">
                  <div class="w-full h-full bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center">
                    <div class="i-ph-video-camera-bold text-white/5 text-4xl transition-transform duration-700 group-hover:scale-110"></div>
                  </div>

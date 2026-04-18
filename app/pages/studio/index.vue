@@ -46,7 +46,7 @@ const deleteVideo = async (id) => {
               {{ t('auth.authentication_locked') }}
             </h2>
             <p class="text-white/30 text-sm leading-relaxed">
-              {{ t('auth.auth_required_desc') }}
+              {{ t('auth.login_required') }}
             </p>
           </div>
           <NuxtLink to="/auth/login" class="btn-primary inline-flex">
@@ -66,7 +66,7 @@ const deleteVideo = async (id) => {
             {{ t('studio.command_center') }}
           </h1>
           <p class="text-[#666] text-[10px] font-bold uppercase tracking-[0.4em]">
-            {{ profile?.display_name || '—' }} • {{ t('studio.elite_operator') }}
+            {{ profile?.display_name || '—' }} • {{ t('studio.creator') }}
           </p>
         </div>
 
@@ -85,13 +85,13 @@ const deleteVideo = async (id) => {
           <div class="text-[9px] text-white/5 font-black tracking-widest">Total Views</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
-          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.signal_fragments') }}</div>
+          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.videos') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.videos }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
           <div class="text-[9px] text-white/5 font-black tracking-widest">Total Videos</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
-          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.synapse_response') }}</div>
+          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.engagement') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.engagement }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
           <div class="text-[9px] text-white/5 font-black tracking-widest">Total Engagement</div>
@@ -103,7 +103,7 @@ const deleteVideo = async (id) => {
         <div class="flex items-center gap-3">
           <div class="w-1.5 h-1.5 rounded-full bg-white/30"></div>
           <h2 class="text-[9px] font-black uppercase tracking-[0.5em] text-white/20">
-            {{ t('studio.active_records') }}
+            {{ t('studio.active_videos') }}
           </h2>
         </div>
 
