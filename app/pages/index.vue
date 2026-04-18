@@ -20,7 +20,7 @@ useSeoMeta({
     <!-- Page header bar -->
     <div class="px-4 md:px-8 pt-6 md:pt-8 pb-6 flex items-center gap-6 border-b border-white/[0.04]">
       <!-- Feed tabs -->
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full">
         <button
           v-for="feed in feeds"
           :key="feed.key"
