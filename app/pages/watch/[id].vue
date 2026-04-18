@@ -107,7 +107,7 @@ const togglePlay = () => {
     <div class="layout-container pb-40 transition-all duration-1000" :class="{ 'relative z-50': isCinemaMode }">
       <!-- Layout Switcher Wrapper -->
       <div 
-        class="grid grid-cols-1 lg:grid-cols-3 gap-16"
+        class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16"
         :class="{ 'flex flex-col items-center': isCinemaMode }"
       >
         <!-- Left Column: Player & Info -->
@@ -126,7 +126,7 @@ const togglePlay = () => {
             <video 
               ref="videoPlayer"
               :src="video.video_url"
-              class="w-full h-full object-contain"
+              class="w-full h-full object-contain" controls
               :poster="video.thumbnail_url"
               @click="togglePlay"
               :style="{ viewTransitionName: `video-thumb-${video.id}` }"
@@ -140,17 +140,11 @@ const togglePlay = () => {
               <div :class="isCinemaMode ? 'i-ph-arrows-in-bold' : 'i-ph-arrows-out-bold'"></div>
             </button>
 
-            <!-- Custom Controls Overlay -->
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-black/20 pointer-events-none">
-              <div class="w-24 h-24 rounded-full bg-white/10 backdrop-blur-2xl flex items-center justify-center border border-white/10 scale-90 group-hover:scale-100 transition-all duration-500">
-                <div :class="isPlaying ? 'i-ph-pause-fill' : 'i-ph-play-fill'" class="text-white text-4xl"></div>
-              </div>
-            </div>
           </div>
 
           <!-- Video Header -->
           <div class="space-y-10" :class="{ 'max-w-4xl mx-auto': isCinemaMode }">
-            <h1 class="text-4xl md:text-5xl font-brand font-extrabold tracking-tighter leading-tight text-gradient">
+            <h1 class="text-3xl md:text-5xl font-brand font-extrabold break-words tracking-tighter leading-tight text-gradient">
               {{ video.title }}
             </h1>
             
@@ -166,7 +160,7 @@ const togglePlay = () => {
                   class="ml-6 flex items-center gap-2 group"
                 >
                   <div 
-                    class="px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-500"
+                    class="px-6 md:px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all duration-500"
                     :class="isSubscribed ? 'bg-white/5 text-white/20 border border-white/5' : 'bg-white text-black hover:bg-zinc-200'"
                   >
                     {{ isSubscribed ? t('watch.membership_active') : t('watch.join_collective') }}
@@ -177,7 +171,7 @@ const togglePlay = () => {
               <div class="flex items-center gap-4">
                 <button 
                   @click="toggleLike"
-                  class="flex items-center gap-3 px-8 py-3 rounded-full border border-white/5 transition-all font-bold text-xs tracking-widest uppercase"
+                  class="flex items-center gap-3 px-6 md:px-8 py-3 rounded-full border border-white/5 transition-all font-bold text-xs tracking-widest uppercase"
                   :class="hasLiked ? 'bg-white text-black' : 'bg-white/5 hover:bg-white/10 text-white/60'"
                 >
                   <div :class="hasLiked ? 'i-ph-heart-fill' : 'i-ph-heart-bold'" class="text-lg"></div>
@@ -189,7 +183,7 @@ const togglePlay = () => {
               </div>
             </div>
 
-            <div class="p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
+            <div class="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
               <div class="flex items-center gap-4 mb-6 text-[10px] font-bold text-white/40 uppercase tracking-[0.4em]">
                 <span>{{ video.view_count }} {{ t('watch.views') }}</span>
                 <span class="w-1 h-1 rounded-full bg-white/10"></span>
