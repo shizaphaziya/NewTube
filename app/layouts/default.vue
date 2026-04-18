@@ -9,7 +9,7 @@ onMounted(() => fetchProfile())
     <Sidebar />
 
     <!-- Right side: topbar + main content -->
-    <div class="flex-1 flex flex-col min-w-0 pl-[72px] transition-[padding-left] duration-500">
+    <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500">
       <!-- Top Bar -->
       <header class="sticky top-0 z-30 h-[72px] flex items-center gap-6 px-8
                      bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
@@ -62,7 +62,7 @@ onMounted(() => fetchProfile())
           <span class="text-[10px] font-brand font-black tracking-[0.3em] uppercase text-white/40">NEWTUBE</span>
         </div>
         <div class="text-[9px] font-black tracking-[0.5em] uppercase text-white/10">
-          &copy; {{ new Date().getFullYear() }} • ELITE 2026
+          &copy; {{ new Date().getFullYear() }} • NewTube
         </div>
       </footer>
     </div>

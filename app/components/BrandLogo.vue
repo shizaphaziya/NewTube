@@ -23,7 +23,6 @@ defineProps({
         NEWTUBE
       </span>
       <span class="text-[7px] font-bold tracking-[0.6em] text-white/20 uppercase mt-1 transition-all duration-700 group-hover:text-white/40 group-hover:tracking-[0.8em]">
-        Elite Architecture
       </span>
     </div>
   </div>

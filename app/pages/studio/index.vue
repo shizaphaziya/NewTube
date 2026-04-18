@@ -31,7 +31,7 @@ const deleteVideo = async (id) => {
 </script>
 
 <template>
-  <div class="px-10 py-10 relative">
+  <div class="px-4 md:px-10 py-6 md:py-10 relative">
     <!-- Guest Overlay -->
     <Transition name="overlay">
       <div v-if="!user"
@@ -82,19 +82,19 @@ const deleteVideo = async (id) => {
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.total_impressions') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.views.toLocaleString() }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">IMP_UNITS • AGGREGATE</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Views</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.signal_fragments') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.videos }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">RECORD_COUNT • INDEX</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Videos</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.synapse_response') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.engagement }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">INT_RATE • LIVE</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Engagement</div>
         </div>
       </div>
 

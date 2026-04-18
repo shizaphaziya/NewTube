@@ -275,7 +275,7 @@ const togglePlay = () => {
             <h3 class="text-xs font-brand tracking-[0.4em] text-white/40 uppercase italic">{{ t('watch.up_next') }}</h3>
           </div>
           
-          <div class="space-y-10" :class="{ 'grid grid-cols-1 md:grid-cols-2 gap-10 space-y-0': isCinemaMode }">
+          <div class="space-y-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
             <div v-for="n in 6" :key="n" class="flex gap-5 group cursor-pointer transition-all duration-500 hover:translate-x-1">
               <div class="w-44 aspect-video rounded-2xl bg-void-card shrink-0 overflow-hidden border border-white/5 transition-all duration-500 group-hover:border-white/20 shadow-xl">
                  <div class="w-full h-full bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center">
@@ -283,9 +283,9 @@ const togglePlay = () => {
                  </div>
               </div>
               <div class="flex flex-col gap-2 min-w-0 pt-1">
-                 <div class="text-xs font-brand font-bold tracking-tight text-white/90 line-clamp-2 leading-snug group-hover:text-white transition-colors">Elevating Video Platforms via Minimalist 2026 Architectures</div>
-                 <div class="text-[9px] text-white/30 tracking-[0.2em] font-bold uppercase">System Operator</div>
-                 <div class="text-[9px] text-white/10 font-bold uppercase tracking-widest">Analytics: 942K Units</div>
+                 <div class="text-xs font-brand font-bold tracking-tight text-white/90 line-clamp-2 leading-snug group-hover:text-white transition-colors">Video Title Placeholder</div>
+                 <div class="text-[9px] text-white/30 tracking-[0.2em] font-bold uppercase">Creator</div>
+                 <div class="text-[9px] text-white/10 font-bold uppercase tracking-widest">942K views</div>
               </div>
             </div>
           </div>

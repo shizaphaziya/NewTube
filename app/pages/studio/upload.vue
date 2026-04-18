@@ -141,9 +141,8 @@ const handleUpload = async () => {
   <div class="layout-container max-w-4xl py-12 pb-20">
     <div v-motion-pop-in class="relative overflow-hidden rounded-[28px]
                                bg-white/[0.03] border border-white/[0.07]
-                               backdrop-blur-2xl p-12">
+                               backdrop-blur-2xl p-6 md:p-12">
       <!-- Ambient glow -->
-      <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/[0.015] blur-[120px] rounded-full pointer-events-none"></div>
       <div class="absolute -bottom-40 -left-20 w-60 h-60 bg-white/[0.01] blur-[80px] rounded-full pointer-events-none"></div>
       
       <div class="flex items-center gap-6 mb-16">
@@ -163,7 +162,7 @@ const handleUpload = async () => {
       </div>
 
       <form v-else @submit.prevent="handleUpload" class="space-y-12">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:p-12">
           <!-- File Selection (2 columns) -->
           <div class="lg:col-span-2 space-y-8">
             <div class="space-y-4">
