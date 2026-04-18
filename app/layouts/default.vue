@@ -9,7 +9,7 @@ onMounted(() => fetchProfile())
     <Sidebar />
 
     <!-- Right side: topbar + main content -->
-    <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-16 md:pb-0">
+    <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
       <!-- Top Bar -->
       <header class="sticky top-0 z-30 h-[72px] flex items-center gap-6 px-8
                      bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">

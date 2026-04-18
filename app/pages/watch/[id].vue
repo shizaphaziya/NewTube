@@ -89,15 +89,6 @@ const postComment = async () => {
   }
   isPosting.value = false
 }
-
-// Player Controls
-const videoPlayer = ref(null)
-const isPlaying = ref(false)
-const togglePlay = () => {
-  if (isPlaying.value) videoPlayer.value.pause()
-  else videoPlayer.value.play()
-  isPlaying.value = !isPlaying.value
-}
 </script>
 
 <template>
@@ -120,15 +111,15 @@ const togglePlay = () => {
             v-motion
             :initial="{ opacity: 0, scale: 0.95 }"
             :enter="{ opacity: 1, scale: 1, transition: { duration: 1000, ease: [0.16, 1, 0.3, 1] } }"
-            class="group relative aspect-video rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border border-white/5 ring-1 ring-white/5 transition-all duration-1000"
+            class="group relative aspect-video rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border border-white/5 ring-1 ring-white/5 transition-all duration-1000"
             :class="{ 'ring-white/20 scale-[1.02] shadow-[0_0_100px_rgba(255,255,255,0.05)]': isCinemaMode }"
           >
             <video 
-              ref="videoPlayer"
+
               :src="video.video_url"
               class="w-full h-full object-contain" controls
               :poster="video.thumbnail_url"
-              @click="togglePlay"
+
               :style="{ viewTransitionName: `video-thumb-${video.id}` }"
             ></video>
             
@@ -148,8 +139,8 @@ const togglePlay = () => {
               {{ video.title }}
             </h1>
             
-            <div class="flex flex-wrap items-center justify-between gap-6 pb-10 border-b border-white/5">
-              <div class="flex items-center gap-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-white/5">
+              <div class="flex flex-wrap items-center gap-4 sm:gap-5">
                 <img :src="video.profiles.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-14 h-14 rounded-full border border-white/10 p-1 bg-void-card ring-1 ring-white/5" />
                 <div class="space-y-1">
                   <div class="font-brand text-lg text-white tracking-tight">{{ video.profiles.display_name }}</div>
@@ -183,7 +174,7 @@ const togglePlay = () => {
               </div>
             </div>
 
-            <div class="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
+            <div class="p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
               <div class="flex items-center gap-4 mb-6 text-[10px] font-bold text-white/40 uppercase tracking-[0.4em]">
                 <span>{{ video.view_count }} {{ t('watch.views') }}</span>
                 <span class="w-1 h-1 rounded-full bg-white/10"></span>
