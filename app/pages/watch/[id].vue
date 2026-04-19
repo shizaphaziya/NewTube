@@ -1,49 +1,87 @@
-<script setup>
+<script setup lang="ts">
+import type { Database } from '~/types/database.types'
+
+type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
+  profiles: {
+    id: string
+    display_name: string | null
+    avatar_url: string | null
+  } | null
+}
+
+type CommentWithProfile = Database['public']['Tables']['comments']['Row'] & {
+  profiles: {
+    display_name: string | null
+    avatar_url: string | null
+  } | null
+}
+
 const route = useRoute()
-const supabase = useSupabaseClient()
+const videoId = (route.params as any).id as string
+const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const { t } = useI18n()
 
-const { data: video } = await useAsyncData(`video-${route.params.id}`, async () => {
+const { data: video, error: videoError } = await useAsyncData(`video-${videoId}`, async () => {
   const { data } = await supabase
     .from('videos')
     .select('*, profiles:profiles!videos_user_id_fkey(id, display_name, avatar_url)')
-    .eq('id', route.params.id)
+    .eq('id', videoId)
     .single()
-  return data
+  return data as VideoWithProfile | null
 })
 
-const { data: likesCount, refresh: refreshLikes } = await useAsyncData(`likes-${route.params.id}`, async () => {
-  const { count } = await supabase
-    .from('likes')
-    .select('*', { count: 'exact', head: true })
-    .eq('video_id', route.params.id)
-  return count || 0
+const { profile } = useProfile()
+const isBlocked = computed(() => {
+  if (!video.value) return false
+  if (video.value.status === 'blocked') {
+    // Admins and owners can still see it
+    if (profile.value?.role === 'admin') return false
+    if (user.value?.id === video.value.user_id) return false
+    return true
+  }
+  return false
 })
 
-const hasLiked = ref(false)
-const checkLike = async () => {
+const { data: reactions, refresh: refreshReactions } = await useAsyncData(`reactions-${videoId}`, async () => {
+  // Actually count them properly
+  const { count: lCount } = await supabase.from('video_reactions').select('*', { count: 'exact', head: true }).eq('video_id', videoId).eq('is_like', true)
+  const { count: dCount } = await supabase.from('video_reactions').select('*', { count: 'exact', head: true }).eq('video_id', videoId).eq('is_like', false)
+
+  return { likes: lCount || 0, dislikes: dCount || 0 }
+})
+
+const userReaction = ref<boolean | null>(null) // true = like, false = dislike, null = none
+
+const checkReaction = async () => {
   if (!user.value) return
   const { data } = await supabase
-    .from('likes')
-    .select('*')
-    .eq('video_id', route.params.id)
+    .from('video_reactions')
+    .select('is_like')
+    .eq('video_id', videoId)
     .eq('user_id', user.value.id)
     .maybeSingle()
-  hasLiked.value = !!data
+  userReaction.value = data ? data.is_like : null
 }
 
-const toggleLike = async () => {
+const toggleReaction = async (isLike: boolean) => {
   if (!user.value) return navigateTo('/auth/login')
   
-  if (hasLiked.value) {
-    await supabase.from('likes').delete().eq('video_id', route.params.id).eq('user_id', user.value.id)
+  if (userReaction.value === isLike) {
+    // Remove reaction
+    await supabase.from('video_reactions').delete().eq('video_id', videoId).eq('user_id', user.value.id)
+    userReaction.value = null
   } else {
-    await supabase.from('likes').insert({ video_id: route.params.id, user_id: user.value.id })
+    // Upsert reaction
+    await supabase.from('video_reactions').upsert({ 
+      video_id: videoId, 
+      user_id: user.value.id,
+      is_like: isLike
+    })
+    userReaction.value = isLike
   }
   
-  hasLiked.value = !hasLiked.value
-  await refreshLikes()
+  await refreshReactions()
 }
 
 const isSubscribed = ref(false)
@@ -53,22 +91,24 @@ const toggleSubscribe = () => {
 }
 
 onMounted(() => {
-  checkLike()
+  checkReaction()
   // Increment view count
-  supabase.rpc('increment_view_count', { video_id_param: route.params.id })
+  supabase.rpc('increment_view_count', { video_id_param: videoId })
 })
 
-const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${route.params.id}`, async () => {
+const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${videoId}`, async () => {
   const { data } = await supabase
     .from('comments')
     .select('*, profiles:profiles!comments_user_id_fkey(display_name, avatar_url)')
-    .eq('video_id', route.params.id)
+    .eq('video_id', videoId)
     .order('created_at', { ascending: false })
-  return data || []
+  return (data || []) as CommentWithProfile[]
 })
 
 const commentContent = ref('')
 const isPosting = ref(false)
+const replyTo = ref<string | null>(null) // ID of comment being replied to
+const commentInput = ref<HTMLTextAreaElement | null>(null)
 
 const postComment = async () => {
   if (!user.value) return navigateTo('/auth/login')
@@ -78,24 +118,62 @@ const postComment = async () => {
   const { error } = await supabase
     .from('comments')
     .insert({
-      video_id: route.params.id,
+      video_id: videoId,
       user_id: user.value.id,
-      content: commentContent.value
+      content: commentContent.value,
+      parent_id: replyTo.value
     })
   
   if (!error) {
     commentContent.value = ''
+    replyTo.value = null
     await refreshComments()
   }
   isPosting.value = false
+}
+
+const structuredComments = computed(() => {
+  if (!comments.value) return []
+  const roots = comments.value.filter(c => !c.parent_id)
+  const replies = comments.value.filter(c => c.parent_id)
+  
+  return roots.map(root => ({
+    ...root,
+    replies: replies.filter(r => r.parent_id === root.id).reverse()
+  }))
+})
+
+const isCinemaMode = ref(false)
+
+const guestHintTarget = ref<string | null>(null) // 'like', 'dislike', 'comment'
+const showGuestHint = (target: string) => {
+  if (user.value) return
+  guestHintTarget.value = target
+  setTimeout(() => {
+    if (guestHintTarget.value === target) guestHintTarget.value = null
+  }, 4000)
 }
 </script>
 
 <template>
   <div v-if="video">
-    <CinemaMode v-model:active="isCinemaMode" />
+    <!-- Blocked State -->
+    <div v-if="isBlocked" class="layout-container py-40">
+      <div class="glass-card p-20 text-center max-w-2xl mx-auto space-y-8 border-red-500/10">
+        <div class="i-ph-shield-warning-bold text-7xl text-red-500 mx-auto opacity-50"></div>
+        <div class="space-y-4">
+          <h1 class="text-4xl font-brand font-black text-white tracking-tighter uppercase italic">Content Suspended</h1>
+          <p class="text-white/30 text-sm leading-relaxed max-w-md mx-auto">
+            This transmission has been intercepted and blocked by the high command for violating protocol.
+          </p>
+        </div>
+        <NuxtLink to="/" class="btn-primary inline-flex">Return to Surface</NuxtLink>
+      </div>
+    </div>
+
+    <CinemaMode v-else v-model:active="isCinemaMode" />
     
-    <div class="layout-container pb-40 transition-all duration-1000" :class="{ 'relative z-50': isCinemaMode }">
+    <div v-if="!isBlocked" class="layout-container pb-40 transition-all duration-1000" :class="{ 'relative z-50': isCinemaMode }">
       <!-- Layout Switcher Wrapper -->
       <div 
         class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16"
@@ -115,11 +193,10 @@ const postComment = async () => {
             :class="{ 'ring-white/20 scale-[1.02] shadow-[0_0_100px_rgba(255,255,255,0.05)]': isCinemaMode }"
           >
             <video 
-
+              crossorigin="anonymous"
               :src="video.video_url"
               class="w-full h-full object-contain" controls
-              :poster="video.thumbnail_url"
-
+              :poster="video.thumbnail_url || undefined"
               :style="{ viewTransitionName: `video-thumb-${video.id}` }"
             ></video>
             
@@ -141,9 +218,9 @@ const postComment = async () => {
             
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-white/5">
               <div class="flex flex-wrap items-center gap-4 sm:gap-5">
-                <img :src="video.profiles.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-14 h-14 rounded-full border border-white/10 p-1 bg-void-card ring-1 ring-white/5" />
+                <img crossorigin="anonymous" :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-14 h-14 rounded-full border border-white/10 p-1 bg-void-card ring-1 ring-white/5" />
                 <div class="space-y-1">
-                  <div class="font-brand text-lg text-white tracking-tight">{{ video.profiles.display_name }}</div>
+                  <div class="font-brand text-lg text-white tracking-tight">{{ video.profiles?.display_name || 'Anonymous' }}</div>
                   <div class="text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">{{ t('watch.verified_user') }}</div>
                 </div>
                 <button 
@@ -159,16 +236,42 @@ const postComment = async () => {
                 </button>
               </div>
 
-              <div class="flex items-center gap-4">
-                <button 
-                  @click="toggleLike"
-                  class="flex items-center gap-3 px-6 md:px-8 py-3 rounded-full border border-white/5 transition-all font-bold text-xs tracking-widest uppercase"
-                  :class="hasLiked ? 'bg-white text-black' : 'bg-white/5 hover:bg-white/10 text-white/60'"
-                >
-                  <div :class="hasLiked ? 'i-ph-heart-fill' : 'i-ph-heart-bold'" class="text-lg"></div>
-                  {{ likesCount }}
-                </button>
-                <button class="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/5 text-white/40 hover:text-white transition-all">
+              <div class="flex items-center gap-2 relative">
+                <!-- Guest Hint Cloud -->
+                <transition name="pop">
+                  <div 
+                    v-if="guestHintTarget === 'like' || guestHintTarget === 'dislike'" 
+                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 w-56 p-6 rounded-[24px] bg-white text-void shadow-[0_20px_50px_rgba(255,255,255,0.2)] z-[60] text-center pointer-events-auto"
+                  >
+                    <div class="absolute bottom-[-8px] left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45"></div>
+                    <div class="i-ph-lock-key-bold text-2xl mb-3 mx-auto"></div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed mb-4">Transmission Locked</p>
+                    <NuxtLink to="/auth/login" class="block py-3 rounded-xl bg-void text-white text-[9px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all">
+                      Log In to React
+                    </NuxtLink>
+                  </div>
+                </transition>
+
+                <div class="flex items-center bg-white/5 rounded-full p-1 border border-white/5">
+                  <button 
+                    @click="user ? toggleReaction(true) : showGuestHint('like')"
+                    class="flex items-center gap-3 px-6 py-2.5 rounded-full transition-all font-bold text-[10px] tracking-widest uppercase"
+                    :class="userReaction === true ? 'bg-white text-black' : 'hover:bg-white/10 text-white/60'"
+                  >
+                    <div :class="userReaction === true ? 'i-ph-thumbs-up-fill' : 'i-ph-thumbs-up-bold'" class="text-sm"></div>
+                    {{ reactions?.likes || 0 }}
+                  </button>
+                  <div class="w-px h-4 bg-white/10 mx-1"></div>
+                  <button 
+                    @click="user ? toggleReaction(false) : showGuestHint('dislike')"
+                    class="flex items-center gap-3 px-6 py-2.5 rounded-full transition-all font-bold text-[10px] tracking-widest uppercase"
+                    :class="userReaction === false ? 'bg-white text-black' : 'hover:bg-white/10 text-white/60'"
+                  >
+                    <div :class="userReaction === false ? 'i-ph-thumbs-down-fill' : 'i-ph-thumbs-down-bold'" class="text-sm"></div>
+                    {{ reactions?.dislikes || 0 }}
+                  </button>
+                </div>
+                <button class="w-11 h-11 rounded-full flex items-center justify-center bg-white/5 border border-white/5 text-white/40 hover:text-white transition-all">
                   <div class="i-ph-share-network-bold text-lg"></div>
                 </button>
               </div>
@@ -178,7 +281,7 @@ const postComment = async () => {
               <div class="flex items-center gap-4 mb-6 text-[10px] font-bold text-white/40 uppercase tracking-[0.4em]">
                 <span>{{ video.view_count }} {{ t('watch.views') }}</span>
                 <span class="w-1 h-1 rounded-full bg-white/10"></span>
-                <span>{{ t('watch.logged') }}: {{ new Date(video.created_at).toLocaleDateString() }}</span>
+                <span>{{ t('watch.logged') }}: {{ new Date(video.created_at || '').toLocaleDateString() }}</span>
               </div>
               {{ video.description || t('watch.no_metadata') }}
             </div>
@@ -195,18 +298,34 @@ const postComment = async () => {
 
             <!-- Add Comment Input -->
             <div class="flex gap-6">
-              <img 
-                :src="profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`" 
-                class="w-12 h-12 rounded-full border border-white/10 p-1 bg-void-card shrink-0" 
-                v-if="user"
-              />
+                <img 
+                  crossorigin="anonymous"
+                  :src="profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`" 
+                  class="w-12 h-12 rounded-full border border-white/10 p-1 bg-void-card shrink-0" 
+                  v-if="user"
+                />
               <div class="flex-1 space-y-4">
                 <textarea 
+                  ref="commentInput"
                   v-model="commentContent"
                   :placeholder="t('watch.add_comment')"
                   class="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-[1.5rem] p-4 md:p-6 text-sm focus:outline-none focus:border-white/30 transition-all min-h-[120px] resize-none placeholder:text-white/20"
                 ></textarea>
-                <div class="flex justify-end items-center gap-6">
+                <div class="flex justify-end items-center gap-6 relative">
+                  <!-- Guest Hint Bubble for Comments -->
+                  <transition name="pop">
+                    <div 
+                      v-if="guestHintTarget === 'comment'" 
+                      class="absolute bottom-full right-0 mb-6 w-64 p-6 rounded-[24px] bg-white text-void shadow-2xl z-[60] text-center"
+                    >
+                      <div class="absolute bottom-[-8px] right-8 w-4 h-4 bg-white rotate-45"></div>
+                      <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-4">Authentication Required</p>
+                      <NuxtLink to="/auth/login" class="block py-3 rounded-xl bg-void text-white text-[9px] font-black uppercase tracking-widest">
+                        Identify Yourself
+                      </NuxtLink>
+                    </div>
+                  </transition>
+
                   <button 
                     @click="commentContent = ''" 
                     class="text-xs font-bold text-white/20 hover:text-white transition-colors uppercase tracking-widest"
@@ -215,8 +334,8 @@ const postComment = async () => {
                     {{ t('watch.discard') }}
                   </button>
                   <button 
-                    @click="postComment"
-                    :disabled="isPosting || !commentContent.trim()"
+                    @click="user ? postComment() : showGuestHint('comment')"
+                    :disabled="!!isPosting || !!(user && !commentContent.trim())"
                     class="btn-primary"
                   >
                     {{ isPosting ? t('watch.transmitting') : t('watch.post_message') }}
@@ -226,27 +345,46 @@ const postComment = async () => {
             </div>
 
             <!-- Comments List -->
-            <div class="space-y-10 pt-6">
-              <div v-for="comment in comments" :key="comment.id" class="flex gap-6 group">
-                <img 
-                  :src="comment.profiles.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`" 
-                  class="w-11 h-11 rounded-full border border-white/5 p-0.5 bg-void shrink-0" 
-                />
-                <div class="space-y-2 flex-1">
-                  <div class="flex items-center gap-3">
-                    <span class="font-bold text-xs tracking-widest uppercase text-white/80">{{ comment.profiles.display_name }}</span>
-                    <span class="text-[9px] text-white/20 font-bold uppercase tracking-widest">{{ useTimeAgo(comment.created_at).value }}</span>
+            <div class="space-y-12 pt-6">
+              <div v-for="comment in structuredComments" :key="comment.id" class="space-y-8">
+                <div class="flex gap-6 group">
+                  <img 
+                    crossorigin="anonymous"
+                    :src="comment.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`" 
+                    class="w-11 h-11 rounded-full border border-white/5 p-0.5 bg-void shrink-0" 
+                  />
+                  <div class="space-y-2 flex-1">
+                    <div class="flex items-center gap-3">
+                      <span class="font-bold text-xs tracking-widest uppercase text-white/80">{{ comment.profiles?.display_name || 'Anonymous' }}</span>
+                      <span class="text-[9px] text-white/20 font-bold uppercase tracking-widest">{{ useTimeAgo(comment.created_at || '').value }}</span>
+                    </div>
+                    <p class="text-white/50 text-sm leading-relaxed max-w-2xl">{{ comment.content }}</p>
+                    <div class="flex items-center gap-6 pt-3">
+                      <button 
+                        @click="replyTo = comment.id; commentContent = ''; $nextTick(() => commentInput?.focus())"
+                        class="text-[9px] font-black text-white/20 hover:text-white transition-colors uppercase tracking-widest"
+                      >
+                        {{ t('watch.reply') }}
+                      </button>
+                    </div>
                   </div>
-                  <p class="text-white/40 text-sm leading-relaxed max-w-2xl">{{ comment.content }}</p>
-                  <div class="flex items-center gap-6 pt-3">
-                    <button class="flex items-center gap-2 text-[10px] font-bold text-white/20 hover:text-white transition-colors">
-                      <div class="i-ph-thumbs-up-bold"></div>
-                      0
-                    </button>
-                    <button class="text-[10px] font-bold text-white/20 hover:text-white transition-colors uppercase tracking-widest">
-                      {{ t('watch.reply') }}
-                    </button>
-                  </div>
+                </div>
+
+                <!-- Replies -->
+                <div v-if="comment.replies.length" class="ml-16 space-y-8 border-l border-white/5 pl-8">
+                   <div v-for="reply in comment.replies" :key="reply.id" class="flex gap-4 group">
+                      <img 
+                        :src="reply.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${reply.user_id}`" 
+                        class="w-8 h-8 rounded-full border border-white/5 p-0.5 bg-void shrink-0" 
+                      />
+                      <div class="space-y-1.5 flex-1">
+                        <div class="flex items-center gap-3">
+                          <span class="font-bold text-[10px] tracking-widest uppercase text-white/60">{{ reply.profiles?.display_name || 'Anonymous' }}</span>
+                          <span class="text-[8px] text-white/10 font-bold uppercase tracking-widest">{{ useTimeAgo(reply.created_at || '').value }}</span>
+                        </div>
+                        <p class="text-white/40 text-xs leading-relaxed max-w-xl">{{ reply.content }}</p>
+                      </div>
+                   </div>
                 </div>
               </div>
             </div>
@@ -279,3 +417,30 @@ const postComment = async () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.pop-enter-active {
+  animation: pop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pop-leave-active {
+  animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) reverse;
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: translate(-50%, 10px) scale(0.9); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+/* Comment hint needs different anchor */
+.right-0.pop-enter-active {
+  animation: pop-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.right-0.pop-leave-active {
+  animation: pop-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) reverse;
+}
+
+@keyframes pop-in-right {
+  0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+</style>

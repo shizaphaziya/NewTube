@@ -3,6 +3,7 @@
     "home": "Home",
     "studio": "Studio",
     "admin": "Admin",
+    "users": "Users",
     "login": "Login",
     "logout": "Logout",
     "upload": "Upload",
@@ -72,7 +73,11 @@
     "actions": "Actions",
     "publish": "Publish",
     "hide": "Hide",
-    "block": "Block"
+    "block": "Block",
+    "users_title": "Population Control",
+    "users_subtitle": "Agent Moderation Terminal",
+    "identity": "Identity",
+    "clearance": "Clearance"
   },
   "auth": {
     "welcome_back": "Welcome Back",
@@ -89,5 +94,26 @@
     "authentication_locked": "Authentication Required",
     "authorize_identity": "Log in",
     "login_required": "You need to log in to access the studio."
+  },
+  "profile": {
+    "settings": "Interface Settings",
+    "identity_management": "Identity Management",
+    "avatar": "Personal Avatar",
+    "profile_picture": "Profile Picture",
+    "avatar_note": "A custom identity across the network.",
+    "name": "Display Name",
+    "display_name": "Display Name",
+    "email_locked": "Contact support to change verified email.",
+    "update": "Update Profile",
+    "save_changes": "Update Profile",
+    "success": "Profile updated successfully",
+    "update_success": "Database update complete.",
+    "delete_account": "Initiate Account Termination",
+    "confirm_deletion": "Irreversible Action",
+    "delete_warning": "Your profile and content will be hidden from the network.",
+    "confirm_delete": "Terminate"
+  },
+  "common": {
+    "cancel": "Abort"
   }
 }

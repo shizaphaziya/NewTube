@@ -1,12 +1,21 @@
-<script setup>
-const supabase = useSupabaseClient()
-const videos = ref([])
+<script setup lang="ts">
+import type { Database } from '~/types/database.types'
+
+type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
+  profiles: {
+    display_name: string | null
+    avatar_url: string | null
+  } | null
+}
+
+const supabase = useSupabaseClient<Database>()
+const videos = ref<VideoWithProfile[]>([])
 const page = ref(0)
 const pageSize = 12
 const loading = ref(false)
 const hasMore = ref(true)
 
-const loadMoreTrigger = ref(null)
+const loadMoreTrigger = ref<HTMLElement | null>(null)
 
 const fetchVideos = async () => {
   if (loading.value || !hasMore.value) return
@@ -24,17 +33,19 @@ const fetchVideos = async () => {
 
   if (error) {
     console.error(error)
-  } else {
+  } else if (data) {
     if (data.length < pageSize) hasMore.value = false
-    videos.value.push(...data)
+    // @ts-ignore - Supabase join types can be tricky with generated types
+    videos.value.push(...(data as VideoWithProfile[]))
     page.value++
   }
   loading.value = false
 }
 
 // Infinite scroll trigger
-useIntersectionObserver(loadMoreTrigger, ([{ isIntersecting }]) => {
-  if (isIntersecting) {
+useIntersectionObserver(loadMoreTrigger, (entries) => {
+  const entry = entries[0]
+  if (entry?.isIntersecting) {
     fetchVideos()
   }
 })

@@ -1,23 +1,31 @@
-<script setup>
+<script setup lang="ts">
+import type { Database } from '~/types/database.types'
+
+type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
+  profiles: {
+    display_name: string | null
+  } | null
+}
+
 definePageMeta({
   middleware: ['admin']
 })
 
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient<Database>()
 const { t } = useI18n()
 
-const { data: videos, refresh } = await useAsyncData('admin-videos', async () => {
+const { data: videos, refresh } = await useAsyncData('admin-moderation-videos', async () => {
   const { data } = await supabase
     .from('videos')
     .select('*, profiles:profiles!videos_user_id_fkey(display_name)')
     .order('created_at', { ascending: false })
-  return data
+  return (data as unknown || []) as VideoWithProfile[]
 })
 
-const updateStatus = async (videoId, status) => {
+const updateStatus = async (videoId: string, status: string) => {
   const { error } = await supabase
     .from('videos')
-    .update({ status })
+    .update({ status: status as any })
     .eq('id', videoId)
   
   if (!error) {
@@ -27,7 +35,7 @@ const updateStatus = async (videoId, status) => {
   }
 }
 
-const getStatusColor = (status) => {
+const getStatusColor = (status: string | null) => {
   switch (status) {
     case 'published': return 'text-green-400 bg-green-400/10'
     case 'hidden': return 'text-yellow-400 bg-yellow-400/10'
@@ -64,7 +72,7 @@ const getStatusColor = (status) => {
               <td class="px-8 py-6">
                 <div class="flex items-center gap-5">
                   <div class="relative group-hover:scale-105 transition-transform duration-500">
-                    <img :src="video.thumbnail_url" class="w-24 aspect-video rounded-xl bg-white/5 object-cover border border-white/5" />
+                    <img :src="video.thumbnail_url || undefined" class="w-24 aspect-video rounded-xl bg-white/5 object-cover border border-white/5" />
                     <div class="absolute inset-0 bg-void/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                       <div class="i-ph-eye-bold text-white text-xl"></div>
                     </div>

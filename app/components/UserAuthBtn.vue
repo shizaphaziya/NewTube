@@ -1,6 +1,8 @@
-<script setup>
+<script setup lang="ts">
+import type { Database } from '~/types/database.types'
+
 const user = useSupabaseUser()
-const client = useSupabaseClient()
+const client = useSupabaseClient<Database>()
 const { profile } = useProfile()
 
 const logout = async () => {
@@ -11,7 +13,7 @@ const logout = async () => {
 
 <template>
   <div v-if="user" class="flex items-center gap-4 animate-fade-in-up">
-    <div class="flex items-center gap-3 group cursor-pointer">
+    <NuxtLink to="/profile/settings" class="flex items-center gap-3 group cursor-pointer no-underline">
       <div class="text-right">
         <div class="text-xs font-bold text-white group-hover:text-silver-white transition-all tracking-widest uppercase">
           {{ profile?.display_name || user.email?.split('@')[0] }}
@@ -24,7 +26,7 @@ const logout = async () => {
           class="w-10 h-10 rounded-full border border-white/5 group-hover:border-white/20 transition-all p-0.5 bg-void-card ring-1 ring-white/5"
         />
       </div>
-    </div>
+    </NuxtLink>
     <button @click="logout" class="w-10 h-10 rounded-full flex items-center justify-center text-white/20 hover:text-white hover:bg-white/5 transition-all">
       <div class="i-ph-sign-out-bold text-lg"></div>
     </button>

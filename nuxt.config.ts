@@ -32,7 +32,6 @@ export default defineNuxtConfig({
       { code: 'en', file: 'en.json', name: 'English' }
     ],
     defaultLocale: 'ru',
-    lazy: true,
     langDir: '../i18n/locales/'
   },
 
@@ -51,8 +50,9 @@ export default defineNuxtConfig({
     routeRules: {
       '/**': {
         headers: {
-          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Cross-Origin-Embedder-Policy': 'credentialless',
           'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Resource-Policy': 'cross-origin'
         }
       }
     }
@@ -63,9 +63,9 @@ export default defineNuxtConfig({
   },
 
   experimental: {
-    viewTransition: true
+    viewTransition: true,
+    typedPages: true
   },
 
   devtools: { enabled: true }
 })
-

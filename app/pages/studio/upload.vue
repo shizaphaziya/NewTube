@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
+// FFmpeg will be imported dynamically to prevent SSR crashes
 
-const supabase = useSupabaseClient()
+import type { Database } from '~/types/database.types'
+
+const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const { t } = useI18n()
 
@@ -11,7 +12,10 @@ const description = ref('')
 const videoFile = ref<File | null>(null)
 const thumbFile = ref<File | null>(null)
 
-const ffmpeg = new FFmpeg()
+const videoInput = ref<HTMLInputElement | null>(null)
+const thumbInput = ref<HTMLInputElement | null>(null)
+
+const ffmpeg = ref<any>(null)
 const processing = ref(false)
 const processingProgress = ref(0)
 const uploading = ref(false)
@@ -19,8 +23,15 @@ const uploadProgress = ref(0)
 const success = ref(false)
 
 const loadFFmpeg = async () => {
+  if (ffmpeg.value) return
+  
+  const { FFmpeg } = await import('@ffmpeg/ffmpeg')
+  const { toBlobURL } = await import('@ffmpeg/util')
+  
+  ffmpeg.value = new FFmpeg()
+  
   const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-  await ffmpeg.load({
+  await ffmpeg.value.load({
     coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
     wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
   })
@@ -37,22 +48,24 @@ const onVideoSelect = (e: Event) => {
 }
 
 const transcodeVideo = async (file: File) => {
-  if (!ffmpeg.loaded) await loadFFmpeg()
+  await loadFFmpeg()
   
   processing.value = true
   processingProgress.value = 0
   
-  ffmpeg.on('progress', ({ progress }) => {
+  ffmpeg.value.on('progress', ({ progress }: { progress: number }) => {
     processingProgress.value = Math.round(progress * 100)
   })
+
+  const { fetchFile } = await import('@ffmpeg/util')
 
   const inputName = 'input' + file.name.substring(file.name.lastIndexOf('.'))
   const outputName = 'output.mp4'
 
-  await ffmpeg.writeFile(inputName, await fetchFile(file))
+  await ffmpeg.value.writeFile(inputName, await fetchFile(file))
   
   // Compression: CRF 26 + Fast preset for balance
-  await ffmpeg.exec([
+  await ffmpeg.value.exec([
     '-i', inputName,
     '-c:v', 'libx264',
     '-crf', '26',
@@ -62,14 +75,40 @@ const transcodeVideo = async (file: File) => {
     outputName
   ])
 
-  const data = await ffmpeg.readFile(outputName)
+  const data = await ffmpeg.value.readFile(outputName)
   processing.value = false
   
   return new File([data], 'processed_' + file.name, { type: 'video/mp4' })
 }
 
+const extractThumbnail = async (file: File) => {
+  await loadFFmpeg()
+  
+  const { fetchFile } = await import('@ffmpeg/util')
+  
+  const inputName = 'input_thumb' + file.name.substring(file.name.lastIndexOf('.'))
+  const outputName = 'thumb.jpg'
+
+  await ffmpeg.value.writeFile(inputName, await fetchFile(file))
+  
+  // Extract frame at 1 second mark
+  await ffmpeg.value.exec([
+    '-ss', '00:00:01',
+    '-i', inputName,
+    '-frames:v', '1',
+    '-q:v', '2',
+    outputName
+  ])
+
+  const data = await ffmpeg.value.readFile(outputName)
+  return new File([data], 'auto_thumb.jpg', { type: 'image/jpeg' })
+}
+
 const handleUpload = async () => {
-  if (!videoFile.value || !title.value || !user.value) return
+  if (!videoFile.value || !user.value) return
+  
+  // Auto-title logic
+  const finalTitle = title.value.trim() || new Date().toLocaleString()
   
   try {
     // Stage 1: Processing
@@ -79,8 +118,13 @@ const handleUpload = async () => {
     uploading.value = true
     uploadProgress.value = 0
     
+    // Use explicit getUser for stability during long upload
+    const { data: { user: authUser }, error: userError } = await supabase.auth.getUser()
+    if (userError || !authUser) throw new Error('Authentication lost during transit')
+    const userId = authUser.id
+
     const videoExt = 'mp4'
-    const videoPath = `${user.value.id}/${Date.now()}.${videoExt}`
+    const videoPath = `${userId}/${Date.now()}.${videoExt}`
     
     const { data: vData, error: vError } = await supabase.storage
       .from('videos')
@@ -92,14 +136,24 @@ const handleUpload = async () => {
     if (vError) throw vError
     uploadProgress.value = 50
 
-    // 2. Upload Thumbnail (Optional)
+    // 2. Upload Thumbnail (Optional or Auto)
     let thumbnailUrl = ''
-    if (thumbFile.value) {
-      const thumbExt = thumbFile.value.name.split('.').pop()
-      const thumbPath = `${user.value.id}/${Date.now()}.${thumbExt}`
+    let thumbnailFileToUpload = thumbFile.value
+
+    if (!thumbnailFileToUpload) {
+      try {
+        thumbnailFileToUpload = await extractThumbnail(processedFile)
+      } catch (e) {
+        console.error('Auto-thumbnail failed', e)
+      }
+    }
+
+    if (thumbnailFileToUpload) {
+      const thumbExt = thumbnailFileToUpload.name.split('.').pop()
+      const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, thumbFile.value)
+        .upload(thumbPath, thumbnailFileToUpload)
       
       if (!tError) {
         thumbnailUrl = supabase.storage.from('thumbnails').getPublicUrl(thumbPath).data.publicUrl
@@ -113,7 +167,7 @@ const handleUpload = async () => {
     const { error: dbError } = await supabase
       .from('videos')
       .insert({
-        title: title.value,
+        title: finalTitle,
         description: description.value || null,
         video_url: videoUrl,
         thumbnail_url: thumbnailUrl || null,
@@ -171,7 +225,7 @@ const handleUpload = async () => {
                 class="relative h-64 rounded-2xl border-2 border-dashed border-white/[0.08]
                        bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20
                        transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
-                @click="$refs.videoInput.click()"
+                @click="videoInput?.click()"
               >
                 <div v-if="!videoFile" class="text-center group-hover:scale-105 transition-transform duration-500">
                   <div class="i-ph-video-bold text-5xl text-white/5 mb-4 group-hover:text-white/20 transition-colors"></div>
@@ -188,7 +242,7 @@ const handleUpload = async () => {
 
             <div class="space-y-4">
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('studio.cover_artwork') }}</label>
-              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-colors cursor-pointer" @click="$refs.thumbInput.click()">
+              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-colors cursor-pointer" @click="thumbInput?.click()">
                 <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-colors">
                   <div class="i-ph-image-bold text-2xl"></div>
                 </div>
@@ -206,10 +260,9 @@ const handleUpload = async () => {
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 group-focus-within:text-silver transition-colors">{{ t('studio.title') }}</label>
               <input 
                 v-model="title" 
-                required 
                 type="text" 
               class="w-full bg-transparent border-b-2 border-white/[0.08] py-4 text-2xl font-brand font-black tracking-tight focus:outline-none focus:border-white/40 transition-colors placeholder:text-white/[0.06] text-white" 
-                :placeholder="t('studio.entry_name_placeholder')" 
+                :placeholder="t('studio.entry_name_placeholder') || new Date().toLocaleString()" 
               />
             </div>
             
@@ -258,7 +311,7 @@ const handleUpload = async () => {
           
           <button 
             type="submit" 
-            :disabled="processing || uploading || !videoFile || !title" 
+            :disabled="processing || uploading || !videoFile" 
             class="btn-primary w-full py-6 text-sm font-black tracking-[0.4em] uppercase group"
           >
             <span v-if="!processing && !uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">

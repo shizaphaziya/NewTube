@@ -1,21 +1,50 @@
--- STORAGE SETUP
+-- NewTube Gold Standard Schema v2.0
+-- Refactored for Standards, Performance, and Extensibility
+
+-- 1. EXTENSIONS & UTILS
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- 2. STORAGE SETUP
 -- Create buckets for videos and thumbnails
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES 
-  ('videos', 'videos', true, 1073741824, '{video/*}'), -- 1GB limit (platform cap may still apply)
+  ('videos', 'videos', true, 1073741824, '{video/*}'), -- 1GB limit
   ('thumbnails', 'thumbnails', true, 10485760, '{image/*}') -- 10MB limit
 ON CONFLICT (id) DO UPDATE SET 
   file_size_limit = EXCLUDED.file_size_limit,
   allowed_mime_types = EXCLUDED.allowed_mime_types;
 
--- DATABASE SCHEMA
--- Profiles table (linked to auth.users)
+-- 3. ROLES SYSTEM
+CREATE TABLE IF NOT EXISTS public.roles (
+    name TEXT PRIMARY KEY,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO public.roles (name, description)
+VALUES 
+    ('guest', 'Can only view public content'),
+    ('user', 'Can upload videos, comment and react'),
+    ('admin', 'Full control over content and users')
+ON CONFLICT (name) DO UPDATE SET description = EXCLUDED.description;
+
+-- 4. TABLES
+-- Profiles table
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name TEXT,
   avatar_url TEXT,
-  role TEXT DEFAULT 'user' CHECK (role IN ('guest', 'user', 'admin')),
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  role TEXT DEFAULT 'user' REFERENCES public.roles(name) ON UPDATE CASCADE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'blocked')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
 -- Videos table
@@ -28,14 +57,18 @@ CREATE TABLE IF NOT EXISTS public.videos (
   thumbnail_url TEXT,
   status TEXT DEFAULT 'published' CHECK (status IN ('published', 'hidden', 'blocked')),
   view_count BIGINT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
--- Likes table (Composite PK)
-CREATE TABLE IF NOT EXISTS public.likes (
+-- Video Reactions table (Likes/Dislikes)
+CREATE TABLE IF NOT EXISTS public.video_reactions (
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   video_id UUID REFERENCES public.videos(id) ON DELETE CASCADE,
+  is_like BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (user_id, video_id)
 );
 
@@ -46,54 +79,46 @@ CREATE TABLE IF NOT EXISTS public.comments (
   video_id UUID NOT NULL REFERENCES public.videos(id) ON DELETE CASCADE,
   parent_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
--- RLS POLICIES
+-- 5. RLS POLICIES
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.videos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.video_reactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
 -- Profile Policies
-CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles
-  FOR SELECT USING (true);
-CREATE POLICY "Users can update their own profile" ON public.profiles
-  FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Video Policies
-CREATE POLICY "Published videos are viewable by everyone" ON public.videos
-  FOR SELECT USING (status = 'published' OR auth.uid() = user_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
-CREATE POLICY "Users can insert their own videos" ON public.videos
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update their own videos (except status)" ON public.videos
-  FOR UPDATE USING (auth.uid() = user_id)
-  WITH CHECK (
-    (status = (SELECT status FROM public.videos WHERE id = id)) OR 
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
-  );
-CREATE POLICY "Admins can do everything with videos" ON public.videos
-  FOR ALL USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+CREATE POLICY "Videos are viewable by everyone if not deleted" ON public.videos
+    FOR SELECT USING (
+        (deleted_at IS NULL AND status = 'published') 
+        OR auth.uid() = user_id 
+        OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+    );
+CREATE POLICY "Users can insert their own videos" ON public.videos FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own videos" ON public.videos FOR UPDATE USING (auth.uid() = user_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
--- Like Policies
-CREATE POLICY "Likes are viewable by everyone" ON public.likes FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own likes" ON public.likes FOR ALL USING (auth.uid() = user_id);
+-- Reaction Policies
+CREATE POLICY "Reactions are viewable by everyone" ON public.video_reactions FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own reactions" ON public.video_reactions FOR ALL USING (auth.uid() = user_id);
 
 -- Comment Policies
-CREATE POLICY "Comments are viewable by everyone" ON public.comments FOR SELECT USING (true);
+CREATE POLICY "Active comments are viewable by everyone" ON public.comments
+    FOR SELECT USING (
+        deleted_at IS NULL 
+        OR auth.uid() = user_id 
+        OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+    );
 CREATE POLICY "Users can manage their own comments" ON public.comments FOR ALL USING (auth.uid() = user_id);
 
--- STORAGE RLS (storage.objects)
-CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id IN ('videos', 'thumbnails'));
-CREATE POLICY "Authenticated Upload" ON storage.objects FOR INSERT WITH CHECK (
-  bucket_id IN ('videos', 'thumbnails') AND auth.role() = 'authenticated'
-);
-CREATE POLICY "Owner Delete" ON storage.objects FOR DELETE USING (
-  bucket_id IN ('videos', 'thumbnails') AND auth.uid()::text = owner::text
-);
-
--- TRIGGERS
--- Create profile on signup
+-- 6. TRIGGERS
+-- Handle new user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -106,3 +131,34 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- Handle updated_at automation
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+CREATE TRIGGER update_videos_updated_at BEFORE UPDATE ON public.videos FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON public.comments FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+CREATE TRIGGER update_video_reactions_updated_at BEFORE UPDATE ON public.video_reactions FOR EACH ROW EXECUTE PROCEDURE public.update_updated_at_column();
+
+-- 7. INDEXES
+CREATE INDEX IF NOT EXISTS idx_videos_user_id ON public.videos(user_id);
+CREATE INDEX IF NOT EXISTS idx_videos_status ON public.videos(status);
+CREATE INDEX IF NOT EXISTS idx_videos_deleted_at ON public.videos(deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_comments_video_id ON public.comments(video_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON public.comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON public.comments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_comments_deleted_at ON public.comments(deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_video_reactions_video_id ON public.video_reactions(video_id);
+CREATE INDEX IF NOT EXISTS idx_video_reactions_user_id ON public.video_reactions(user_id);
+
+-- 8. FUNCTIONS
+CREATE OR REPLACE FUNCTION public.increment_view_count(video_id_param UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE public.videos SET view_count = view_count + 1 WHERE id = video_id_param;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 9. DOCUMENTATION
+COMMENT ON TABLE profiles IS 'User profiles linked to auth.users';
+COMMENT ON TABLE videos IS 'Video metadata with soft delete and status support';
+COMMENT ON TABLE video_reactions IS 'User likes and dislikes tracked globally';
+COMMENT ON TABLE roles IS 'Platform role system (Extensible)';

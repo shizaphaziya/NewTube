@@ -1,5 +1,12 @@
-<script setup>
-const supabase = useSupabaseClient()
+<script setup lang="ts">
+import type { Database } from '~/types/database.types'
+
+type VideoWithCounts = Database['public']['Tables']['videos']['Row'] & {
+  likes: { count: number }[]
+  comments: { count: number }[]
+}
+
+const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
@@ -11,7 +18,7 @@ const { data: videos, refresh } = await useAsyncData('user-videos', async () => 
     .select('*, likes(count), comments(count)')
     .eq('user_id', user.value.id)
     .order('created_at', { ascending: false })
-  return data || []
+  return (data || []) as VideoWithCounts[]
 })
 
 const stats = computed(() => {
@@ -23,7 +30,7 @@ const stats = computed(() => {
   }
 })
 
-const deleteVideo = async (id) => {
+const deleteVideo = async (id: string) => {
   if (!confirm(t('studio.terminate_confirm'))) return
   const { error } = await supabase.from('videos').delete().eq('id', id)
   if (!error) refresh()
@@ -130,6 +137,7 @@ const deleteVideo = async (id) => {
             <div class="w-full sm:w-full sm:w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
               <img
                 v-if="video.thumbnail_url"
+                crossorigin="anonymous"
                 :src="video.thumbnail_url"
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
               />
@@ -140,7 +148,19 @@ const deleteVideo = async (id) => {
 
             <!-- Info -->
             <div class="flex-1 min-w-0 space-y-1.5">
-              <h3 class="font-brand font-black tracking-tight text-white truncate">{{ video.title }}</h3>
+              <div class="flex items-center gap-3">
+                <h3 class="font-brand font-black tracking-tight text-white truncate">{{ video.title }}</h3>
+                <span 
+                  class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border"
+                  :class="[
+                    video.status === 'published' ? 'text-emerald-400 bg-emerald-400/5 border-emerald-400/10' : 
+                    video.status === 'blocked' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
+                    'text-white/20 bg-white/5 border-white/5'
+                  ]"
+                >
+                  {{ video.status }}
+                </span>
+              </div>
               <div class="flex items-center gap-4 text-[9px] font-bold text-white/20 uppercase tracking-widest">
                 <span>{{ (video.view_count || 0).toLocaleString() }} {{ t('studio.impressions') }}</span>
                 <span class="w-px h-3 bg-white/10"></span>

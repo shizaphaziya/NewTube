@@ -37,7 +37,7 @@ onMounted(() => fetchProfile())
         <div class="flex items-center gap-3 ml-auto">
           <NuxtLink
             v-if="isAdmin"
-            to="/admin"
+            to="/admin/videos"
             class="w-10 h-10 rounded-xl flex items-center justify-center
                    bg-white/[0.04] border border-white/[0.07]
                    text-white/25 hover:text-white hover:border-white/20
@@ -58,24 +58,8 @@ onMounted(() => fetchProfile())
 
 
       <!-- Mobile Navigation -->
-      <nav class="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#050505]/95 backdrop-blur-xl border-t border-white/[0.05] z-50 items-center justify-around px-2">
-        <NuxtLink to="/" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
-          <div class="i-ph-house-line-bold text-xl"></div>
-          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.home') || 'Home' }}</span>
-        </NuxtLink>
-        <NuxtLink to="/?feed=trending" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
-          <div class="i-ph-fire-bold text-xl"></div>
-          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('home.trending') || 'Trending' }}</span>
-        </NuxtLink>
-        <NuxtLink to="/studio" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
-          <div class="i-ph-circles-four-bold text-xl"></div>
-          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.studio') || 'Studio' }}</span>
-        </NuxtLink>
-        <NuxtLink v-if="isAdmin" to="/admin" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
-          <div class="i-ph-shield-checkered-bold text-xl"></div>
-          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.admin') || 'Admin' }}</span>
-        </NuxtLink>
-      </nav>
+      <MobileNavbar />
+      <div class="h-16 md:hidden"></div> <!-- Spacer for mobile nav -->
 
       <!-- Footer -->
       <footer class="hidden md:flex h-16 border-t border-white/[0.04] items-center justify-between px-8">

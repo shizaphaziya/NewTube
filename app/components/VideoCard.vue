@@ -4,25 +4,26 @@ defineProps<{
     id: string
     title: string
     user_id: string
-    thumbnail_url?: string
-    view_count: number
-    created_at?: string
+    thumbnail_url?: string | null
+    view_count: number | null
+    created_at?: string | null
     profiles: {
-      display_name: string
-      avatar_url: string
-    }
+      display_name: string | null
+      avatar_url: string | null
+    } | null
   }
 }>()
 
 const { t } = useI18n()
 
-const formatViews = (count: number) => {
+const formatViews = (count: number | null) => {
+  if (!count) return '0'
   if (count >= 1_000_000) return (count / 1_000_000).toFixed(1) + 'M'
   if (count >= 1_000) return (count / 1_000).toFixed(1) + 'K'
   return count.toString()
 }
 
-const formatDate = (dateStr?: string) => {
+const formatDate = (dateStr?: string | null) => {
   if (!dateStr) return ''
   const d = new Date(dateStr)
   const now = new Date()
@@ -52,6 +53,7 @@ const formatDate = (dateStr?: string) => {
              group-hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.9)]"
     >
       <img
+        crossorigin="anonymous"
         :src="video.thumbnail_url || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800'"
         :alt="video.title"
         class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
@@ -90,8 +92,9 @@ const formatDate = (dateStr?: string) => {
       <!-- Avatar -->
       <NuxtLink :to="`/profile/${video.user_id}`" @click.stop class="shrink-0 mt-0.5">
         <img
+          crossorigin="anonymous"
           :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`"
-          :alt="video.profiles?.display_name"
+          :alt="video.profiles?.display_name || undefined"
           class="w-8 h-8 rounded-xl border border-white/[0.08] object-cover
                  transition-all duration-300 hover:border-white/25 hover:scale-110"
         />
