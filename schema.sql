@@ -157,7 +157,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 9. DOCUMENTATION
+-- 9. STORAGE POLICIES
+-- Allow public read access to all objects in videos and thumbnails buckets
+CREATE POLICY "Videos are publicly accessible" ON storage.objects FOR SELECT USING (bucket_id = 'videos');
+CREATE POLICY "Thumbnails are publicly accessible" ON storage.objects FOR SELECT USING (bucket_id = 'thumbnails');
+
+-- Allow authenticated users to upload files to their own folders in buckets
+CREATE POLICY "Users can upload videos" ON storage.objects 
+    FOR INSERT 
+    TO authenticated 
+    WITH CHECK (bucket_id = 'videos');
+
+CREATE POLICY "Users can upload thumbnails" ON storage.objects 
+    FOR INSERT 
+    TO authenticated 
+    WITH CHECK (bucket_id = 'thumbnails');
+
+-- 10. DOCUMENTATION
 COMMENT ON TABLE profiles IS 'User profiles linked to auth.users';
 COMMENT ON TABLE videos IS 'Video metadata with soft delete and status support';
 COMMENT ON TABLE video_reactions IS 'User likes and dislikes tracked globally';

@@ -17,36 +17,38 @@ onMounted(() => fetchProfile())
         <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
 
         <!-- Search -->
-        <div class="flex-1 max-w-md">
-          <label class="relative flex items-center group">
-            <div class="absolute left-4 i-ph-magnifying-glass-bold text-white/20 text-sm pointer-events-none
-                        transition-colors duration-200 group-focus-within:text-white/40"></div>
+        <div class="flex-1 max-w-xl group/search">
+          <label class="relative flex items-center">
+            <div class="absolute left-4 i-ph-magnifying-glass-bold text-white/10 text-base pointer-events-none
+                        transition-all duration-300 group-focus-within/search:text-white/40 group-focus-within/search:scale-110"></div>
             <input
               type="search"
               :placeholder="$t('nav.search') || 'Search...'"
-              class="w-full bg-white/[0.04] border border-white/[0.07]
-                     rounded-xl pl-10 pr-2 md:pr-4 py-2 md:py-2.5
-                     text-white text-sm font-sans placeholder:text-white/20
-                     focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.06]
-                     transition-all duration-200"
+              class="w-full bg-white/[0.03] border border-white/[0.06]
+                     rounded-xl pl-12 pr-4 py-2.5
+                     text-[13px] font-sans text-white/90 placeholder:text-white/10
+                     shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]
+                     focus:outline-none focus:ring-1 focus:ring-white/15 focus:bg-white/[0.05]
+                     transition-all duration-300"
             />
           </label>
         </div>
 
         <!-- Right controls -->
-        <div class="flex items-center gap-3 ml-auto">
+        <div class="flex items-center gap-4 ml-auto">
           <NuxtLink
             v-if="isAdmin"
             to="/admin/videos"
             class="w-10 h-10 rounded-xl flex items-center justify-center
-                   bg-white/[0.04] border border-white/[0.07]
-                   text-white/25 hover:text-white hover:border-white/20
-                   transition-all duration-200 no-underline"
+                   bg-white/[0.03] border border-white/[0.06]
+                   text-white/20 hover:text-white hover:border-white/20
+                   transition-all duration-300 hover:scale-110 active:scale-95"
+            title="Admin Dashboard"
           >
-            <div class="i-ph-shield-checkered-bold"></div>
+            <div class="i-ph-shield-checkered-bold text-lg"></div>
           </NuxtLink>
 
-          <div class="w-px h-5 bg-white/[0.08]"></div>
+          <div class="w-px h-6 bg-white/[0.08]"></div>
           <UserAuthBtn />
         </div>
       </header>

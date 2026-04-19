@@ -62,7 +62,7 @@ const getStatusColor = (status: string | null) => {
 <template>
   <div class="layout-container pb-20">
     <div class="flex items-center gap-6 mb-12">
-      <div class="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-white/40 shadow-2xl">
+      <div class="w-16 h-16 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-white/40 shadow-2xl">
         <div class="i-ph-users-four-bold text-3xl"></div>
       </div>
       <div>
@@ -75,7 +75,7 @@ const getStatusColor = (status: string | null) => {
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 border-b border-white/5">
+            <tr class="bg-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 border-b border-white/5 font-brand">
               <th class="px-8 py-6">{{ t('admin.identity') }}</th>
               <th class="px-8 py-6">{{ t('admin.clearance') }}</th>
               <th class="px-8 py-6">{{ t('admin.status') }}</th>
@@ -87,13 +87,13 @@ const getStatusColor = (status: string | null) => {
               <td class="px-8 py-8">
                 <div class="flex items-center gap-5">
                   <div class="relative">
-                    <img crossorigin="anonymous" :src="profile.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.id}`" class="w-10 h-10 rounded-full bg-void border border-white/10 object-cover shadow-xl group-hover:scale-105 transition-transform duration-500" />
-                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-void flex items-center justify-center" :class="profile.status === 'blocked' ? 'bg-red-500' : 'bg-emerald-500'">
+                    <img crossorigin="anonymous" :src="profile.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.id}`" class="w-10 h-10 rounded-full bg-void-surface border border-white/10 object-cover shadow-xl group-hover:scale-105 transition-transform duration-500" />
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-void-DEFAULT flex items-center justify-center shadow-lg" :class="profile.status === 'blocked' ? 'bg-red-500' : 'bg-emerald-500'">
                       <div :class="profile.status === 'blocked' ? 'i-ph-x-bold' : 'i-ph-check-bold'" class="text-[7px] text-white font-black"></div>
                     </div>
                   </div>
                   <div>
-                    <div class="text-[13px] font-bold text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{{ profile.display_name || t('admin.anonymous') }}</div>
+                    <div class="text-[13px] font-bold text-white uppercase tracking-tight group-hover:text-white transition-colors">{{ profile.display_name || t('admin.anonymous') }}</div>
                     <div class="text-[9px] text-white/30 font-medium tracking-wide mt-0.5">{{ t('admin.registered') }}: {{ profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A' }}</div>
                   </div>
                 </div>
@@ -102,7 +102,7 @@ const getStatusColor = (status: string | null) => {
                 <div class="flex items-center gap-2">
                   <select 
                     @change="handleRoleChange(profile.id, $event)"
-                    class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none focus:border-white/30 transition-all cursor-pointer"
+                    class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none focus:border-emerald-500/30 transition-all cursor-pointer hover:bg-white/10"
                   >
                     <option value="user" :selected="profile.role === 'user'">{{ t('admin.role_user') }}</option>
                     <option value="admin" :selected="profile.role === 'admin'">{{ t('admin.role_admin') }}</option>
@@ -111,7 +111,7 @@ const getStatusColor = (status: string | null) => {
               </td>
               <td class="px-8 py-8">
                 <span 
-                  class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] border"
+                  class="px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-[0.2em] border transition-all duration-300"
                   :class="getStatusColor(profile.status)"
                 >
                   {{ t('studio.status_' + (profile.status || 'active')) }}
@@ -121,19 +121,19 @@ const getStatusColor = (status: string | null) => {
                 <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <button 
                     @click="toggleStatus(profile)"
-                    class="p-2.5 rounded-lg border transition-all"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg border transition-all duration-300 hover:scale-110 active:scale-95"
                     :class="profile.status === 'blocked' 
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white shadow-lg shadow-emerald-500/10' 
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white shadow-lg shadow-emerald-500/20' 
                       : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/10'"
                     :title="profile.status === 'blocked' ? t('admin.unblock_account') : t('admin.suspend_account')"
                   >
-                    <div :class="profile.status === 'blocked' ? 'i-ph-shield-check-bold' : 'i-ph-shield-slash-bold'" class="text-lg"></div>
+                    <div :class="profile.status === 'blocked' ? 'i-ph-shield-check-bold' : 'i-ph-shield-slash-bold'" class="text-base"></div>
                   </button>
                   <NuxtLink 
                     :to="`/profile/${profile.id}`"
-                    class="p-2.5 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:bg-white hover:text-void transition-all"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white/40 hover:bg-white hover:text-black transition-all duration-300 hover:scale-110 active:scale-95"
                   >
-                    <div class="i-ph-eye-bold text-lg"></div>
+                    <div class="i-ph-eye-bold text-base"></div>
                   </NuxtLink>
                 </div>
               </td>

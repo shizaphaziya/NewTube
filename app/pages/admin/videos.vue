@@ -105,12 +105,12 @@ watchEffect(() => {
               <tr v-for="video in videos" :key="video.id" class="group hover:bg-white/[0.01] transition-colors">
                 <td class="px-6 py-6">
                   <div class="flex items-center gap-4">
-                    <div class="w-20 aspect-video rounded-lg overflow-hidden bg-void border border-white/5">
+                    <div class="w-20 aspect-video rounded-lg overflow-hidden bg-void-card border border-white/5">
                       <img :src="video.thumbnail_url || undefined" class="w-full h-full object-cover" />
                     </div>
                     <div class="space-y-1">
-                      <div class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">{{ video.title }}</div>
-                      <div class="text-[9px] text-white/30 uppercase tracking-wider">{{ video.profiles?.display_name || t('admin.anonymous') }}</div>
+                      <div class="text-xs font-bold text-white group-hover:text-white transition-colors">{{ video.title }}</div>
+                      <div class="text-[9px] text-white/30 uppercase tracking-wider font-medium">{{ video.profiles?.display_name || t('admin.anonymous') }}</div>
                     </div>
                   </div>
                 </td>
@@ -119,17 +119,17 @@ watchEffect(() => {
                 </td>
                 <td class="px-6 py-6">
                   <span 
-                    class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border"
+                    class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border transition-all duration-300"
                     :class="video.status === 'blocked' ? 'border-red-500/20 text-red-500 bg-red-500/5' : 'border-emerald-500/20 text-emerald-400 bg-emerald-400/5'"
                   >
                     {{ t('studio.status_' + video.status) }}
                   </span>
                 </td>
                 <td class="px-6 py-6 text-right">
-                  <div class="flex items-center justify-end gap-2">
+                  <div class="flex items-center justify-end gap-2 text-void-silver">
                     <button 
                       @click="toggleBlock(video)"
-                      class="w-8 h-8 rounded bg-white/5 border border-white/5 flex items-center justify-center transition-all hover:scale-110"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
                       :title="video.status === 'blocked' ? t('admin.publish') : t('admin.block')"
                       :class="video.status === 'blocked' ? 'text-emerald-400 hover:bg-emerald-400/10' : 'text-red-500 hover:bg-red-500/10'"
                     >
@@ -137,13 +137,13 @@ watchEffect(() => {
                     </button>
                     <button 
                       @click="deleteVideo(video.id)"
-                      class="w-8 h-8 rounded bg-red-500/5 border border-red-500/10 text-red-500/40 hover:text-red-500 flex items-center justify-center transition-all hover:scale-110"
+                      class="w-8 h-8 rounded-lg bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                       <div class="i-ph-trash-bold"></div>
                     </button>
                     <NuxtLink 
                       :to="`/watch/${video.id}`"
-                      class="w-8 h-8 rounded bg-white/5 border border-white/5 text-white/40 hover:text-white flex items-center justify-center transition-all hover:scale-110"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
                     >
                       <div class="i-ph-arrow-square-out-bold"></div>
                     </NuxtLink>

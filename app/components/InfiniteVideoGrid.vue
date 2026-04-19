@@ -82,9 +82,6 @@ onMounted(() => {
       </p>
     </div>
 
-    <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-60 text-center">
-      <div class="i-ph-video-camera-slash text-8xl text-white/[0.02] mb-10"></div>
-      <h2 class="text-4xl font-brand tracking-widest text-white/20 uppercase italic">{{ $t('home.no_videos') }}</h2>
     </div>
   </div>
 </template>

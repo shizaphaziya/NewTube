@@ -78,7 +78,9 @@ const transcodeVideo = async (file: File) => {
   const data = await ffmpeg.value.readFile(outputName)
   processing.value = false
   
-  return new File([data], 'processed_' + file.name, { type: 'video/mp4' })
+  // Returning Uint8Array directly is more stable than creating a new File object
+  // as it avoids certain browser-specific fetch/XHR proxy issues.
+  return data as Uint8Array
 }
 
 const extractThumbnail = async (file: File) => {
@@ -101,7 +103,7 @@ const extractThumbnail = async (file: File) => {
   ])
 
   const data = await ffmpeg.value.readFile(outputName)
-  return new File([data], 'auto_thumb.jpg', { type: 'image/jpeg' })
+  return data as Uint8Array
 }
 
 const handleUpload = async () => {
@@ -130,7 +132,8 @@ const handleUpload = async () => {
       .from('videos')
       .upload(videoPath, processedFile, {
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
+        contentType: 'video/mp4'
       })
     
     if (vError) throw vError
@@ -138,22 +141,27 @@ const handleUpload = async () => {
 
     // 2. Upload Thumbnail (Optional or Auto)
     let thumbnailUrl = ''
-    let thumbnailFileToUpload = thumbFile.value
+    let thumbnailDataToUpload: Uint8Array | File | null = thumbFile.value
 
-    if (!thumbnailFileToUpload) {
+    if (!thumbnailDataToUpload) {
       try {
-        thumbnailFileToUpload = await extractThumbnail(processedFile)
+        // processedFile is already a Uint8Array here
+        thumbnailDataToUpload = await extractThumbnail(processedFile)
       } catch (e) {
         console.error('Auto-thumbnail failed', e)
       }
     }
 
-    if (thumbnailFileToUpload) {
-      const thumbExt = thumbnailFileToUpload.name.split('.').pop()
+    if (thumbnailDataToUpload) {
+      const isAuto = !(thumbnailDataToUpload instanceof File)
+      const thumbExt = isAuto ? 'jpg' : (thumbnailDataToUpload as File).name.split('.').pop()
       const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
+      
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, thumbnailFileToUpload)
+        .upload(thumbPath, thumbnailDataToUpload, {
+          contentType: isAuto ? 'image/jpeg' : undefined
+        })
       
       if (!tError) {
         thumbnailUrl = supabase.storage.from('thumbnails').getPublicUrl(thumbPath).data.publicUrl
@@ -167,6 +175,7 @@ const handleUpload = async () => {
     const { error: dbError } = await supabase
       .from('videos')
       .insert({
+        user_id: userId,
         title: finalTitle,
         description: description.value || null,
         video_url: videoUrl,
