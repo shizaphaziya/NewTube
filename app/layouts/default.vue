@@ -4,7 +4,7 @@ onMounted(() => fetchProfile())
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#050505] text-white font-sans flex">
+  <div class="min-h-screen bg-void text-white font-sans flex transition-colors duration-500">
     <!-- Sidebar -->
     <Sidebar />
 
@@ -12,9 +12,9 @@ onMounted(() => fetchProfile())
     <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
       <!-- Top Bar -->
       <header class="sticky top-0 z-30 h-[72px] flex items-center gap-4 md:gap-6 px-4 md:px-8
-                     bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
+                     bg-void/80 backdrop-blur-2xl border-b border-white/[0.05]">
         <!-- Mobile Logo -->
-        <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
+        <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
 
         <!-- Search -->
         <div class="flex-1 max-w-md">

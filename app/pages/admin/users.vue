@@ -61,17 +61,17 @@ const getStatusColor = (status: string | null) => {
 
 <template>
   <div class="layout-container pb-20">
-    <div class="flex items-center gap-6 mb-16">
-      <div class="w-16 h-16 rounded-[24px] bg-white/[0.03] border border-white/5 flex items-center justify-center text-white/40 shadow-2xl">
+    <div class="flex items-center gap-6 mb-12">
+      <div class="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-white/40 shadow-2xl">
         <div class="i-ph-users-four-bold text-3xl"></div>
       </div>
       <div>
-        <h1 class="text-4xl font-black font-brand tracking-tighter text-white uppercase italic">{{ t('admin.users_title') }}</h1>
-        <p class="text-[10px] text-white/20 font-black uppercase tracking-[0.4em] mt-1 italic">{{ t('admin.users_subtitle') }}</p>
+        <h1 class="text-3xl font-black font-brand tracking-tighter text-white uppercase italic">{{ t('admin.users_title') }}</h1>
+        <p class="text-[9px] text-white/20 font-black uppercase tracking-[0.4em] mt-1 italic">{{ t('admin.users_subtitle') }}</p>
       </div>
     </div>
 
-    <div class="glass-card overflow-hidden border-white/5 shadow-2xl rounded-[32px] animate-fade-in">
+    <div class="glass-card overflow-hidden border-white/5 shadow-2xl animate-fade-in">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse">
           <thead>
@@ -87,14 +87,14 @@ const getStatusColor = (status: string | null) => {
               <td class="px-8 py-8">
                 <div class="flex items-center gap-5">
                   <div class="relative">
-                    <img crossorigin="anonymous" :src="profile.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.id}`" class="w-12 h-12 rounded-full bg-void border border-white/5 object-cover shadow-xl group-hover:scale-110 transition-transform duration-500" />
-                    <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-void flex items-center justify-center" :class="profile.status === 'blocked' ? 'bg-red-500' : 'bg-emerald-500'">
-                      <div :class="profile.status === 'blocked' ? 'i-ph-x-bold' : 'i-ph-check-bold'" class="text-[8px] text-white font-black"></div>
+                    <img crossorigin="anonymous" :src="profile.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.id}`" class="w-10 h-10 rounded-full bg-void border border-white/10 object-cover shadow-xl group-hover:scale-105 transition-transform duration-500" />
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-void flex items-center justify-center" :class="profile.status === 'blocked' ? 'bg-red-500' : 'bg-emerald-500'">
+                      <div :class="profile.status === 'blocked' ? 'i-ph-x-bold' : 'i-ph-check-bold'" class="text-[7px] text-white font-black"></div>
                     </div>
                   </div>
                   <div>
-                    <div class="text-sm font-black text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{{ profile.display_name || 'ANONYMOUS' }}</div>
-                    <div class="text-[9px] text-white/20 font-bold uppercase tracking-widest mt-1 italic">Registered: {{ profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A' }}</div>
+                    <div class="text-[13px] font-bold text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{{ profile.display_name || t('admin.anonymous') }}</div>
+                    <div class="text-[9px] text-white/30 font-medium tracking-wide mt-0.5">{{ t('admin.registered') }}: {{ profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A' }}</div>
                   </div>
                 </div>
               </td>
@@ -104,8 +104,8 @@ const getStatusColor = (status: string | null) => {
                     @change="handleRoleChange(profile.id, $event)"
                     class="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white/60 focus:outline-none focus:border-white/30 transition-all cursor-pointer"
                   >
-                    <option value="user" :selected="profile.role === 'user'">USER</option>
-                    <option value="admin" :selected="profile.role === 'admin'">ADMIN</option>
+                    <option value="user" :selected="profile.role === 'user'">{{ t('admin.role_user') }}</option>
+                    <option value="admin" :selected="profile.role === 'admin'">{{ t('admin.role_admin') }}</option>
                   </select>
                 </div>
               </td>
@@ -114,26 +114,26 @@ const getStatusColor = (status: string | null) => {
                   class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] border"
                   :class="getStatusColor(profile.status)"
                 >
-                  {{ profile.status || 'active' }}
+                  {{ t('studio.status_' + (profile.status || 'active')) }}
                 </span>
               </td>
-              <td class="px-8 py-8 text-right">
-                <div class="flex items-center justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+              <td class="px-8 py-6 text-right">
+                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <button 
                     @click="toggleStatus(profile)"
-                    class="p-3 rounded-xl border transition-all"
+                    class="p-2.5 rounded-lg border transition-all"
                     :class="profile.status === 'blocked' 
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white' 
-                      : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white'"
-                    :title="profile.status === 'blocked' ? 'Unblock Account' : 'Suspend Account'"
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white shadow-lg shadow-emerald-500/10' 
+                      : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/10'"
+                    :title="profile.status === 'blocked' ? t('admin.unblock_account') : t('admin.suspend_account')"
                   >
-                    <div :class="profile.status === 'blocked' ? 'i-ph-shield-check-bold' : 'i-ph-shield-slash-bold'"></div>
+                    <div :class="profile.status === 'blocked' ? 'i-ph-shield-check-bold' : 'i-ph-shield-slash-bold'" class="text-lg"></div>
                   </button>
                   <NuxtLink 
                     :to="`/profile/${profile.id}`"
-                    class="p-3 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:bg-white hover:text-void transition-all"
+                    class="p-2.5 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:bg-white hover:text-void transition-all"
                   >
-                    <div class="i-ph-eye-bold"></div>
+                    <div class="i-ph-eye-bold text-lg"></div>
                   </NuxtLink>
                 </div>
               </td>

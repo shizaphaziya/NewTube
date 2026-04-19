@@ -39,7 +39,7 @@ const handleAuth = async () => {
       navigateTo('/')
     }
   } catch (e: any) {
-    errorMsg.value = e.message || 'Authentication failed'
+    errorMsg.value = e.message || t('auth.failed')
   } finally {
     loading.value = false
   }

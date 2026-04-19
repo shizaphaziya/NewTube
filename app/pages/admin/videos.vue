@@ -52,37 +52,37 @@ watchEffect(() => {
     <div v-if="!isAdmin" class="glass-card p-20 text-center max-w-2xl mx-auto space-y-8">
       <div class="i-ph-shield-warning-bold text-6xl text-red-500 mx-auto opacity-50"></div>
       <div class="space-y-2">
-        <h1 class="text-3xl font-brand font-black text-white">ACCESS DENIED</h1>
-        <p class="text-white/30 text-sm uppercase tracking-widest font-bold">Level 4 Clearance Required</p>
+        <h1 class="text-3xl font-brand font-black text-white">{{ t('admin.access_denied') }}</h1>
+        <p class="text-white/30 text-sm uppercase tracking-widest font-bold">{{ t('admin.clearance_required') }}</p>
       </div>
-      <NuxtLink to="/" class="btn-primary inline-flex">Return to Surface</NuxtLink>
+      <NuxtLink to="/" class="btn-primary inline-flex">{{ t('admin.return_surface') }}</NuxtLink>
     </div>
 
     <div v-else class="space-y-16">
       <!-- Header -->
       <div class="space-y-2">
         <h1 class="text-5xl font-brand font-black tracking-tighter text-white uppercase italic">
-          High Command
+          {{ t('admin.high_command') }}
         </h1>
         <p class="text-[10px] font-black text-white/20 uppercase tracking-[0.5em]">
-          Video Moderation Terminal
+          {{ t('admin.video_moderation_terminal') }}
         </p>
       </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-white/20 uppercase tracking-widest">Total Assets</div>
+          <div class="text-[8px] font-black text-white/20 uppercase tracking-widest">{{ t('admin.total_assets') }}</div>
           <div class="text-3xl font-brand font-black text-white tabular-nums">{{ videos?.length || 0 }}</div>
         </div>
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">Active</div>
+          <div class="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">{{ t('admin.active') }}</div>
           <div class="text-3xl font-brand font-black text-emerald-400 tabular-nums">
             {{ videos?.filter(v => v.status === 'published').length || 0 }}
           </div>
         </div>
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-red-500/40 uppercase tracking-widest">Blocked</div>
+          <div class="text-[8px] font-black text-red-500/40 uppercase tracking-widest">{{ t('admin.blocked') }}</div>
           <div class="text-3xl font-brand font-black text-red-500 tabular-nums">
             {{ videos?.filter(v => v.status === 'blocked').length || 0 }}
           </div>
@@ -95,10 +95,10 @@ watchEffect(() => {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-white/5 bg-white/[0.02]">
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">Video / Author</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">Views</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">Status</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest text-right">Actions</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.video_author') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('watch.views') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.status') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest text-right">{{ t('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/[0.03]">
@@ -110,19 +110,19 @@ watchEffect(() => {
                     </div>
                     <div class="space-y-1">
                       <div class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">{{ video.title }}</div>
-                      <div class="text-[9px] text-white/30 uppercase tracking-wider">{{ video.profiles?.display_name || 'ANONYMOUS' }}</div>
+                      <div class="text-[9px] text-white/30 uppercase tracking-wider">{{ video.profiles?.display_name || t('admin.anonymous') }}</div>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-6">
-                  <div class="text-[10px] font-black text-white/40 tabular-nums uppercase tracking-widest">{{ (video.view_count || 0).toLocaleString() }} IMPS</div>
+                  <div class="text-[10px] font-black text-white/40 tabular-nums uppercase tracking-widest">{{ (video.view_count || 0).toLocaleString() }} {{ t('admin.imps') }}</div>
                 </td>
                 <td class="px-6 py-6">
                   <span 
                     class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border"
                     :class="video.status === 'blocked' ? 'border-red-500/20 text-red-500 bg-red-500/5' : 'border-emerald-500/20 text-emerald-400 bg-emerald-400/5'"
                   >
-                    {{ video.status }}
+                    {{ t('studio.status_' + video.status) }}
                   </span>
                 </td>
                 <td class="px-6 py-6 text-right">
@@ -130,7 +130,7 @@ watchEffect(() => {
                     <button 
                       @click="toggleBlock(video)"
                       class="w-8 h-8 rounded bg-white/5 border border-white/5 flex items-center justify-center transition-all hover:scale-110"
-                      :title="video.status === 'blocked' ? 'Unblock' : 'Block'"
+                      :title="video.status === 'blocked' ? t('admin.publish') : t('admin.block')"
                       :class="video.status === 'blocked' ? 'text-emerald-400 hover:bg-emerald-400/10' : 'text-red-500 hover:bg-red-500/10'"
                     >
                       <div :class="video.status === 'blocked' ? 'i-ph-lock-open-bold' : 'i-ph-lock-bold'"></div>

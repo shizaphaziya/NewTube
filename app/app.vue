@@ -1,13 +1,13 @@
 <script setup>
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} | NewTube` : 'NewTube | Next-Gen Video Collective'
+    return titleChunk ? `${titleChunk} | NewTube` : `NewTube | ${t('meta.title')}`
   },
   meta: [
-    { name: 'description', content: 'A premium decentralized-feeling video platform built for the next generation of creators.' },
-    { name: 'theme-color', content: '#050505' },
+    { name: 'description', content: t('meta.description') },
+    { name: 'theme-color', content: '#0A0A0B' },
     { property: 'og:site_name', content: 'NewTube' },
     { property: 'og:type', content: 'website' }
   ],
@@ -15,7 +15,7 @@ useHead({
     { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'ru'
+    lang: locale.value
   }
 })
 </script>

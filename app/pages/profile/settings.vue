@@ -81,12 +81,12 @@ const handleDeleteAccount = async () => {
 
 <template>
   <div class="layout-container py-12 px-4 max-w-2xl mx-auto">
-    <div v-motion-pop-in class="glass-card p-8 md:p-12 relative overflow-hidden rounded-[32px] border-white/5">
+    <div v-motion-pop-in class="glass-card p-8 md:p-12 relative overflow-hidden rounded-xl border-white/5">
       <!-- Background Glow -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-white/[0.02] blur-[60px] rounded-full pointer-events-none"></div>
 
       <div class="flex items-center gap-6 mb-12">
-        <div class="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/40">
+        <div class="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/40">
           <div class="i-ph-user-gear-bold text-2xl"></div>
         </div>
         <div>
@@ -132,7 +132,7 @@ const handleDeleteAccount = async () => {
 
           <div class="space-y-3">
              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('auth.email') || 'Account Email' }}</label>
-             <div class="w-full bg-white/[0.02] border border-white/5 rounded-2xl p-5 text-sm text-white/20 font-bold tracking-widest">
+             <div class="w-full bg-white/[0.02] border border-white/5 rounded-xl p-5 text-sm text-white/20 font-bold tracking-widest">
                {{ user?.email }}
              </div>
              <p class="text-[8px] text-white/10 font-bold uppercase tracking-widest ml-1">{{ t('profile.email_locked') || 'Contact support to change verified email.' }}</p>
@@ -156,21 +156,20 @@ const handleDeleteAccount = async () => {
           </div>
         </div>
 
-        <!-- Danger Zone -->
         <div class="mt-20 pt-10 border-t border-red-500/10">
-          <h3 class="text-[10px] font-black text-red-500/40 uppercase tracking-[0.3em] mb-6 italic">Danger Zone</h3>
+          <h3 class="text-[10px] font-black text-red-500/40 uppercase tracking-[0.3em] mb-6 italic">{{ t('profile.danger_zone') }}</h3>
           
           <div v-if="!isDeleteConfirmOpen">
             <button 
               type="button"
               @click="isDeleteConfirmOpen = true"
-              class="w-full py-4 rounded-2xl border border-red-500/10 text-red-500/30 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500/5 hover:border-red-500/20 hover:text-red-500 transition-all text-center"
+              class="w-full py-4 rounded-xl border border-red-500/10 text-red-500/30 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500/5 hover:border-red-500/20 hover:text-red-500 transition-all text-center"
             >
               {{ t('profile.delete_account') || 'Initiate Account Termination' }}
             </button>
           </div>
           
-          <div v-else v-motion-pop-in class="bg-red-500/5 border border-red-500/20 rounded-3xl p-8 text-center space-y-6">
+          <div v-else v-motion-pop-in class="bg-red-500/5 border border-red-500/20 rounded-xl p-8 text-center space-y-6">
             <div class="i-ph-warning-octagon-bold text-red-500 text-3xl mx-auto"></div>
             <div>
               <p class="text-xs font-black text-white uppercase tracking-tight">{{ t('profile.confirm_deletion') || 'Irreversible Action' }}</p>

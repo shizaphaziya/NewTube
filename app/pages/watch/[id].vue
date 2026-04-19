@@ -158,16 +158,16 @@ const showGuestHint = (target: string) => {
 <template>
   <div v-if="video">
     <!-- Blocked State -->
-    <div v-if="isBlocked" class="layout-container py-40">
-      <div class="glass-card p-20 text-center max-w-2xl mx-auto space-y-8 border-red-500/10">
-        <div class="i-ph-shield-warning-bold text-7xl text-red-500 mx-auto opacity-50"></div>
+    <div v-if="isBlocked" class="layout-container py-32">
+      <div class="glass-card p-16 text-center max-w-xl mx-auto space-y-8 border-red-500/10">
+        <div class="i-ph-shield-warning-bold text-6xl text-red-500 mx-auto opacity-40"></div>
         <div class="space-y-4">
-          <h1 class="text-4xl font-brand font-black text-white tracking-tighter uppercase italic">Content Suspended</h1>
+          <h1 class="text-3xl font-brand font-black text-white tracking-tighter uppercase italic">{{ t('watch.content_suspended') }}</h1>
           <p class="text-white/30 text-sm leading-relaxed max-w-md mx-auto">
-            This transmission has been intercepted and blocked by the high command for violating protocol.
+            {{ t('watch.intercepted_message') }}
           </p>
         </div>
-        <NuxtLink to="/" class="btn-primary inline-flex">Return to Surface</NuxtLink>
+        <NuxtLink to="/" class="btn-primary inline-flex">{{ t('admin.return_surface') }}</NuxtLink>
       </div>
     </div>
 
@@ -187,10 +187,10 @@ const showGuestHint = (target: string) => {
           <!-- Player Container -->
           <div 
             v-motion
-            :initial="{ opacity: 0, scale: 0.95 }"
-            :enter="{ opacity: 1, scale: 1, transition: { duration: 1000, ease: [0.16, 1, 0.3, 1] } }"
-            class="group relative aspect-video rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border border-white/5 ring-1 ring-white/5 transition-all duration-1000"
-            :class="{ 'ring-white/20 scale-[1.02] shadow-[0_0_100px_rgba(255,255,255,0.05)]': isCinemaMode }"
+            :initial="{ opacity: 0, scale: 0.98 }"
+            :enter="{ opacity: 1, scale: 1, transition: { duration: 800, ease: [0.16, 1, 0.3, 1] } }"
+            class="group relative aspect-video rounded-3xl overflow-hidden bg-void-card shadow-2xl border border-white/5 ring-1 ring-white/5 transition-all duration-1000"
+            :class="{ 'ring-white/20 scale-[1.02] shadow-[0_0_100px_rgba(255,255,255,0.08)]': isCinemaMode }"
           >
             <video 
               crossorigin="anonymous"
@@ -216,12 +216,12 @@ const showGuestHint = (target: string) => {
               {{ video.title }}
             </h1>
             
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-white/5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-white/[0.06]">
               <div class="flex flex-wrap items-center gap-4 sm:gap-5">
-                <img crossorigin="anonymous" :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-14 h-14 rounded-full border border-white/10 p-1 bg-void-card ring-1 ring-white/5" />
-                <div class="space-y-1">
-                  <div class="font-brand text-lg text-white tracking-tight">{{ video.profiles?.display_name || 'Anonymous' }}</div>
-                  <div class="text-[10px] text-white/30 uppercase tracking-[0.3em] font-bold">{{ t('watch.verified_user') }}</div>
+                <img crossorigin="anonymous" :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" class="w-12 h-12 rounded-full border border-white/10 p-0.5 bg-void focus:ring-2 ring-white/10" />
+                <div class="space-y-0.5">
+                  <div class="font-bold text-[16px] text-white tracking-tight leading-none">{{ video.profiles?.display_name || t('admin.anonymous') }}</div>
+                  <div class="text-[9px] text-white/25 uppercase tracking-[0.2em] font-black">{{ t('watch.verified_user') }}</div>
                 </div>
                 <button 
                   @click="toggleSubscribe"
@@ -241,13 +241,13 @@ const showGuestHint = (target: string) => {
                 <transition name="pop">
                   <div 
                     v-if="guestHintTarget === 'like' || guestHintTarget === 'dislike'" 
-                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 w-56 p-6 rounded-[24px] bg-white text-void shadow-[0_20px_50px_rgba(255,255,255,0.2)] z-[60] text-center pointer-events-auto"
+                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 w-52 p-5 rounded-2xl bg-white text-void shadow-[0_20px_50px_rgba(255,255,255,0.2)] z-[60] text-center pointer-events-auto"
                   >
-                    <div class="absolute bottom-[-8px] left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45"></div>
-                    <div class="i-ph-lock-key-bold text-2xl mb-3 mx-auto"></div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed mb-4">Transmission Locked</p>
-                    <NuxtLink to="/auth/login" class="block py-3 rounded-xl bg-void text-white text-[9px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all">
-                      Log In to React
+                    <div class="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45"></div>
+                    <div class="i-ph-lock-key-bold text-xl mb-2 mx-auto opacity-50"></div>
+                    <p class="text-[9px] font-black uppercase tracking-[0.1em] leading-relaxed mb-3">{{ t('watch.transmission_locked') }}</p>
+                    <NuxtLink to="/auth/login" class="block py-2.5 rounded-lg bg-void text-white text-[9px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all">
+                      {{ t('watch.guest_hint_like') }}
                     </NuxtLink>
                   </div>
                 </transition>
@@ -277,8 +277,8 @@ const showGuestHint = (target: string) => {
               </div>
             </div>
 
-            <div class="p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide">
-              <div class="flex items-center gap-4 mb-6 text-[10px] font-bold text-white/40 uppercase tracking-[0.4em]">
+            <div class="p-6 md:p-8 rounded-3xl bg-white/[0.03] border border-white/5 leading-relaxed text-white/50 text-sm tracking-wide shadow-sm">
+              <div class="flex items-center gap-4 mb-4 text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">
                 <span>{{ video.view_count }} {{ t('watch.views') }}</span>
                 <span class="w-1 h-1 rounded-full bg-white/10"></span>
                 <span>{{ t('watch.logged') }}: {{ new Date(video.created_at || '').toLocaleDateString() }}</span>
@@ -316,12 +316,12 @@ const showGuestHint = (target: string) => {
                   <transition name="pop">
                     <div 
                       v-if="guestHintTarget === 'comment'" 
-                      class="absolute bottom-full right-0 mb-6 w-64 p-6 rounded-[24px] bg-white text-void shadow-2xl z-[60] text-center"
+                      class="absolute bottom-full right-0 mb-6 w-56 p-5 rounded-2xl bg-white text-void shadow-2xl z-[60] text-center"
                     >
-                      <div class="absolute bottom-[-8px] right-8 w-4 h-4 bg-white rotate-45"></div>
-                      <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-4">Authentication Required</p>
-                      <NuxtLink to="/auth/login" class="block py-3 rounded-xl bg-void text-white text-[9px] font-black uppercase tracking-widest">
-                        Identify Yourself
+                      <div class="absolute bottom-[-6px] right-6 w-3 h-3 bg-white rotate-45"></div>
+                      <p class="text-[9px] font-black uppercase tracking-[0.1em] mb-3">{{ t('watch.auth_required') }}</p>
+                      <NuxtLink to="/auth/login" class="block py-2.5 rounded-lg bg-void text-white text-[9px] font-black uppercase tracking-widest">
+                        {{ t('watch.identify_yourself') }}
                       </NuxtLink>
                     </div>
                   </transition>
@@ -355,7 +355,7 @@ const showGuestHint = (target: string) => {
                   />
                   <div class="space-y-2 flex-1">
                     <div class="flex items-center gap-3">
-                      <span class="font-bold text-xs tracking-widest uppercase text-white/80">{{ comment.profiles?.display_name || 'Anonymous' }}</span>
+                      <span class="font-bold text-xs tracking-widest uppercase text-white/80">{{ comment.profiles?.display_name || t('admin.anonymous') }}</span>
                       <span class="text-[9px] text-white/20 font-bold uppercase tracking-widest">{{ useTimeAgo(comment.created_at || '').value }}</span>
                     </div>
                     <p class="text-white/50 text-sm leading-relaxed max-w-2xl">{{ comment.content }}</p>
@@ -379,7 +379,7 @@ const showGuestHint = (target: string) => {
                       />
                       <div class="space-y-1.5 flex-1">
                         <div class="flex items-center gap-3">
-                          <span class="font-bold text-[10px] tracking-widest uppercase text-white/60">{{ reply.profiles?.display_name || 'Anonymous' }}</span>
+                          <span class="font-bold text-[10px] tracking-widest uppercase text-white/60">{{ reply.profiles?.display_name || t('admin.anonymous') }}</span>
                           <span class="text-[8px] text-white/10 font-bold uppercase tracking-widest">{{ useTimeAgo(reply.created_at || '').value }}</span>
                         </div>
                         <p class="text-white/40 text-xs leading-relaxed max-w-xl">{{ reply.content }}</p>
@@ -406,9 +406,9 @@ const showGuestHint = (target: string) => {
                  </div>
               </div>
               <div class="flex flex-col gap-2 min-w-0 pt-1">
-                 <div class="text-xs font-brand font-bold tracking-tight text-white/90 line-clamp-2 leading-snug group-hover:text-white transition-colors">Video Title Placeholder</div>
-                 <div class="text-[9px] text-white/30 tracking-[0.2em] font-bold uppercase">Creator</div>
-                 <div class="text-[9px] text-white/10 font-bold uppercase tracking-widest">942K views</div>
+                 <div class="text-xs font-brand font-bold tracking-tight text-white/90 line-clamp-2 leading-snug group-hover:text-white transition-colors">{{ t('watch.related_title_placeholder') }}</div>
+                 <div class="text-[9px] text-white/30 tracking-[0.2em] font-bold uppercase">{{ t('watch.related_creator_placeholder') }}</div>
+                 <div class="text-[9px] text-white/10 font-bold uppercase tracking-widest">942K {{ t('watch.views') }}</div>
               </div>
             </div>
           </div>

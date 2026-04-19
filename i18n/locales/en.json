@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "Next-Gen Video Collective",
+    "description": "A premium decentralized-feeling video platform built for the next generation of creators."
+  },
   "nav": {
     "home": "Home",
     "studio": "Studio",
@@ -33,7 +37,17 @@
     "no_metadata": "No detailed metadata available.",
     "analytics_units": "views",
     "verified_user": "Verified User",
-    "comments_title": "Comments"
+    "comments_title": "Comments",
+    "auth_required": "Authentication Required",
+    "identify_yourself": "Identify Yourself",
+    "guest_hint_like": "Log In to React",
+    "guest_hint_dislike": "Log In to React",
+    "guest_hint_comment": "Log in to post a comment",
+    "transmission_locked": "Transmission Locked",
+    "content_suspended": "Content Suspended",
+    "intercepted_message": "This transmission has been intercepted and blocked by the high command for violating protocol.",
+    "related_title_placeholder": "Video Title Placeholder",
+    "related_creator_placeholder": "Creator"
   },
   "studio": {
     "command_center": "Dashboard",
@@ -59,13 +73,23 @@
     "optimizing": "Optimizing Video",
     "ffmpeg_note": "Compressing video",
     "uploading_note": "Uploading to storage",
-    "creator": "Creator",
     "engagement": "Engagement",
     "videos": "Videos",
     "compressing": "Compressing video",
     "uploading_storage": "Uploading video to storage",
     "active_videos": "Active Records",
-    "processing_video": "Processing Video"
+    "processing_video": "Processing Video",
+    "total_views": "Total Views",
+    "total_videos": "Total Videos",
+    "total_engagement": "Total Engagement",
+    "status_published": "Published",
+    "status_blocked": "Blocked",
+    "status_pending": "Pending",
+    "status_active": "Active",
+    "file_too_large": "File too large (max 1GB)",
+    "auth_lost": "Authentication lost during transit",
+    "upload_failed": "Upload failed",
+    "ready": "READY"
   },
   "admin": {
     "moderation": "Content Moderation",
@@ -77,7 +101,26 @@
     "users_title": "Population Control",
     "users_subtitle": "Agent Moderation Terminal",
     "identity": "Identity",
-    "clearance": "Clearance"
+    "clearance": "Clearance",
+    "access_denied": "ACCESS DENIED",
+    "clearance_required": "Level 4 Clearance Required",
+    "return_surface": "Return to Surface",
+    "high_command": "High Command",
+    "video_moderation_terminal": "Video Moderation Terminal",
+    "total_assets": "Total Assets",
+    "active": "Active",
+    "blocked": "Blocked",
+    "video_author": "Video / Author",
+    "imps": "IMPS",
+    "no_videos": "No videos found",
+    "video": "Video",
+    "user": "User",
+    "anonymous": "ANONYMOUS",
+    "registered": "Registered",
+    "role_user": "USER",
+    "role_admin": "ADMIN",
+    "unblock_account": "Unblock Account",
+    "suspend_account": "Suspend Account"
   },
   "auth": {
     "welcome_back": "Welcome Back",
@@ -93,7 +136,8 @@
     "check_email": "Check your email for confirmation!",
     "authentication_locked": "Authentication Required",
     "authorize_identity": "Log in",
-    "login_required": "You need to log in to access the studio."
+    "login_required": "You need to log in to access the studio.",
+    "failed": "Authentication failed"
   },
   "profile": {
     "settings": "Interface Settings",
@@ -111,9 +155,21 @@
     "delete_account": "Initiate Account Termination",
     "confirm_deletion": "Irreversible Action",
     "delete_warning": "Your profile and content will be hidden from the network.",
-    "confirm_delete": "Terminate"
+    "confirm_delete": "Terminate",
+    "danger_zone": "Danger Zone"
+  },
+  "sidebar": {
+    "creator": "Creator",
+    "system": "System",
+    "online": "ONLINE"
   },
   "common": {
-    "cancel": "Abort"
+    "cancel": "Abort",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "days_ago": "{n}d ago",
+    "weeks_ago": "{n}w ago",
+    "months_ago": "{n}mo ago",
+    "years_ago": "{n}y ago"
   }
 }

@@ -41,7 +41,7 @@ const onVideoSelect = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (file && file.size > 1073741824) { // 1GB limit
-    alert('File too large (max 1GB)')
+    alert(t('studio.file_too_large'))
     return
   }
   videoFile.value = file || null
@@ -120,7 +120,7 @@ const handleUpload = async () => {
     
     // Use explicit getUser for stability during long upload
     const { data: { user: authUser }, error: userError } = await supabase.auth.getUser()
-    if (userError || !authUser) throw new Error('Authentication lost during transit')
+    if (userError || !authUser) throw new Error(t('studio.auth_lost'))
     const userId = authUser.id
 
     const videoExt = 'mp4'
@@ -181,7 +181,7 @@ const handleUpload = async () => {
     setTimeout(() => navigateTo('/'), 2000)
     
   } catch (e: any) {
-    alert('Upload failed: ' + e.message)
+    alert(t('studio.upload_failed') + ': ' + e.message)
     console.error(e)
   } finally {
     uploading.value = false
@@ -193,14 +193,14 @@ const handleUpload = async () => {
 
 <template>
   <div class="layout-container max-w-4xl py-12 pb-20">
-    <div v-motion-pop-in class="relative overflow-hidden rounded-[28px]
+    <div v-motion-pop-in class="relative overflow-hidden rounded-xl
                                bg-white/[0.03] border border-white/[0.07]
                                backdrop-blur-2xl p-6 md:p-12">
       <!-- Ambient glow -->
       <div class="absolute -bottom-40 -left-20 w-60 h-60 bg-white/[0.01] blur-[80px] rounded-full pointer-events-none"></div>
       
       <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-12 sm:mb-16">
-        <div class="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
+        <div class="w-16 h-16 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
           <div class="i-ph-upload-simple-bold text-2xl text-white/60"></div>
         </div>
         <div>
@@ -209,7 +209,7 @@ const handleUpload = async () => {
         </div>
       </div>
 
-      <div v-if="success" class="bg-white/5 border border-white/10 p-16 rounded-[40px] text-center space-y-6">
+      <div v-if="success" class="bg-white/5 border border-white/10 p-16 rounded-3xl text-center space-y-6">
         <div class="i-ph-check-circle-fill text-7xl text-white mx-auto animate-pulse"></div>
         <h2 class="text-2xl md:text-3xl font-heading font-black tracking-tight text-white uppercase">{{ t('studio.success') }}</h2>
         <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">{{ t('studio.success_subtitle') }}</p>
@@ -222,7 +222,7 @@ const handleUpload = async () => {
             <div class="space-y-4">
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('studio.select_file') }}</label>
               <div 
-                class="relative h-64 rounded-2xl border-2 border-dashed border-white/[0.08]
+                class="relative h-64 rounded-xl border-2 border-dashed border-white/[0.08]
                        bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20
                        transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
                 @click="videoInput?.click()"
@@ -234,7 +234,7 @@ const handleUpload = async () => {
                 <div v-else class="text-center p-6 w-full">
                   <div class="i-ph-file-video-fill text-5xl text-silver mb-4 mx-auto"></div>
                   <p class="text-xs font-black text-white truncate px-4">{{ videoFile.name.toUpperCase() }}</p>
-                  <p class="text-[9px] text-white/20 font-bold mt-2 uppercase tracking-widest">{{ (videoFile.size / (1024*1024)).toFixed(1) }} MB • READY</p>
+                  <p class="text-[9px] text-white/20 font-bold mt-2 uppercase tracking-widest">{{ (videoFile.size / (1024*1024)).toFixed(1) }} MB • {{ t('studio.ready') }}</p>
                 </div>
                 <input ref="videoInput" type="file" hidden accept="video/*" @change="onVideoSelect" />
               </div>
@@ -242,7 +242,7 @@ const handleUpload = async () => {
 
             <div class="space-y-4">
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('studio.cover_artwork') }}</label>
-              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-colors cursor-pointer" @click="thumbInput?.click()">
+              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl group hover:border-white/10 transition-colors cursor-pointer" @click="thumbInput?.click()">
                 <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-colors">
                   <div class="i-ph-image-bold text-2xl"></div>
                 </div>
@@ -271,7 +271,7 @@ const handleUpload = async () => {
               <textarea 
                 v-model="description" 
                 rows="6" 
-                class="w-full bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-sm focus:outline-none focus:border-white/25 focus:bg-white/[0.05] transition-all placeholder:text-white/15 leading-relaxed resize-none text-white font-sans" 
+                class="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 text-sm focus:outline-none focus:border-white/25 focus:bg-white/[0.05] transition-all placeholder:text-white/15 leading-relaxed resize-none text-white font-sans" 
                 :placeholder="t('studio.description_placeholder')"
               ></textarea>
             </div>

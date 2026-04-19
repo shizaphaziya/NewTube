@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "Видео-коллектив нового поколения",
+    "description": "Премиальная платформа для обмена видео, созданная для нового поколения авторов."
+  },
   "nav": {
     "home": "Главная",
     "studio": "Студия",
@@ -28,12 +32,22 @@
     "post_message": "Отправить",
     "logged": "Загружено",
     "up_next": "Далее",
-    "membership_active": "Вы подписаны",
+    "membership_active": "В подписках",
     "join_collective": "Подписаться",
-    "no_metadata": "Описание отсутствует.",
-    "analytics_units": "просмотры",
-    "verified_user": "Верифицированный пользователь",
-    "comments_title": "Комментарии"
+    "no_metadata": "Подробные метаданные отсутствуют.",
+    "analytics_units": "просмотров",
+    "verified_user": "Верифицированный агент",
+    "comments_title": "Комментарии",
+    "auth_required": "Требуется авторизация",
+    "identify_yourself": "Идентифицировать себя",
+    "guest_hint_like": "Войти чтобы отреагировать",
+    "guest_hint_dislike": "Войти чтобы отреагировать",
+    "guest_hint_comment": "Войдите чтобы оставить комментарий",
+    "transmission_locked": "Связь заблокирована",
+    "content_suspended": "Доступ приостановлен",
+    "intercepted_message": "Эта передача была перехвачена и заблокирована высшим командованием за нарушение протокола.",
+    "related_title_placeholder": "Заголовок видео",
+    "related_creator_placeholder": "Автор"
   },
   "studio": {
     "command_center": "Панель управления",
@@ -60,12 +74,23 @@
     "ffmpeg_note": "Сжатие видео",
     "uploading_note": "Загрузка на сервер",
     "creator": "Автор",
-    "engagement": "Вовлеченность",
+    "engagement": "Взаимодействие",
     "videos": "Видео",
     "compressing": "Сжатие видео",
-    "uploading_storage": "Загрузка видео на сервер",
+    "uploading_storage": "Загрузка видео в хранилище",
     "active_videos": "Активные записи",
-    "processing_video": "Обработка видео"
+    "processing_video": "Обработка видео",
+    "total_views": "Всего просмотров",
+    "total_videos": "Всего видео",
+    "total_engagement": "Общий охват",
+    "status_published": "Опубликовано",
+    "status_blocked": "Заблокировано",
+    "status_pending": "В обработке",
+    "status_active": "Активен",
+    "file_too_large": "Файл слишком большой (макс. 1ГБ)",
+    "auth_lost": "Сессия была прервана",
+    "upload_failed": "Загрузка не удалась",
+    "ready": "ГОТОВО"
   },
   "admin": {
     "moderation": "Модерация контента",
@@ -77,7 +102,26 @@
     "users_title": "Контроль популяции",
     "users_subtitle": "Терминал модерации агентов",
     "identity": "Личность",
-    "clearance": "Допуск"
+    "clearance": "Допуск",
+    "access_denied": "ДОСТУП ЗАПРЕЩЕН",
+    "clearance_required": "Требуется допуск 4 уровня",
+    "return_surface": "Вернуться на поверхность",
+    "high_command": "Высшее командование",
+    "video_moderation_terminal": "Терминал модерации видео",
+    "total_assets": "Всего активов",
+    "active": "Активны",
+    "blocked": "Заблокированы",
+    "video_author": "Видео / Автор",
+    "imps": "ПРОСМ.",
+    "no_videos": "Видео не найдены",
+    "video": "Видео",
+    "user": "Пользователь",
+    "anonymous": "АНОНИМ",
+    "registered": "Регистрация",
+    "role_user": "ПОЛЬЗОВАТЕЛЬ",
+    "role_admin": "АДМИН",
+    "unblock_account": "Разблокировать",
+    "suspend_account": "Заблокировать"
   },
   "auth": {
     "welcome_back": "С возвращением",
@@ -93,7 +137,8 @@
     "check_email": "Проверьте почту для подтверждения!",
     "authentication_locked": "Требуется авторизация",
     "authorize_identity": "Войти",
-    "login_required": "Вам нужно войти в систему для доступа к студии."
+    "login_required": "Вам необходимо войти для доступа в студию.",
+    "failed": "Ошибка аутентификации"
   },
   "profile": {
     "settings": "Настройки профиля",
@@ -111,9 +156,21 @@
     "delete_account": "Удалить аккаунт",
     "confirm_deletion": "Необратимое действие",
     "delete_warning": "Ваш профиль и контент будут скрыты из сети.",
-    "confirm_delete": "Удалить"
+    "confirm_delete": "Удалить",
+    "danger_zone": "Опасная зона"
+  },
+  "sidebar": {
+    "creator": "Автор",
+    "system": "Система",
+    "online": "ОНЛАЙН"
   },
   "common": {
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "days_ago": "{n}д назад",
+    "weeks_ago": "{n}н назад",
+    "months_ago": "{n}м назад",
+    "years_ago": "{n}г назад"
   }
 }

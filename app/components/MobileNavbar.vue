@@ -20,7 +20,7 @@ const isActive = (link) => {
 </script>
 
 <template>
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#050505]/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-around px-2">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 h-18 bg-void-900/80 backdrop-blur-2xl border-t border-white/5 z-50 flex items-center justify-around px-2 pb-safe">
     <NuxtLink 
       v-for="item in navItems" 
       :key="item.link"
