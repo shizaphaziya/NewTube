@@ -11,7 +11,7 @@ onMounted(() => fetchProfile())
     <!-- Right side: topbar + main content -->
     <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
       <!-- Top Bar -->
-      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-6 px-8
+      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-3 md:gap-6 px-4 md:px-8
                      bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
         <!-- Search -->
         <div class="flex-1 max-w-md">
@@ -22,7 +22,7 @@ onMounted(() => fetchProfile())
               type="search"
               :placeholder="$t('nav.search') || 'Search...'"
               class="w-full bg-white/[0.04] border border-white/[0.07]
-                     rounded-xl pl-10 pr-4 py-2.5
+                     rounded-xl pl-10 pr-2 md:pr-4 py-2 md:py-2.5
                      text-white text-sm font-sans placeholder:text-white/20
                      focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.06]
                      transition-all duration-200"

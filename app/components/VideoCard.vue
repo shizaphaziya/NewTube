@@ -40,7 +40,7 @@ const formatDate = (dateStr?: string) => {
   <NuxtLink
     :to="`/watch/${video.id}`"
     class="flex flex-col gap-3 group focus-visible:outline-none
-           focus-visible:ring-2 focus-visible:ring-white/30 rounded-2xl"
+           focus-visible:ring-2 focus-visible:ring-white/30 rounded-2xl w-full"
     :style="{ viewTransitionName: `video-card-${video.id}` }"
   >
     <!-- Thumbnail -->
