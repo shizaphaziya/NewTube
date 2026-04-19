@@ -17,8 +17,8 @@ html {
 }
 
 body {
-  background-color: #0c0c0e; /* Deep Charcoal (Lighter than AMOLED black) */
-  color: #eeeeee; /* Slightly softer white for better readability */
+  background-color: #050505;
+  color: #ffffff;
   min-height: 100vh;
 }
 
@@ -37,11 +37,11 @@ a {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.15);
 }
 
 /* --- Selection --- */
@@ -52,9 +52,9 @@ a {
 
 /* --- Focus rings --- */
 :focus-visible {
-  outline: 2px solid rgba(255,255,255,0.4);
-  outline-offset: 4px;
-  transition: outline-offset 0.2s ease;
+  outline: 2px solid rgba(255,255,255,0.3);
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 /* --- Smooth image rendering --- */
@@ -91,11 +91,10 @@ img {
    Glass Surfaces — Hardware accelerated
    ============================================================ */
 .glass-surface {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.025);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 /* ============================================================

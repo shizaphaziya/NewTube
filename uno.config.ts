@@ -10,14 +10,15 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['btn-primary', 'px-7 py-3.5 rounded-xl bg-white text-black font-extrabold transition-all duration-300 hover:bg-zinc-100 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed tracking-tight text-xs uppercase no-underline'],
-    ['btn-secondary', 'px-7 py-3.5 rounded-xl bg-white/5 text-white/70 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:text-white active:scale-95 tracking-tight text-xs uppercase no-underline'],
-    ['glass-card', 'bg-white/[0.03] backdrop-blur-2xl border border-white/[0.07] rounded-xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]'],
-    ['glass-input', 'bg-white/[0.03] border border-white/[0.06] rounded-xl px-5 py-2.5 text-white placeholder:text-white/20 transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.05] shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]'],
-    ['layout-container', 'max-w-screen-2xl mx-auto px-6 md:px-12'],
+    ['btn-primary', 'px-7 py-3.5 rounded-2xl bg-white text-black font-extrabold transition-all duration-300 hover:bg-zinc-100 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed tracking-tight text-xs uppercase no-underline'],
+    ['btn-secondary', 'px-7 py-3.5 rounded-2xl bg-white/5 text-white/70 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:text-white active:scale-95 tracking-tight text-xs uppercase no-underline'],
+    ['glass-card', 'bg-white/[0.03] backdrop-blur-2xl border border-white/[0.07] rounded-[24px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]'],
+    ['glass-input', 'bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-3.5 text-white placeholder:text-white/20 transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-white/25 focus:bg-white/[0.06]'],
+    ['layout-container', 'max-w-screen-2xl mx-auto px-8 lg:px-12'],
     ['nav-link', 'text-white/30 hover:text-white transition-colors duration-300 text-[11px] font-bold tracking-[0.15em] uppercase no-underline'],
-    ['surface-elevated', 'bg-[#121214] border border-white/[0.06] rounded-xl'],
-    ['tag', 'px-3 py-1 rounded-md bg-white/[0.05] border border-white/[0.08] text-[10px] font-bold tracking-widest uppercase text-white/30'],
+    ['text-gradient', 'bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60'],
+    ['surface-elevated', 'bg-[#0f0f0f] border border-white/[0.06] rounded-2xl'],
+    ['tag', 'px-3 py-1 rounded-lg bg-white/[0.05] border border-white/[0.08] text-[10px] font-bold tracking-widest uppercase text-white/30'],
   ],
   presets: [
     presetUno(),
@@ -41,10 +42,10 @@ export default defineConfig({
   theme: {
     colors: {
       void: {
-        DEFAULT: '#0C0C0E',
-        surface: '#121214',
-        card: '#18181B',
-        accent: '#232328',
+        DEFAULT: '#000000',
+        surface: '#0A0A0A',
+        card: '#111111',
+        accent: '#1D1D1F',
       },
       silver: {
         400: '#888888',

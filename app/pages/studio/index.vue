@@ -1,12 +1,5 @@
-<script setup lang="ts">
-import type { Database } from '~/types/database.types'
-
-type VideoWithCounts = Database['public']['Tables']['videos']['Row'] & {
-  likes: { count: number }[]
-  comments: { count: number }[]
-}
-
-const supabase = useSupabaseClient<Database>()
+<script setup>
+const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
@@ -18,7 +11,7 @@ const { data: videos, refresh } = await useAsyncData('user-videos', async () => 
     .select('*, likes(count), comments(count)')
     .eq('user_id', user.value.id)
     .order('created_at', { ascending: false })
-  return (data || []) as VideoWithCounts[]
+  return data || []
 })
 
 const stats = computed(() => {
@@ -30,7 +23,7 @@ const stats = computed(() => {
   }
 })
 
-const deleteVideo = async (id: string) => {
+const deleteVideo = async (id) => {
   if (!confirm(t('studio.terminate_confirm'))) return
   const { error } = await supabase.from('videos').delete().eq('id', id)
   if (!error) refresh()
@@ -45,7 +38,7 @@ const deleteVideo = async (id: string) => {
            class="absolute inset-0 z-50 flex items-center justify-center p-6 text-center">
         <div class="glass-card p-16 max-w-md space-y-8 ring-1 ring-white/10 relative z-10"
              style="animation: fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) both">
-          <div class="w-14 h-14 mx-auto rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
+          <div class="w-14 h-14 mx-auto rounded-3xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
             <div class="i-ph-lock-key-bold text-2xl text-white/40"></div>
           </div>
           <div class="space-y-3">
@@ -89,19 +82,19 @@ const deleteVideo = async (id: string) => {
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.total_impressions') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.views.toLocaleString() }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.total_views') }}</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Views</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.videos') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.videos }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.total_videos') }}</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Videos</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.engagement') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.engagement }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.total_engagement') }}</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Engagement</div>
         </div>
       </div>
 
@@ -134,10 +127,9 @@ const deleteVideo = async (id: string) => {
             class="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:border-white/10 transition-all duration-500"
           >
             <!-- Thumbnail -->
-            <div class="w-full sm:w-full sm:w-40 aspect-video rounded-xl overflow-hidden bg-void/50 flex-shrink-0">
+            <div class="w-full sm:w-full sm:w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
               <img
                 v-if="video.thumbnail_url"
-                crossorigin="anonymous"
                 :src="video.thumbnail_url"
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
               />
@@ -148,19 +140,7 @@ const deleteVideo = async (id: string) => {
 
             <!-- Info -->
             <div class="flex-1 min-w-0 space-y-1.5">
-              <div class="flex items-center gap-3">
-                <h3 class="font-brand font-black tracking-tight text-white truncate">{{ video.title }}</h3>
-                <div 
-                  class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border"
-                  :class="[
-                    video.status === 'published' ? 'text-emerald-400 bg-emerald-400/5 border-emerald-400/10' : 
-                    video.status === 'blocked' ? 'text-red-500 bg-red-500/5 border-red-500/10' :
-                    'text-white/20 bg-white/5 border-white/5'
-                  ]"
-                >
-                  {{ t(`studio.status_${video.status}`) }}
-                </div>
-              </div>
+              <h3 class="font-brand font-black tracking-tight text-white truncate">{{ video.title }}</h3>
               <div class="flex items-center gap-4 text-[9px] font-bold text-white/20 uppercase tracking-widest">
                 <span>{{ (video.view_count || 0).toLocaleString() }} {{ t('studio.impressions') }}</span>
                 <span class="w-px h-3 bg-white/10"></span>

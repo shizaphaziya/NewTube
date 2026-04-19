@@ -1,31 +1,23 @@
-<script setup lang="ts">
-import type { Database } from '~/types/database.types'
-
-type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
-  profiles: {
-    display_name: string | null
-  } | null
-}
-
+<script setup>
 definePageMeta({
   middleware: ['admin']
 })
 
-const supabase = useSupabaseClient<Database>()
+const supabase = useSupabaseClient()
 const { t } = useI18n()
 
-const { data: videos, refresh } = await useAsyncData('admin-moderation-videos', async () => {
+const { data: videos, refresh } = await useAsyncData('admin-videos', async () => {
   const { data } = await supabase
     .from('videos')
     .select('*, profiles:profiles!videos_user_id_fkey(display_name)')
     .order('created_at', { ascending: false })
-  return (data as unknown || []) as VideoWithProfile[]
+  return data
 })
 
-const updateStatus = async (videoId: string, status: string) => {
+const updateStatus = async (videoId, status) => {
   const { error } = await supabase
     .from('videos')
-    .update({ status: status as any })
+    .update({ status })
     .eq('id', videoId)
   
   if (!error) {
@@ -35,7 +27,7 @@ const updateStatus = async (videoId: string, status: string) => {
   }
 }
 
-const getStatusColor = (status: string | null) => {
+const getStatusColor = (status) => {
   switch (status) {
     case 'published': return 'text-green-400 bg-green-400/10'
     case 'hidden': return 'text-yellow-400 bg-yellow-400/10'
@@ -61,10 +53,10 @@ const getStatusColor = (status: string | null) => {
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 border-b border-white/5">
-              <th class="px-8 py-6">{{ t('admin.video') }}</th>
-              <th class="px-8 py-6">{{ t('admin.user') }}</th>
-              <th class="px-8 py-6">{{ t('admin.status') }}</th>
-              <th class="px-8 py-6 text-right">{{ t('admin.actions') }}</th>
+              <th class="px-8 py-6">Video</th>
+              <th class="px-8 py-6">User</th>
+              <th class="px-8 py-6">Status</th>
+              <th class="px-8 py-6 text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5">
@@ -72,7 +64,7 @@ const getStatusColor = (status: string | null) => {
               <td class="px-8 py-6">
                 <div class="flex items-center gap-5">
                   <div class="relative group-hover:scale-105 transition-transform duration-500">
-                    <img :src="video.thumbnail_url || undefined" class="w-24 aspect-video rounded-xl bg-white/5 object-cover border border-white/5" />
+                    <img :src="video.thumbnail_url" class="w-24 aspect-video rounded-xl bg-white/5 object-cover border border-white/5" />
                     <div class="absolute inset-0 bg-void/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                       <div class="i-ph-eye-bold text-white text-xl"></div>
                     </div>
@@ -134,7 +126,7 @@ const getStatusColor = (status: string | null) => {
       </div>
       
       <div v-if="!videos?.length" class="py-32 text-center text-white/5 font-black uppercase tracking-[0.5em] text-sm">
-        {{ t('admin.no_videos') }}
+        No videos found
       </div>
     </div>
   </div>
