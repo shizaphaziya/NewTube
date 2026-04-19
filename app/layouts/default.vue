@@ -11,8 +11,11 @@ onMounted(() => fetchProfile())
     <!-- Right side: topbar + main content -->
     <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
       <!-- Top Bar -->
-      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-3 md:gap-6 px-4 md:px-8
+      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-4 md:gap-6 px-4 md:px-8
                      bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
+        <!-- Mobile Logo -->
+        <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
+
         <!-- Search -->
         <div class="flex-1 max-w-md">
           <label class="relative flex items-center group">
