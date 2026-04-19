@@ -204,7 +204,7 @@ const postComment = async () => {
                 <textarea 
                   v-model="commentContent"
                   :placeholder="t('watch.add_comment')"
-                  class="w-full bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-6 text-sm focus:outline-none focus:border-white/30 transition-all min-h-[120px] resize-none placeholder:text-white/20"
+                  class="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-[1.5rem] p-4 md:p-6 text-sm focus:outline-none focus:border-white/30 transition-all min-h-[120px] resize-none placeholder:text-white/20"
                 ></textarea>
                 <div class="flex justify-end items-center gap-6">
                   <button 

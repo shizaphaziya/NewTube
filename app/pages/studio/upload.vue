@@ -145,19 +145,19 @@ const handleUpload = async () => {
       <!-- Ambient glow -->
       <div class="absolute -bottom-40 -left-20 w-60 h-60 bg-white/[0.01] blur-[80px] rounded-full pointer-events-none"></div>
       
-      <div class="flex items-center gap-6 mb-16">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-12 sm:mb-16">
         <div class="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
           <div class="i-ph-upload-simple-bold text-2xl text-white/60"></div>
         </div>
         <div>
-          <h1 class="text-3xl font-black font-brand tracking-tighter text-white uppercase">{{ t('studio.upload') }}</h1>
+          <h1 class="text-2xl md:text-3xl font-black font-brand tracking-tighter text-white uppercase">{{ t('studio.upload') }}</h1>
           <p class="text-[9px] text-white/20 font-black uppercase tracking-[0.4em] mt-1">{{ t('studio.broadcasting') }}</p>
         </div>
       </div>
 
       <div v-if="success" class="bg-white/5 border border-white/10 p-16 rounded-[40px] text-center space-y-6">
         <div class="i-ph-check-circle-fill text-7xl text-white mx-auto animate-pulse"></div>
-        <h2 class="text-3xl font-heading font-black tracking-tight text-white uppercase">{{ t('studio.success') }}</h2>
+        <h2 class="text-2xl md:text-3xl font-heading font-black tracking-tight text-white uppercase">{{ t('studio.success') }}</h2>
         <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">{{ t('studio.success_subtitle') }}</p>
       </div>
 

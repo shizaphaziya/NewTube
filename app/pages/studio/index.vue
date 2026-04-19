@@ -127,7 +127,7 @@ const deleteVideo = async (id) => {
             class="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:border-white/10 transition-all duration-500"
           >
             <!-- Thumbnail -->
-            <div class="w-full sm:w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
+            <div class="w-full sm:w-full sm:w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
               <img
                 v-if="video.thumbnail_url"
                 :src="video.thumbnail_url"
