@@ -32,7 +32,7 @@ useSeoMeta({
             ? 'bg-white text-black shadow-[0_8px_24px_rgba(255,255,255,0.15)] border-white'
             : 'text-white/30 hover:text-white/60 hover:bg-white/[0.04] hover:border-white/5'"
         >
-          <div :class="feed.icon" class="text-[13px] shrink-0 transition-transform duration-300" :class="activeFeed === feed.key ? 'scale-110' : 'group-hover:scale-110'"></div>
+          <div :class="[feed.icon, 'text-[13px] shrink-0 transition-transform duration-300', activeFeed === feed.key ? 'scale-110' : 'group-hover:scale-110']"></div>
           <span>{{ feed.label }}</span>
         </button>
       </div>
@@ -49,19 +49,7 @@ useSeoMeta({
 
     <!-- Video Grid -->
     <div class="layout-container py-8 md:py-12">
-      <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 md:py-60 text-center animate-fade-in">
-        <div class="relative mb-12">
-          <div class="i-ph-video-camera-slash text-9xl text-white/[0.015] animate-pulse"></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="i-ph-layout-bold text-4xl text-white/[0.03]"></div>
-          </div>
-        </div>
-        <h2 class="text-3xl md:text-5xl font-brand font-black tracking-widest text-white/10 uppercase italic mb-4">
-          {{ $t('home.no_videos') }}
-        </h2>
-        <p class="text-[10px] font-black tracking-[0.5em] text-white/5 uppercase">{{ $t('admin.clearance_required') }}</p>
-      </div>
-      <InfiniteVideoGrid v-else />
+      <InfiniteVideoGrid />
     </div>
   </div>
 </template>

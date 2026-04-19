@@ -4,6 +4,8 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  ssr: false,
+
   future: {
     compatibilityVersion: 4,
   },
@@ -41,30 +43,30 @@ export default defineNuxtConfig({
       'pop-in': {
         initial: { scale: 0.8, opacity: 0 },
         enter: { scale: 1, opacity: 1, transition: { duration: 400, ease: 'easeOut' } }
-      }
-    }
-  },
-
-  // Required for ffmpeg.wasm
-  nitro: {
-    routeRules: {
-      '/**': {
-        headers: {
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-          'Cross-Origin-Opener-Policy': 'same-origin',
-          'Cross-Origin-Resource-Policy': 'cross-origin'
-        }
+      },
+      'fade': {
+        initial: { opacity: 0 },
+        enter: { opacity: 1, transition: { duration: 300 } }
       }
     }
   },
 
   devServer: {
     https: false, // Default
+    port: 3000,
   },
 
   experimental: {
     viewTransition: true,
-    typedPages: true
+    typedPages: false
+  },
+
+  vite: {
+    server: {
+      watch: {
+        usePolling: true
+      }
+    }
   },
 
   devtools: { enabled: true }

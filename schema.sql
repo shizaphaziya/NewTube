@@ -10,13 +10,30 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+-- Create an auth bypass function to prevent infinite recursion in RLS policies
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+DECLARE
+  is_admin_user BOOLEAN;
+BEGIN
+  -- We query profiles directly using a separate auth context or simply select it.
+  -- However, since the function is SECURITY DEFINER, it runs with the privileges of the creator (usually postgres/supabase_admin).
+  -- This bypasses RLS policies entirely, preventing infinite recursion.
+  SELECT role = 'admin' INTO is_admin_user
+  FROM public.profiles
+  WHERE id = auth.uid();
+
+  RETURN COALESCE(is_admin_user, FALSE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- 2. STORAGE SETUP
 -- Create buckets for videos and thumbnails
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES 
+VALUES
   ('videos', 'videos', true, 1073741824, '{video/*}'), -- 1GB limit
   ('thumbnails', 'thumbnails', true, 10485760, '{image/*}') -- 10MB limit
-ON CONFLICT (id) DO UPDATE SET 
+ON CONFLICT (id) DO UPDATE SET
   file_size_limit = EXCLUDED.file_size_limit,
   allowed_mime_types = EXCLUDED.allowed_mime_types;
 
@@ -28,7 +45,7 @@ CREATE TABLE IF NOT EXISTS public.roles (
 );
 
 INSERT INTO public.roles (name, description)
-VALUES 
+VALUES
     ('guest', 'Can only view public content'),
     ('user', 'Can upload videos, comment and react'),
     ('admin', 'Full control over content and users')
@@ -92,30 +109,30 @@ ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
 -- Profile Policies
 CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id OR public.is_admin());
 
 -- Video Policies
 CREATE POLICY "Videos are viewable by everyone if not deleted" ON public.videos
     FOR SELECT USING (
-        (deleted_at IS NULL AND status = 'published') 
-        OR auth.uid() = user_id 
-        OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+        (deleted_at IS NULL AND status = 'published')
+        OR auth.uid() = user_id
+        OR public.is_admin()
     );
 CREATE POLICY "Users can insert their own videos" ON public.videos FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update their own videos" ON public.videos FOR UPDATE USING (auth.uid() = user_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
+CREATE POLICY "Users can update their own videos" ON public.videos FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 
 -- Reaction Policies
 CREATE POLICY "Reactions are viewable by everyone" ON public.video_reactions FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own reactions" ON public.video_reactions FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage their own reactions" ON public.video_reactions FOR ALL USING (auth.uid() = user_id OR public.is_admin());
 
 -- Comment Policies
 CREATE POLICY "Active comments are viewable by everyone" ON public.comments
     FOR SELECT USING (
-        deleted_at IS NULL 
-        OR auth.uid() = user_id 
-        OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+        deleted_at IS NULL
+        OR auth.uid() = user_id
+        OR public.is_admin()
     );
-CREATE POLICY "Users can manage their own comments" ON public.comments FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can manage their own comments" ON public.comments FOR ALL USING (auth.uid() = user_id OR public.is_admin());
 
 -- 6. TRIGGERS
 -- Handle new user creation
@@ -163,14 +180,14 @@ CREATE POLICY "Videos are publicly accessible" ON storage.objects FOR SELECT USI
 CREATE POLICY "Thumbnails are publicly accessible" ON storage.objects FOR SELECT USING (bucket_id = 'thumbnails');
 
 -- Allow authenticated users to upload files to their own folders in buckets
-CREATE POLICY "Users can upload videos" ON storage.objects 
-    FOR INSERT 
-    TO authenticated 
+CREATE POLICY "Users can upload videos" ON storage.objects
+    FOR INSERT
+    TO authenticated
     WITH CHECK (bucket_id = 'videos');
 
-CREATE POLICY "Users can upload thumbnails" ON storage.objects 
-    FOR INSERT 
-    TO authenticated 
+CREATE POLICY "Users can upload thumbnails" ON storage.objects
+    FOR INSERT
+    TO authenticated
     WITH CHECK (bucket_id = 'thumbnails');
 
 -- 10. DOCUMENTATION

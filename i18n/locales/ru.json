@@ -47,7 +47,8 @@
     "content_suspended": "Доступ приостановлен",
     "intercepted_message": "Эта передача была перехвачена и заблокирована высшим командованием за нарушение протокола.",
     "related_title_placeholder": "Заголовок видео",
-    "related_creator_placeholder": "Автор"
+    "related_creator_placeholder": "Автор",
+    "not_found": "Видео не найдено. Возможно, оно было удалено или ссылка некорректна."
   },
   "studio": {
     "command_center": "Панель управления",
@@ -71,12 +72,10 @@
     "entry_name_placeholder": "Название видео",
     "description_placeholder": "Описание видео...",
     "optimizing": "Оптимизация видео",
-    "ffmpeg_note": "Сжатие видео",
     "uploading_note": "Загрузка на сервер",
     "creator": "Автор",
     "engagement": "Взаимодействие",
     "videos": "Видео",
-    "compressing": "Сжатие видео",
     "uploading_storage": "Загрузка видео в хранилище",
     "active_videos": "Активные записи",
     "processing_video": "Обработка видео",
@@ -166,6 +165,7 @@
   },
   "common": {
     "cancel": "Отмена",
+    "error": "Ошибка",
     "today": "Сегодня",
     "yesterday": "Вчера",
     "days_ago": "{n}д назад",

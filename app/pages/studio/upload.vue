@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// FFmpeg will be imported dynamically to prevent SSR crashes
-
 import type { Database } from '~/types/database.types'
 
 const supabase = useSupabaseClient<Database>()
@@ -15,27 +13,9 @@ const thumbFile = ref<File | null>(null)
 const videoInput = ref<HTMLInputElement | null>(null)
 const thumbInput = ref<HTMLInputElement | null>(null)
 
-const ffmpeg = ref<any>(null)
-const processing = ref(false)
-const processingProgress = ref(0)
 const uploading = ref(false)
 const uploadProgress = ref(0)
 const success = ref(false)
-
-const loadFFmpeg = async () => {
-  if (ffmpeg.value) return
-  
-  const { FFmpeg } = await import('@ffmpeg/ffmpeg')
-  const { toBlobURL } = await import('@ffmpeg/util')
-  
-  ffmpeg.value = new FFmpeg()
-  
-  const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-  await ffmpeg.value.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-  })
-}
 
 const onVideoSelect = (e: Event) => {
   const target = e.target as HTMLInputElement
@@ -47,65 +27,6 @@ const onVideoSelect = (e: Event) => {
   videoFile.value = file || null
 }
 
-const transcodeVideo = async (file: File) => {
-  await loadFFmpeg()
-  
-  processing.value = true
-  processingProgress.value = 0
-  
-  ffmpeg.value.on('progress', ({ progress }: { progress: number }) => {
-    processingProgress.value = Math.round(progress * 100)
-  })
-
-  const { fetchFile } = await import('@ffmpeg/util')
-
-  const inputName = 'input' + file.name.substring(file.name.lastIndexOf('.'))
-  const outputName = 'output.mp4'
-
-  await ffmpeg.value.writeFile(inputName, await fetchFile(file))
-  
-  // Compression: CRF 26 + Fast preset for balance
-  await ffmpeg.value.exec([
-    '-i', inputName,
-    '-c:v', 'libx264',
-    '-crf', '26',
-    '-preset', 'superfast',
-    '-c:a', 'aac',
-    '-b:a', '128k',
-    outputName
-  ])
-
-  const data = await ffmpeg.value.readFile(outputName)
-  processing.value = false
-  
-  // Returning Uint8Array directly is more stable than creating a new File object
-  // as it avoids certain browser-specific fetch/XHR proxy issues.
-  return data as Uint8Array
-}
-
-const extractThumbnail = async (file: File) => {
-  await loadFFmpeg()
-  
-  const { fetchFile } = await import('@ffmpeg/util')
-  
-  const inputName = 'input_thumb' + file.name.substring(file.name.lastIndexOf('.'))
-  const outputName = 'thumb.jpg'
-
-  await ffmpeg.value.writeFile(inputName, await fetchFile(file))
-  
-  // Extract frame at 1 second mark
-  await ffmpeg.value.exec([
-    '-ss', '00:00:01',
-    '-i', inputName,
-    '-frames:v', '1',
-    '-q:v', '2',
-    outputName
-  ])
-
-  const data = await ffmpeg.value.readFile(outputName)
-  return data as Uint8Array
-}
-
 const handleUpload = async () => {
   if (!videoFile.value || !user.value) return
   
@@ -113,10 +34,7 @@ const handleUpload = async () => {
   const finalTitle = title.value.trim() || new Date().toLocaleString()
   
   try {
-    // Stage 1: Processing
-    const processedFile = await transcodeVideo(videoFile.value)
-    
-    // Stage 2: Uploading
+    // Stage 1: Uploading
     uploading.value = true
     uploadProgress.value = 0
     
@@ -125,42 +43,32 @@ const handleUpload = async () => {
     if (userError || !authUser) throw new Error(t('studio.auth_lost'))
     const userId = authUser.id
 
-    const videoExt = 'mp4'
+    const videoExt = videoFile.value.name.split('.').pop() || 'mp4'
     const videoPath = `${userId}/${Date.now()}.${videoExt}`
     
     const { data: vData, error: vError } = await supabase.storage
       .from('videos')
-      .upload(videoPath, processedFile, {
+      .upload(videoPath, videoFile.value, {
         cacheControl: '3600',
         upsert: false,
-        contentType: 'video/mp4'
+        contentType: videoFile.value.type || 'video/mp4'
       })
     
     if (vError) throw vError
     uploadProgress.value = 50
 
-    // 2. Upload Thumbnail (Optional or Auto)
+    // 2. Upload Thumbnail (Optional)
     let thumbnailUrl = ''
-    let thumbnailDataToUpload: Uint8Array | File | null = thumbFile.value
+    let thumbnailFile: File | null = thumbFile.value
 
-    if (!thumbnailDataToUpload) {
-      try {
-        // processedFile is already a Uint8Array here
-        thumbnailDataToUpload = await extractThumbnail(processedFile)
-      } catch (e) {
-        console.error('Auto-thumbnail failed', e)
-      }
-    }
-
-    if (thumbnailDataToUpload) {
-      const isAuto = !(thumbnailDataToUpload instanceof File)
-      const thumbExt = isAuto ? 'jpg' : (thumbnailDataToUpload as File).name.split('.').pop()
+    if (thumbnailFile) {
+      const thumbExt = thumbnailFile.name.split('.').pop() || 'jpg'
       const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
       
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, thumbnailDataToUpload, {
-          contentType: isAuto ? 'image/jpeg' : undefined
+        .upload(thumbPath, thumbnailFile, {
+          contentType: thumbnailFile.type || 'image/jpeg'
         })
       
       if (!tError) {
@@ -190,11 +98,11 @@ const handleUpload = async () => {
     setTimeout(() => navigateTo('/'), 2000)
     
   } catch (e: any) {
-    alert(t('studio.upload_failed') + ': ' + e.message)
-    console.error(e)
+    const errorMsg = e.message || e.toString() || JSON.stringify(e);
+    alert(t('studio.upload_failed') + ` : ` + errorMsg)
+    console.error('Upload Process Failed:', e)
   } finally {
     uploading.value = false
-    processing.value = false
   }
 }
 </script>
@@ -290,20 +198,6 @@ const handleUpload = async () => {
 
         <!-- Progress/Action -->
         <div class="pt-12 border-t border-white/5">
-          <!-- Processing State (FFmpeg) -->
-          <div v-if="processing" class="space-y-6 mb-12" v-motion-fade>
-             <div class="flex justify-between items-end">
-               <div class="space-y-1">
-                 <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/60 animate-pulse">{{ t('studio.optimizing') }}</p>
-                 <p class="text-[9px] text-white/20 uppercase font-black">{{ t('studio.ffmpeg_note') }}</p>
-               </div>
-               <span class="text-2xl font-brand font-black tracking-tighter text-white tabular-nums">{{ processingProgress }}%</span>
-             </div>
-             <div class="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-               <div class="h-full bg-white transition-all duration-300 ease-out" :style="{ width: `${processingProgress}%` }"></div>
-             </div>
-          </div>
-
           <!-- Uploading State (Supabase) -->
           <div v-if="uploading" class="space-y-6 mb-12" v-motion-fade>
              <div class="flex justify-between items-end">
@@ -320,15 +214,15 @@ const handleUpload = async () => {
           
           <button 
             type="submit" 
-            :disabled="processing || uploading || !videoFile" 
+            :disabled="uploading || !videoFile"
             class="btn-primary w-full py-6 text-sm font-black tracking-[0.4em] uppercase group"
           >
-            <span v-if="!processing && !uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">
+            <span v-if="!uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">
               {{ t('studio.publish') }}
               <div class="i-ph-rocket-launch-bold group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300"></div>
             </span>
             <span v-else class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.2em]">
-              {{ processing ? t('studio.processing') : t('studio.uploading') }}
+              {{ t('studio.uploading') }}
               <div class="i-ph-circle-notch-bold animate-spin"></div>
             </span>
           </button>

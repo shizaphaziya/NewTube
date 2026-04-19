@@ -47,7 +47,8 @@
     "content_suspended": "Content Suspended",
     "intercepted_message": "This transmission has been intercepted and blocked by the high command for violating protocol.",
     "related_title_placeholder": "Video Title Placeholder",
-    "related_creator_placeholder": "Creator"
+    "related_creator_placeholder": "Creator",
+    "not_found": "Video not found. It may have been removed or the link is incorrect."
   },
   "studio": {
     "command_center": "Dashboard",
@@ -71,11 +72,9 @@
     "entry_name_placeholder": "Video title",
     "description_placeholder": "Video description...",
     "optimizing": "Optimizing Video",
-    "ffmpeg_note": "Compressing video",
     "uploading_note": "Uploading to storage",
     "engagement": "Engagement",
     "videos": "Videos",
-    "compressing": "Compressing video",
     "uploading_storage": "Uploading video to storage",
     "active_videos": "Active Records",
     "processing_video": "Processing Video",
@@ -165,6 +164,7 @@
   },
   "common": {
     "cancel": "Abort",
+    "error": "Error",
     "today": "Today",
     "yesterday": "Yesterday",
     "days_ago": "{n}d ago",
