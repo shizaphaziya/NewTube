@@ -19,7 +19,7 @@ const { data: videos, refresh, error: asyncError } = await useAsyncData('user-vi
     console.error('[Studio] Fetch error:', error)
     throw error
   }
-  return (data || []) as unknown as VideoWithCounts[]
+  return (data || [])
 }, { watch: [user], server: false })
 
 if (asyncError.value) {
