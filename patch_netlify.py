@@ -1,7 +1,7 @@
 with open('netlify.toml', 'w') as f:
     f.write('''[build]
   command = "bun install && bun run build"
-  publish = ".output/public"
+  publish = "dist"
 
 [build.environment]
   BUN_VERSION = "1.0.3"
