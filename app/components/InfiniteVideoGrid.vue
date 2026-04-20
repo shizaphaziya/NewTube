@@ -47,16 +47,16 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-      <VideoCard 
-        v-for="(video, idx) in videos" 
-        :key="video.id" 
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
+      <VideoCard
+        v-for="(video, idx) in videos"
+        :key="video.id"
         :video="video"
         v-motion
         :initial="{ opacity: 0, y: 40 }"
         :enter="{ opacity: 1, y: 0, transition: { duration: 1000, ease: [0.16, 1, 0.3, 1], delay: (idx % pageSize) * 100 } }"
       />
-      
+
       <!-- Skeletons -->
       <template v-if="loading">
         <VideoSkeleton v-for="n in 6" :key="n" />

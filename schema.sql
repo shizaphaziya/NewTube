@@ -1,10 +1,10 @@
 -- STORAGE SETUP
 -- Create buckets for videos and thumbnails
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES 
+VALUES
   ('videos', 'videos', true, 1073741824, '{video/*}'), -- 1GB limit (platform cap may still apply)
   ('thumbnails', 'thumbnails', true, 10485760, '{image/*}') -- 10MB limit
-ON CONFLICT (id) DO UPDATE SET 
+ON CONFLICT (id) DO UPDATE SET
   file_size_limit = EXCLUDED.file_size_limit,
   allowed_mime_types = EXCLUDED.allowed_mime_types;
 
@@ -69,7 +69,7 @@ CREATE POLICY "Users can insert their own videos" ON public.videos
 CREATE POLICY "Users can update their own videos (except status)" ON public.videos
   FOR UPDATE USING (auth.uid() = user_id)
   WITH CHECK (
-    (status = (SELECT status FROM public.videos WHERE id = id)) OR 
+    (status = (SELECT status FROM public.videos WHERE id = id)) OR
     (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
   );
 CREATE POLICY "Admins can do everything with videos" ON public.videos

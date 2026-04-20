@@ -4,9 +4,10 @@ defineProps<{
     id: string
     title: string
     user_id: string
-    thumbnail_url?: string
-    view_count: number
-    created_at?: string
+    thumbnail_url?: string | null
+    video_url?: string | null
+    view_count: number | null
+    created_at?: string | null
     profiles: {
       display_name: string
       avatar_url: string
@@ -40,7 +41,7 @@ const formatDate = (dateStr?: string) => {
   <NuxtLink
     :to="`/watch/${video.id}`"
     class="flex flex-col gap-3 group focus-visible:outline-none
-           focus-visible:ring-2 focus-visible:ring-white/30 rounded-2xl"
+           focus-visible:ring-2 focus-visible:ring-white/30 rounded-2xl w-full"
     :style="{ viewTransitionName: `video-card-${video.id}` }"
   >
     <!-- Thumbnail -->
@@ -51,14 +52,35 @@ const formatDate = (dateStr?: string) => {
              group-hover:border-white/20 group-hover:-translate-y-1.5
              group-hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.9)]"
     >
+      <!-- Thumbnail Image -->
       <img
-        :src="video.thumbnail_url || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800'"
+        v-if="video.thumbnail_url"
+        crossorigin="anonymous"
+        :src="video.thumbnail_url"
         :alt="video.title"
         class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
                group-hover:scale-[1.05]"
         :style="{ viewTransitionName: `video-thumb-${video.id}` }"
         loading="lazy"
       />
+      <!-- Video Frame Fallback -->
+      <video
+        v-else-if="video.video_url"
+        crossorigin="anonymous"
+        :src="video.video_url + '#t=0.5'"
+        class="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+               group-hover:scale-[1.05]"
+        :style="{ viewTransitionName: `video-thumb-${video.id}` }"
+        muted
+        preload="metadata"
+      ></video>
+      <!-- Final Placeholder Fallback -->
+      <div
+        v-else
+        class="w-full h-full flex items-center justify-center bg-white/[0.04] opacity-20"
+      >
+         <div class="i-ph-film-strip-bold text-4xl text-white"></div>
+      </div>
 
       <!-- Dark gradient bottom -->
       <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent

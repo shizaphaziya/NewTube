@@ -4,15 +4,28 @@ const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
 
-const { data: videos, refresh } = await useAsyncData('user-videos', async () => {
-  if (!user.value) return []
-  const { data } = await supabase
+const { data: videos, refresh, error: asyncError } = await useAsyncData('user-videos', async () => {
+  const { data: { user: authUser } } = await supabase.auth.getUser()
+  const userId = user.value?.id || authUser?.id
+  if (!userId) return []
+  
+  const { data, error } = await supabase
     .from('videos')
-    .select('*, likes(count), comments(count)')
-    .eq('user_id', user.value.id)
+    .select('*')
+    .eq('user_id', userId)
     .order('created_at', { ascending: false })
-  return data || []
-})
+    
+  if (error) {
+    console.error('[Studio] Fetch error:', error)
+    throw error
+  }
+  return (data || []) as unknown as VideoWithCounts[]
+}, { watch: [user], server: false })
+
+if (asyncError.value) {
+  console.error('[Studio] useAsyncData error:', asyncError.value)
+}
+
 
 const stats = computed(() => {
   if (!videos.value) return { views: 0, videos: 0, engagement: 0 }
@@ -31,7 +44,7 @@ const deleteVideo = async (id) => {
 </script>
 
 <template>
-  <div class="px-10 py-10 relative">
+  <div class="px-4 md:px-10 py-6 md:py-10 relative">
     <!-- Guest Overlay -->
     <Transition name="overlay">
       <div v-if="!user"
@@ -46,7 +59,7 @@ const deleteVideo = async (id) => {
               {{ t('auth.authentication_locked') }}
             </h2>
             <p class="text-white/30 text-sm leading-relaxed">
-              {{ t('auth.auth_required_desc') }}
+              {{ t('auth.login_required') }}
             </p>
           </div>
           <NuxtLink to="/auth/login" class="btn-primary inline-flex">
@@ -66,7 +79,7 @@ const deleteVideo = async (id) => {
             {{ t('studio.command_center') }}
           </h1>
           <p class="text-[#666] text-[10px] font-bold uppercase tracking-[0.4em]">
-            {{ profile?.display_name || '—' }} • {{ t('studio.elite_operator') }}
+            {{ profile?.display_name || '—' }} • {{ t('studio.creator') }}
           </p>
         </div>
 
@@ -82,19 +95,19 @@ const deleteVideo = async (id) => {
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.total_impressions') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.views.toLocaleString() }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">IMP_UNITS • AGGREGATE</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Views</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
-          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.signal_fragments') }}</div>
+          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.videos') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.videos }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">RECORD_COUNT • INDEX</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Videos</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
-          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.synapse_response') }}</div>
+          <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.engagement') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.engagement }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">INT_RATE • LIVE</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Engagement</div>
         </div>
       </div>
 
@@ -103,7 +116,7 @@ const deleteVideo = async (id) => {
         <div class="flex items-center gap-3">
           <div class="w-1.5 h-1.5 rounded-full bg-white/30"></div>
           <h2 class="text-[9px] font-black uppercase tracking-[0.5em] text-white/20">
-            {{ t('studio.active_records') }}
+            {{ t('studio.active_videos') }}
           </h2>
         </div>
 
@@ -124,17 +137,28 @@ const deleteVideo = async (id) => {
           <div
             v-for="video in videos"
             :key="video.id"
-            class="glass-card p-5 flex items-center gap-6 group hover:border-white/10 transition-all duration-500"
+            class="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:border-white/10 transition-all duration-500"
           >
             <!-- Thumbnail -->
-            <div class="w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
+            <div class="w-full sm:w-full sm:w-40 aspect-video rounded-2xl overflow-hidden bg-void/50 flex-shrink-0">
               <img
                 v-if="video.thumbnail_url"
                 :src="video.thumbnail_url"
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
               />
-              <div v-else class="w-full h-full flex items-center justify-center">
-                <div class="i-ph-video-camera-bold text-white/10 text-3xl"></div>
+              <video
+                v-else-if="video.video_url"
+                crossorigin="anonymous"
+                :src="video.video_url + '#t=0.5'"
+                class="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-all duration-700"
+                muted
+                preload="metadata"
+              ></video>
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center bg-white/[0.04] opacity-10"
+              >
+                  <div class="i-ph-film-strip-bold text-4xl text-white"></div>
               </div>
             </div>
 
@@ -144,7 +168,7 @@ const deleteVideo = async (id) => {
               <div class="flex items-center gap-4 text-[9px] font-bold text-white/20 uppercase tracking-widest">
                 <span>{{ (video.view_count || 0).toLocaleString() }} {{ t('studio.impressions') }}</span>
                 <span class="w-px h-3 bg-white/10"></span>
-                <span>{{ new Date(video.created_at).toLocaleDateString() }}</span>
+                <span>{{ video.created_at ? new Date(video.created_at).toLocaleDateString() : '—' }}</span>
               </div>
             </div>
 

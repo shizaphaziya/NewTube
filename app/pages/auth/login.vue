@@ -75,7 +75,7 @@ const handleAuth = async () => {
               v-model="email" 
               type="email" 
               required
-              placeholder="IDENTITY@ELITE.CO"
+              placeholder="email@example.com"
               class="w-full bg-white/5 border-b border-white/10 p-4 text-sm focus:outline-none focus:border-silver focus:bg-white/[0.08] transition-all placeholder:text-white/10"
             />
           </div>

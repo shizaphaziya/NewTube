@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
+const { isAdmin } = useProfile()
 
 // Correctly mapped i18n keys
 const navItems = [
@@ -14,6 +15,13 @@ const creatorItems = [
   { icon: 'i-ph-circles-four-bold', label: t('nav.studio'), link: '/studio' },
   { icon: 'i-ph-upload-simple-bold',label: t('nav.upload'), link: '/studio/upload' },
 ]
+
+const adminItems = [
+  { icon: 'i-ph-shield-check-bold', label: t('nav.admin'), link: '/admin/videos' },
+  { icon: 'i-ph-users-four-bold', label: t('nav.users') || 'Users', link: '/admin/users' },
+]
+
+
 
 const isActive = (link: string) => {
   const [path, query] = link.split('?')
@@ -31,7 +39,7 @@ const isActive = (link: string) => {
 
 <template>
   <aside
-    class="fixed left-0 top-0 h-screen z-40 flex flex-col overflow-hidden
+    class="hidden md:flex fixed left-0 top-0 h-screen z-40 flex flex-col overflow-hidden
            bg-[#050505] border-r border-white/[0.05] select-none
            w-[72px] hover:w-60 transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
   >
@@ -51,7 +59,7 @@ const isActive = (link: string) => {
                   transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
                   [aside:hover_&]:opacity-100 [aside:hover_&]:w-28">
         <div class="text-[13px] font-brand font-black tracking-[0.25em] text-white italic">NEWTUBE</div>
-        <div class="text-[6px] font-black tracking-[0.5em] text-white/20 uppercase">ELITE</div>
+
       </div>
     </NuxtLink>
 
@@ -118,6 +126,39 @@ const isActive = (link: string) => {
             {{ item.label }}
           </span>
         </NuxtLink>
+      </template>
+
+      <!-- Admin Section -->
+      <template v-if="isAdmin">
+        <div class="my-3 mx-3 h-px bg-white/[0.05]"></div>
+        <div class="px-3 mb-1 overflow-hidden whitespace-nowrap
+                    h-0 opacity-0
+                    transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+                    [aside:hover_&]:h-6 [aside:hover_&]:opacity-100">
+          <span class="text-[9px] font-black tracking-[0.5em] uppercase text-red-500/30">{{ t('sidebar.system') }}</span>
+        </div>
+        <template v-for="item in adminItems" :key="item.link">
+          <NuxtLink
+            :to="item.link"
+            class="relative flex items-center h-11 rounded-xl overflow-hidden no-underline
+                   transition-colors duration-200 group"
+            :class="isActive(item.link)
+              ? 'bg-red-500/10 text-red-500'
+              : 'text-red-500/20 hover:text-red-400 hover:bg-red-500/[0.05]'"
+          >
+            <div v-if="isActive(item.link)"
+                 class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-red-500 rounded-r-full"></div>
+            <div class="w-[72px] flex items-center justify-center shrink-0 [aside:hover_&]:w-11">
+              <div :class="item.icon" class="text-[18px]"></div>
+            </div>
+            <span class="whitespace-nowrap text-[11px] font-brand font-bold tracking-[0.15em] uppercase
+                         opacity-0 w-0 overflow-hidden
+                         transition-all duration-500 delay-75
+                         [aside:hover_&]:opacity-100 [aside:hover_&]:w-auto">
+              {{ item.label }}
+            </span>
+          </NuxtLink>
+        </template>
       </template>
     </nav>
 

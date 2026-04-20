@@ -41,7 +41,7 @@ const transcodeVideo = async (file: File) => {
   
   processing.value = true
   processingProgress.value = 0
-  
+
   ffmpeg.on('progress', ({ progress }) => {
     processingProgress.value = Math.round(progress * 100)
   })
@@ -50,7 +50,7 @@ const transcodeVideo = async (file: File) => {
   const outputName = 'output.mp4'
 
   await ffmpeg.writeFile(inputName, await fetchFile(file))
-  
+
   // Compression: CRF 26 + Fast preset for balance
   await ffmpeg.exec([
     '-i', inputName,
@@ -64,17 +64,59 @@ const transcodeVideo = async (file: File) => {
 
   const data = await ffmpeg.readFile(outputName)
   processing.value = false
-  
+
   return new File([data], 'processed_' + file.name, { type: 'video/mp4' })
 }
 
 const handleUpload = async () => {
-  if (!videoFile.value || !title.value || !user.value) return
+  if (!videoFile.value || !user.value) return
+  
+  const generateThumbnail = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      video.muted = true
+      video.playsInline = true
+      const url = URL.createObjectURL(file)
+      video.src = url
+
+      video.addEventListener('loadedmetadata', () => {
+        video.currentTime = Math.min(1.5, video.duration / 2 || 0)
+      })
+
+      video.addEventListener('seeked', () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth || 1280
+        canvas.height = video.videoHeight || 720
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url)
+            if (blob) resolve(blob)
+            else reject(new Error('Could not create thumbnail blob'))
+          }, 'image/jpeg', 0.85)
+        } else {
+          URL.revokeObjectURL(url)
+          reject(new Error('Could not get canvas context'))
+        }
+      })
+
+      video.addEventListener('error', (e) => {
+        URL.revokeObjectURL(url)
+        reject(e)
+      })
+    })
+  }
+
+
+  // Auto-title logic
+  const finalTitle = title.value.trim() || new Date().toLocaleString()
   
   try {
     // Stage 1: Processing
     const processedFile = await transcodeVideo(videoFile.value)
-    
+
     // Stage 2: Uploading
     uploading.value = true
     uploadProgress.value = 0
@@ -92,14 +134,27 @@ const handleUpload = async () => {
     if (vError) throw vError
     uploadProgress.value = 50
 
-    // 2. Upload Thumbnail (Optional)
+    // 2. Upload Thumbnail
     let thumbnailUrl = ''
-    if (thumbFile.value) {
-      const thumbExt = thumbFile.value.name.split('.').pop()
-      const thumbPath = `${user.value.id}/${Date.now()}.${thumbExt}`
+    let thumbnailBlob: Blob | File | null = thumbFile.value
+
+    if (!thumbnailBlob && videoFile.value) {
+      try {
+        thumbnailBlob = await generateThumbnail(videoFile.value)
+      } catch (e) {
+        console.warn('Failed to generate automatic thumbnail:', e)
+      }
+    }
+
+    if (thumbnailBlob) {
+      const thumbExt = thumbnailBlob instanceof File ? (thumbnailBlob.name.split('.').pop() || 'jpg') : 'jpg'
+      const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
+      
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, thumbFile.value)
+        .upload(thumbPath, thumbnailBlob, {
+          contentType: thumbnailBlob.type || 'image/jpeg'
+        })
       
       if (!tError) {
         thumbnailUrl = supabase.storage.from('thumbnails').getPublicUrl(thumbPath).data.publicUrl
@@ -141,29 +196,28 @@ const handleUpload = async () => {
   <div class="layout-container max-w-4xl py-12 pb-20">
     <div v-motion-pop-in class="relative overflow-hidden rounded-[28px]
                                bg-white/[0.03] border border-white/[0.07]
-                               backdrop-blur-2xl p-12">
+                               backdrop-blur-2xl p-6 md:p-12">
       <!-- Ambient glow -->
-      <div class="absolute -top-40 -right-40 w-80 h-80 bg-white/[0.015] blur-[120px] rounded-full pointer-events-none"></div>
       <div class="absolute -bottom-40 -left-20 w-60 h-60 bg-white/[0.01] blur-[80px] rounded-full pointer-events-none"></div>
       
-      <div class="flex items-center gap-6 mb-16">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-12 sm:mb-16">
         <div class="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
           <div class="i-ph-upload-simple-bold text-2xl text-white/60"></div>
         </div>
         <div>
-          <h1 class="text-3xl font-black font-brand tracking-tighter text-white uppercase">{{ t('studio.upload') }}</h1>
+          <h1 class="text-2xl md:text-3xl font-black font-brand tracking-tighter text-white uppercase">{{ t('studio.upload') }}</h1>
           <p class="text-[9px] text-white/20 font-black uppercase tracking-[0.4em] mt-1">{{ t('studio.broadcasting') }}</p>
         </div>
       </div>
 
       <div v-if="success" class="bg-white/5 border border-white/10 p-16 rounded-[40px] text-center space-y-6">
         <div class="i-ph-check-circle-fill text-7xl text-white mx-auto animate-pulse"></div>
-        <h2 class="text-3xl font-heading font-black tracking-tight text-white uppercase">{{ t('studio.success') }}</h2>
+        <h2 class="text-2xl md:text-3xl font-heading font-black tracking-tight text-white uppercase">{{ t('studio.success') }}</h2>
         <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">{{ t('studio.success_subtitle') }}</p>
       </div>
 
       <form v-else @submit.prevent="handleUpload" class="space-y-12">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:p-12">
           <!-- File Selection (2 columns) -->
           <div class="lg:col-span-2 space-y-8">
             <div class="space-y-4">
@@ -207,10 +261,10 @@ const handleUpload = async () => {
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 group-focus-within:text-silver transition-colors">{{ t('studio.title') }}</label>
               <input 
                 v-model="title" 
-                required 
+                required
                 type="text" 
               class="w-full bg-transparent border-b-2 border-white/[0.08] py-4 text-2xl font-brand font-black tracking-tight focus:outline-none focus:border-white/40 transition-colors placeholder:text-white/[0.06] text-white" 
-                :placeholder="t('studio.entry_name_placeholder')" 
+                :placeholder="t('studio.entry_name_placeholder')"
               />
             </div>
             
@@ -219,7 +273,7 @@ const handleUpload = async () => {
               <textarea 
                 v-model="description" 
                 rows="6" 
-                class="w-full bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-sm focus:outline-none focus:border-white/25 focus:bg-white/[0.05] transition-all placeholder:text-white/15 leading-relaxed resize-none text-white font-sans" 
+                class="w-full bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-sm focus:outline-none focus:border-white/25 focus:bg-white/[0.05] transition-all placeholder:text-white/15 leading-relaxed resize-none text-white font-sans"
                 :placeholder="t('studio.description_placeholder')"
               ></textarea>
             </div>
@@ -259,7 +313,7 @@ const handleUpload = async () => {
           
           <button 
             type="submit" 
-            :disabled="processing || uploading || !videoFile || !title" 
+            :disabled="processing || uploading || !videoFile || !title"
             class="btn-primary w-full py-6 text-sm font-black tracking-[0.4em] uppercase group"
           >
             <span v-if="!processing && !uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">
