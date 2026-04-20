@@ -31,7 +31,7 @@ const isActive = (link: string) => {
 
 <template>
   <aside
-    class="fixed left-0 top-0 h-screen z-40 flex flex-col overflow-hidden
+    class="hidden md:flex fixed left-0 top-0 h-screen z-40 flex flex-col overflow-hidden
            bg-[#050505] border-r border-white/[0.05] select-none
            w-[72px] hover:w-60 transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
   >
@@ -51,7 +51,7 @@ const isActive = (link: string) => {
                   transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
                   [aside:hover_&]:opacity-100 [aside:hover_&]:w-28">
         <div class="text-[13px] font-brand font-black tracking-[0.25em] text-white italic">NEWTUBE</div>
-        <div class="text-[6px] font-black tracking-[0.5em] text-white/20 uppercase">ELITE</div>
+
       </div>
     </NuxtLink>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Premium Video Skeleton with refined shimmer and 2026 Elite aesthetics
+// Video Skeleton
 </script>
 
 <template>

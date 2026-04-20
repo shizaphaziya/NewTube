@@ -5,7 +5,7 @@
 </template>
 
 <style>
-/* View Transition API — cinematic navigation */
+/* View Transition API — navigation */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.4s;

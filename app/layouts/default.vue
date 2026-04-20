@@ -9,10 +9,13 @@ onMounted(() => fetchProfile())
     <Sidebar />
 
     <!-- Right side: topbar + main content -->
-    <div class="flex-1 flex flex-col min-w-0 pl-[72px] transition-[padding-left] duration-500">
+    <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
       <!-- Top Bar -->
-      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-6 px-8
+      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-4 md:gap-6 px-4 md:px-8
                      bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
+        <!-- Mobile Logo -->
+        <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
+
         <!-- Search -->
         <div class="flex-1 max-w-md">
           <label class="relative flex items-center group">
@@ -22,7 +25,7 @@ onMounted(() => fetchProfile())
               type="search"
               :placeholder="$t('nav.search') || 'Search...'"
               class="w-full bg-white/[0.04] border border-white/[0.07]
-                     rounded-xl pl-10 pr-4 py-2.5
+                     rounded-xl pl-10 pr-2 md:pr-4 py-2 md:py-2.5
                      text-white text-sm font-sans placeholder:text-white/20
                      focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.06]
                      transition-all duration-200"
@@ -53,8 +56,29 @@ onMounted(() => fetchProfile())
         <slot />
       </main>
 
+
+      <!-- Mobile Navigation -->
+      <nav class="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#050505]/95 backdrop-blur-xl border-t border-white/[0.05] z-50 items-center justify-around px-2">
+        <NuxtLink to="/" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
+          <div class="i-ph-house-line-bold text-xl"></div>
+          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.home') || 'Home' }}</span>
+        </NuxtLink>
+        <NuxtLink to="/?feed=trending" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
+          <div class="i-ph-fire-bold text-xl"></div>
+          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('home.trending') || 'Trending' }}</span>
+        </NuxtLink>
+        <NuxtLink to="/studio" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
+          <div class="i-ph-circles-four-bold text-xl"></div>
+          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.studio') || 'Studio' }}</span>
+        </NuxtLink>
+        <NuxtLink v-if="isAdmin" to="/admin" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/40 hover:text-white transition-colors">
+          <div class="i-ph-shield-checkered-bold text-xl"></div>
+          <span class="text-[9px] font-bold uppercase tracking-widest">{{ $t('nav.admin') || 'Admin' }}</span>
+        </NuxtLink>
+      </nav>
+
       <!-- Footer -->
-      <footer class="h-16 border-t border-white/[0.04] flex items-center justify-between px-8">
+      <footer class="hidden md:flex h-16 border-t border-white/[0.04] items-center justify-between px-8">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-lg bg-white flex items-center justify-center">
             <div class="i-ph-play-fill text-black text-xs translate-x-px"></div>
@@ -62,7 +86,7 @@ onMounted(() => fetchProfile())
           <span class="text-[10px] font-brand font-black tracking-[0.3em] uppercase text-white/40">NEWTUBE</span>
         </div>
         <div class="text-[9px] font-black tracking-[0.5em] uppercase text-white/10">
-          &copy; {{ new Date().getFullYear() }} • ELITE 2026
+          &copy; {{ new Date().getFullYear() }} • NewTube
         </div>
       </footer>
     </div>
