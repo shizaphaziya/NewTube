@@ -108,7 +108,7 @@ watchEffect(() => {
                     <div class="w-20 aspect-video rounded-lg overflow-hidden bg-void-card border border-white/5">
                       <img v-if="video.thumbnail_url" :src="video.thumbnail_url" class="w-full h-full object-cover" />
                       <video v-else-if="video.video_url" :src="video.video_url + '#t=0.5'" class="w-full h-full object-cover" muted preload="metadata"></video>
-                      <img v-else src="/video-placeholder.png" class="w-full h-full object-cover opacity-20" />
+                      <div v-else class="w-full h-full flex items-center justify-center opacity-20 bg-white/5"><div class="i-ph-video-camera-bold text-2xl text-white"></div></div>
                     </div>
                     <div class="space-y-1">
                       <div class="text-xs font-bold text-white group-hover:text-white transition-colors">{{ video.title }}</div>
