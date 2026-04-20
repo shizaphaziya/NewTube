@@ -11,15 +11,28 @@ const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
 
-const { data: videos, refresh } = await useAsyncData('user-videos', async () => {
-  if (!user.value) return []
-  const { data } = await supabase
+const { data: videos, refresh, error: asyncError } = await useAsyncData('user-videos', async () => {
+  const { data: { user: authUser } } = await supabase.auth.getUser()
+  const userId = user.value?.id || authUser?.id
+  if (!userId) return []
+  
+  const { data, error } = await supabase
     .from('videos')
-    .select('*, likes(count), comments(count)')
-    .eq('user_id', user.value.id)
+    .select('*')
+    .eq('user_id', userId)
     .order('created_at', { ascending: false })
-  return (data || []) as VideoWithCounts[]
-})
+    
+  if (error) {
+    console.error('[Studio] Fetch error:', error)
+    throw error
+  }
+  return (data || []) as unknown as VideoWithCounts[]
+}, { watch: [user], server: false })
+
+if (asyncError.value) {
+  console.error('[Studio] useAsyncData error:', asyncError.value)
+}
+
 
 const stats = computed(() => {
   if (!videos.value) return { views: 0, videos: 0, engagement: 0 }
@@ -141,8 +154,19 @@ const deleteVideo = async (id: string) => {
                 :src="video.thumbnail_url"
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
               />
-              <div v-else class="w-full h-full flex items-center justify-center">
-                <div class="i-ph-video-camera-bold text-white/10 text-3xl"></div>
+              <video
+                v-else-if="video.video_url"
+                crossorigin="anonymous"
+                :src="video.video_url + '#t=0.5'"
+                class="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-all duration-700"
+                muted
+                preload="metadata"
+              ></video>
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center bg-white/[0.04] opacity-10"
+              >
+                  <div class="i-ph-film-strip-bold text-4xl text-white"></div>
               </div>
             </div>
 
@@ -164,7 +188,7 @@ const deleteVideo = async (id: string) => {
               <div class="flex items-center gap-4 text-[9px] font-bold text-white/20 uppercase tracking-widest">
                 <span>{{ (video.view_count || 0).toLocaleString() }} {{ t('studio.impressions') }}</span>
                 <span class="w-px h-3 bg-white/10"></span>
-                <span>{{ new Date(video.created_at).toLocaleDateString() }}</span>
+                <span>{{ video.created_at ? new Date(video.created_at).toLocaleDateString() : '—' }}</span>
               </div>
             </div>
 

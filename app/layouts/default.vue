@@ -1,6 +1,5 @@
 <script setup lang="ts">
-const { isAdmin, fetchProfile } = useProfile()
-onMounted(() => fetchProfile())
+const { isAdmin } = useProfile()
 </script>
 
 <template>

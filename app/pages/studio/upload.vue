@@ -30,6 +30,45 @@ const onVideoSelect = (e: Event) => {
 const handleUpload = async () => {
   if (!videoFile.value || !user.value) return
   
+  const generateThumbnail = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      video.muted = true
+      video.playsInline = true
+      const url = URL.createObjectURL(file)
+      video.src = url
+
+      video.addEventListener('loadedmetadata', () => {
+        video.currentTime = Math.min(1.5, video.duration / 2 || 0)
+      })
+
+      video.addEventListener('seeked', () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth || 1280
+        canvas.height = video.videoHeight || 720
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url)
+            if (blob) resolve(blob)
+            else reject(new Error('Could not create thumbnail blob'))
+          }, 'image/jpeg', 0.85)
+        } else {
+          URL.revokeObjectURL(url)
+          reject(new Error('Could not get canvas context'))
+        }
+      })
+
+      video.addEventListener('error', (e) => {
+        URL.revokeObjectURL(url)
+        reject(e)
+      })
+    })
+  }
+
+
   // Auto-title logic
   const finalTitle = title.value.trim() || new Date().toLocaleString()
   
@@ -57,18 +96,26 @@ const handleUpload = async () => {
     if (vError) throw vError
     uploadProgress.value = 50
 
-    // 2. Upload Thumbnail (Optional)
+    // 2. Upload Thumbnail
     let thumbnailUrl = ''
-    let thumbnailFile: File | null = thumbFile.value
+    let thumbnailBlob: Blob | File | null = thumbFile.value
 
-    if (thumbnailFile) {
-      const thumbExt = thumbnailFile.name.split('.').pop() || 'jpg'
+    if (!thumbnailBlob && videoFile.value) {
+      try {
+        thumbnailBlob = await generateThumbnail(videoFile.value)
+      } catch (e) {
+        console.warn('Failed to generate automatic thumbnail:', e)
+      }
+    }
+
+    if (thumbnailBlob) {
+      const thumbExt = thumbnailBlob instanceof File ? (thumbnailBlob.name.split('.').pop() || 'jpg') : 'jpg'
       const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
       
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, thumbnailFile, {
-          contentType: thumbnailFile.type || 'image/jpeg'
+        .upload(thumbPath, thumbnailBlob, {
+          contentType: thumbnailBlob.type || 'image/jpeg'
         })
       
       if (!tError) {

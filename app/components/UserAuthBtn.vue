@@ -3,7 +3,7 @@ import type { Database } from '~/types/database.types'
 
 const user = useSupabaseUser()
 const client = useSupabaseClient<Database>()
-const { profile } = useProfile()
+const { profile, isAdmin } = useProfile()
 
 const logout = async () => {
   await client.auth.signOut()
@@ -25,7 +25,7 @@ const logout = async () => {
           {{ profile?.display_name || user.email?.split('@')[0] }}
         </div>
         <div class="text-[9px] text-white/30 tracking-[0.2em] uppercase font-brand mt-0.5">
-          {{ profile?.role === 'admin' ? $t('admin.role_admin') : $t('admin.role_user') }}
+          {{ isAdmin ? $t('admin.role_admin') : $t('admin.role_user') }}
         </div>
       </div>
     </NuxtLink>

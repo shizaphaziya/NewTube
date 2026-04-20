@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { profile, updateProfile } = useProfile()
 import type { Database } from '~/types/database.types'
 
+const { profile, updateProfile } = useProfile()
 const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const { t } = useI18n()
@@ -12,6 +12,7 @@ const loading = ref(false)
 const success = ref(false)
 const avatarInput = ref<HTMLInputElement | null>(null)
 
+// Sync form with profile data, but don't overwrite if user is typing
 watch(profile, (p) => {
   if (p) {
     displayName.value = p.display_name || ''
@@ -19,63 +20,96 @@ watch(profile, (p) => {
   }
 }, { immediate: true })
 
-const handleSave = async () => {
-  loading.value = true
-  success.value = false
-  
-  const { error } = await updateProfile({
-    display_name: displayName.value,
-    avatar_url: avatarUrl.value
-  })
-
-  if (!error) {
-    success.value = true
-    setTimeout(() => { success.value = false }, 3000)
-  } else {
-    alert(error.message)
-  }
-  
-  loading.value = false
-}
-
 const onAvatarSelect = async (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
-  if (!file || !user.value) return
+  if (!file) return
 
-  const fileExt = file.name.split('.').pop()
-  const filePath = `${user.value.id}/avatar.${fileExt}`
+  loading.value = true
+  try {
+    // Stage 1: Get/Verify user
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+    if (authError || !authUser) throw new Error('Authentication lost. Please log in again.')
 
-  const { error: uploadError } = await supabase.storage
-    .from('thumbnails') // Using thumbnails bucket for avatars too for simplicity
-    .upload(filePath, file, { upsert: true })
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${authUser.id}/avatar.${fileExt}`
 
-  if (uploadError) {
-    alert(uploadError.message)
-    return
+    // Upload to avatars bucket (as defined in RLS)
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) throw uploadError
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
+    // Add cache buster for immediate visual feedback
+    avatarUrl.value = `${data.publicUrl}?t=${Date.now()}`
+  } catch (e: any) {
+    alert(e.message || 'Avatar upload failed')
+  } finally {
+    loading.value = false
   }
+}
 
-  const { data } = supabase.storage.from('thumbnails').getPublicUrl(filePath)
-  avatarUrl.value = data.publicUrl
+const handleSave = async () => {
+  if (loading.value) return
+  
+  loading.value = true
+  success.value = false
+  
+  try {
+    const { error, data } = await updateProfile({
+      display_name: displayName.value,
+      avatar_url: avatarUrl.value
+    })
+
+    if (!error) {
+      success.value = true
+      // Force sync local refs
+      if (data) {
+        displayName.value = data.display_name || ''
+        avatarUrl.value = data.avatar_url || ''
+      }
+      setTimeout(() => {
+        success.value = false
+      }, 3000)
+    } else {
+      throw error
+    }
+  } catch (e: any) {
+    alert((t('profile.update_failed') || 'Failed to update profile') + ': ' + (e.message || e))
+  } finally {
+    loading.value = false
+  }
 }
 
 const isDeleteConfirmOpen = ref(false)
 const deleteLoading = ref(false)
 
 const handleDeleteAccount = async () => {
+  if (deleteLoading.value) return
   deleteLoading.value = true
-  const { error } = await supabase
-    .from('profiles')
-    .update({ deleted_at: new Date().toISOString() })
-    .eq('id', user.value?.id)
   
-  if (!error) {
-    await supabase.auth.signOut()
-    navigateTo('/')
-  } else {
-    alert(error.message)
+  try {
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) throw new Error('Auth session lost')
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', authUser.id)
+    
+    if (!error) {
+      await supabase.auth.signOut()
+      navigateTo('/')
+    } else {
+      throw error
+    }
+  } catch (e: any) {
+    alert(e.message || 'Deletion failed')
+  } finally {
+    deleteLoading.value = false
   }
-  deleteLoading.value = false
 }
 </script>
 

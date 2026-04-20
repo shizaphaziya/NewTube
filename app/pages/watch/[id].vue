@@ -232,7 +232,7 @@ const showGuestHint = (target: string) => {
                 crossorigin="anonymous"
                 :src="video.video_url"
                 class="w-full h-full object-contain" controls
-                :poster="video.thumbnail_url || undefined"
+                :poster="video.thumbnail_url || (video.video_url + '#t=0.5')"
                 :style="{ viewTransitionName: `video-thumb-${video.id}` }"
               ></video>
               

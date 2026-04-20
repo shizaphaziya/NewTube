@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const route = useRoute()
+const { isAdmin } = useProfile()
 
 // Correctly mapped i18n keys
 const navItems = [
@@ -20,8 +21,7 @@ const adminItems = [
   { icon: 'i-ph-users-four-bold', label: t('nav.users') || 'Users', link: '/admin/users' },
 ]
 
-const { profile } = useProfile()
-const isAdminUser = computed(() => profile.value?.role === 'admin')
+
 
 const isActive = (link: string) => {
   const [path, query] = link.split('?')
@@ -131,7 +131,7 @@ const isActive = (link: string) => {
       </template>
 
       <!-- Admin Section -->
-      <template v-if="isAdminUser">
+      <template v-if="isAdmin">
         <div class="my-3 mx-3 h-px bg-white/[0.05]"></div>
         <div class="px-3 mb-1 overflow-hidden whitespace-nowrap
                     h-0 opacity-0
