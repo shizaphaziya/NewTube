@@ -18,8 +18,18 @@ const { data: likesCount, refresh: refreshLikes } = await useAsyncData(`likes-${
     .from('likes')
     .select('*', { count: 'exact', head: true })
     .eq('video_id', route.params.id)
+    .eq('is_dislike', false)
   return count || 0
 })
+const { data: dislikesCount, refresh: refreshDislikes } = await useAsyncData(`dislikes-${route.params.id}`, async () => {
+  const { count } = await supabase
+    .from('likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('video_id', route.params.id)
+    .eq('is_dislike', true)
+  return count || 0
+})
+
 
 const hasLiked = ref(false)
 const checkLike = async () => {
@@ -134,7 +144,7 @@ const postComment = async () => {
         <!-- Layout Switcher Wrapper -->
         <div 
           class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16"
-          :class="{ 'flex flex-col items-center': isCinemaMode }"
+          :class="{ 'flex flex-col items-center': isCinemaMode, 'blur-xl pointer-events-none opacity-50': video && video.is_18_plus && !agreedTo18Plus }"
         >
           <!-- Left Column: Player & Info -->
           <div 
@@ -207,6 +217,14 @@ const postComment = async () => {
                 >
                   <div :class="hasLiked ? 'i-ph-heart-fill' : 'i-ph-heart-bold'" class="text-lg"></div>
                   {{ likesCount }}
+                </button>
+                <button
+                  @click="toggleDislike"
+                  class="flex items-center gap-3 px-6 md:px-8 py-3 rounded-full border border-white/5 transition-all font-bold text-xs tracking-widest uppercase"
+                  :class="hasDisliked ? 'bg-white text-black' : 'bg-white/5 hover:bg-white/10 text-white/60'"
+                >
+                  <div :class="hasDisliked ? 'i-ph-thumbs-down-fill' : 'i-ph-thumbs-down-bold'" class="text-lg"></div>
+                  {{ dislikesCount }}
                 </button>
                 <button class="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/5 text-white/40 hover:text-white transition-all">
                   <div class="i-ph-share-network-bold text-lg"></div>
@@ -318,4 +336,5 @@ const postComment = async () => {
       </div>
     </div>
   </div>
+</div>
 </template>

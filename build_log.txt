@@ -1,8 +1,0 @@
-﻿
-> NewTube@ build C:\Users\ineed\PhpstormProjects\NewTube
-> nuxt build
-
-T  [36mBuilding Nuxt for production...[39m
-|
-тАв  [32mNuxt [1m4.4.2[22m[39m[90m (with [39m[90mNitro [1m2.13.3[22m[39m[90m, Vite [1m7.3.2[22m[39m[90m and Vue [1m3.5.32[22m[39m[90m)[39m
-тАЙELIFECYCLEтАЙ Command failed with exit code 1.
