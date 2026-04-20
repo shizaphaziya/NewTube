@@ -6,11 +6,17 @@ const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const { t } = useI18n()
 
+useSeoMeta({
+  title: () => `${t('profile.settings')} - NewTube`,
+  description: t('profile.avatar_note')
+})
+
 const displayName = ref('')
 const avatarUrl = ref('')
 const loading = ref(false)
 const success = ref(false)
 const avatarInput = ref<HTMLInputElement | null>(null)
+
 
 // Sync form with profile data, but don't overwrite if user is typing
 watch(profile, (p) => {
@@ -119,13 +125,13 @@ const handleDeleteAccount = async () => {
       <!-- Background Glow -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-white/[0.02] blur-[60px] rounded-full pointer-events-none"></div>
 
-      <div class="flex items-center gap-6 mb-12">
+        <div class="flex items-center gap-6 mb-12">
         <div class="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/40">
           <div class="i-ph-user-gear-bold text-2xl"></div>
         </div>
         <div>
-          <h1 class="text-2xl font-black font-brand tracking-tighter text-white uppercase">{{ t('profile.settings') || 'Settings' }}</h1>
-          <p class="text-[9px] text-white/20 font-black uppercase tracking-[0.4em] mt-1">{{ t('profile.identity_management') || 'Identity Management' }}</p>
+          <h1 class="text-2xl font-black font-brand tracking-tighter text-white uppercase">{{ t('profile.settings') }}</h1>
+          <p class="text-[9px] text-white/20 font-black uppercase tracking-[0.4em] mt-1">{{ t('profile.identity_management') }}</p>
         </div>
       </div>
 
@@ -147,29 +153,29 @@ const handleDeleteAccount = async () => {
             <input ref="avatarInput" type="file" hidden accept="image/*" @change="onAvatarSelect" />
           </div>
           <div class="space-y-2 text-center sm:text-left">
-            <h3 class="text-xs font-black text-white/60 uppercase tracking-widest">{{ t('profile.profile_picture') || 'Profile Picture' }}</h3>
-            <p class="text-[10px] text-white/20 font-bold leading-relaxed max-w-[200px] uppercase tracking-widest">{{ t('profile.avatar_note') || 'A custom identity across the network.' }}</p>
+            <h3 class="text-xs font-black text-white/60 uppercase tracking-widest">{{ t('profile.profile_picture') }}</h3>
+            <p class="text-[10px] text-white/20 font-bold leading-relaxed max-w-[200px] uppercase tracking-widest">{{ t('profile.avatar_note') }}</p>
           </div>
         </div>
 
         <!-- Inputs -->
         <div class="space-y-8">
           <div class="space-y-3 group">
-            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 group-focus-within:text-silver transition-colors">{{ t('profile.display_name') || 'Display Name' }}</label>
+            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1 group-focus-within:text-silver transition-colors">{{ t('profile.display_name') }}</label>
             <input 
               v-model="displayName"
               type="text"
               class="w-full bg-transparent border-b-2 border-white/[0.08] py-4 text-xl font-brand font-black tracking-tight focus:outline-none focus:border-white/40 transition-colors placeholder:text-white/[0.06] text-white" 
-              placeholder="Your Alias" 
+              :placeholder="t('auth.join_community')" 
             />
           </div>
 
           <div class="space-y-3">
-             <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('auth.email') || 'Account Email' }}</label>
+             <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('auth.email') }}</label>
              <div class="w-full bg-white/[0.02] border border-white/5 rounded-xl p-5 text-sm text-white/20 font-bold tracking-widest">
                {{ user?.email }}
              </div>
-             <p class="text-[8px] text-white/10 font-bold uppercase tracking-widest ml-1">{{ t('profile.email_locked') || 'Contact support to change verified email.' }}</p>
+             <p class="text-[8px] text-white/10 font-bold uppercase tracking-widest ml-1">{{ t('profile.email_locked') }}</p>
           </div>
         </div>
 
@@ -180,13 +186,13 @@ const handleDeleteAccount = async () => {
             :disabled="loading"
             class="btn-primary w-full py-6 text-xs font-black tracking-[0.4em] uppercase group flex items-center justify-center gap-4"
           >
-            <span v-if="!loading">{{ t('profile.save_changes') || 'Update Profile' }}</span>
+            <span v-if="!loading">{{ t('profile.save_changes') }}</span>
             <div v-if="!loading" class="i-ph-arrow-right-bold group-hover:translate-x-1 transition-transform"></div>
             <div v-else class="i-ph-circle-notch-bold animate-spin text-xl"></div>
           </button>
           
           <div v-if="success" v-motion-pop-in class="mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em] text-center">
-            {{ t('profile.update_success') || 'Database update complete.' }}
+            {{ t('profile.update_success') }}
           </div>
         </div>
 
@@ -199,15 +205,15 @@ const handleDeleteAccount = async () => {
               @click="isDeleteConfirmOpen = true"
               class="w-full py-4 rounded-xl border border-red-500/10 text-red-500/30 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500/5 hover:border-red-500/20 hover:text-red-500 transition-all text-center"
             >
-              {{ t('profile.delete_account') || 'Initiate Account Termination' }}
+              {{ t('profile.delete_account') }}
             </button>
           </div>
           
           <div v-else v-motion-pop-in class="bg-red-500/5 border border-red-500/20 rounded-xl p-8 text-center space-y-6">
             <div class="i-ph-warning-octagon-bold text-red-500 text-3xl mx-auto"></div>
             <div>
-              <p class="text-xs font-black text-white uppercase tracking-tight">{{ t('profile.confirm_deletion') || 'Irreversible Action' }}</p>
-              <p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mt-2">{{ t('profile.delete_warning') || 'Your profile and content will be hidden from the network.' }}</p>
+              <p class="text-xs font-black text-white uppercase tracking-tight">{{ t('profile.confirm_deletion') }}</p>
+              <p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mt-2">{{ t('profile.delete_warning') }}</p>
             </div>
             <div class="flex gap-4">
               <button 
@@ -215,7 +221,7 @@ const handleDeleteAccount = async () => {
                 @click="isDeleteConfirmOpen = false"
                 class="flex-1 py-4 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-white/40 hover:bg-white/10 transition-all"
               >
-                {{ t('common.cancel') || 'Abort' }}
+                {{ t('common.cancel') }}
               </button>
               <button 
                 type="button"
@@ -223,13 +229,14 @@ const handleDeleteAccount = async () => {
                 :disabled="deleteLoading"
                 class="flex-1 py-4 rounded-xl bg-red-500 text-void text-[9px] font-black uppercase tracking-widest hover:bg-red-400 transition-all disabled:opacity-50"
               >
-                <span v-if="!deleteLoading">{{ t('profile.confirm_delete') || 'Terminate' }}</span>
+                <span v-if="!deleteLoading">{{ t('profile.confirm_delete') }}</span>
                 <div v-else class="i-ph-circle-notch-bold animate-spin mx-auto"></div>
               </button>
             </div>
           </div>
         </div>
       </form>
+
     </div>
   </div>
 </template>

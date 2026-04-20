@@ -10,43 +10,73 @@ const feeds = [
 const activeFeed = ref('trending')
 
 useSeoMeta({
-  title: 'NewTube',
-  description: 'Discover the best videos on NewTube, the next-generation video platform.'
+  title: t('seo.title') || 'NewTube - Premium Video Signal',
+  description: t('seo.description') || 'Curated signals. High fidelity. Zero noise.'
 })
 </script>
 
 <template>
   <div class="min-h-screen">
-    <!-- Page header bar -->
-    <div class="px-4 md:px-8 pt-4 md:pt-8 pb-4 md:pb-6 flex flex-col md:flex-row md:items-center items-start gap-4 md:gap-6 border-b border-white/[0.04]">
-      <!-- Feed tabs -->
-      <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none w-full">
-        <button
-          v-for="feed in feeds"
-          :key="feed.key"
-          @click="activeFeed = feed.key"
-          class="flex items-center gap-2 px-4 py-2 rounded-xl font-brand font-bold text-[10px]
-                 uppercase tracking-[0.18em] transition-all duration-250 whitespace-nowrap"
-          :class="activeFeed === feed.key
-            ? 'bg-white text-black'
-            : 'text-white/35 hover:text-white/70 hover:bg-white/[0.05]'"
+    <!-- Main Content -->
+    <main class="flex-1 layout-container py-12">
+      <!-- Premium Feed Tabs / Category Swiper -->
+      <div 
+        v-motion
+        :initial="{ opacity: 0, y: -20 }"
+        :enter="{ opacity: 1, y: 0, transition: { duration: 800, delay: 200 } }"
+        class="flex items-center gap-3 mb-16 overflow-x-auto pb-4 scrollbar-none"
+      >
+        <button 
+          v-for="cat in [
+            { key: 'all', label: t('categories.all') },
+            { key: 'music', label: t('categories.music') },
+            { key: 'cinema', label: t('categories.cinema') },
+            { key: 'gaming', label: t('categories.gaming') },
+            { key: 'tech', label: t('categories.tech') },
+            { key: 'art', label: t('categories.art') },
+            { key: 'nature', label: t('categories.nature') }
+          ]"
+          :key="cat.key"
+          class="px-8 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-[10px] font-black uppercase tracking-[0.2em] 
+                 transition-all hover:(bg-white/10 border-white/20 scale-105) active:scale-95 whitespace-nowrap"
+          :class="{ 'bg-white !text-black border-white shadow-[0_0_30px_rgba(255,255,255,0.15)]': cat.key === 'all' }"
         >
-          <div :class="feed.icon" class="text-sm shrink-0"></div>
-          <span>{{ feed.label }}</span>
+          {{ cat.label }}
         </button>
       </div>
+
+      <!-- Hero / Feature Header (Optional, but adds WOW) -->
+      <div 
+        v-motion
+        :initial="{ opacity: 0, scale: 0.95 }"
+        :enter="{ opacity: 1, scale: 1, transition: { duration: 1000, ease: 'easeOut' } }"
+        class="mb-20 h-[300px] rounded-[3rem] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.05] p-16 flex flex-col justify-center relative overflow-hidden"
+      >
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] pointer-events-none"></div>
+        <div class="max-w-2xl relative z-10">
+          <h1 class="text-5xl font-brand font-black italic tracking-tighter mb-6 text-gradient">DISCOVER THE VOID</h1>
+          <p class="text-white/30 text-sm font-bold tracking-widest uppercase leading-loose">Curated signals. High fidelity. Zero noise.</p>
+        </div>
+      </div>
+
+      <!-- Content will be managed by InfiniteVideoGrid below -->
 
       <!-- Spacer -->
       <div class="flex-1"></div>
 
       <!-- Count badge — will be populated when videos load -->
       <div class="hidden md:block text-[9px] font-black tracking-[0.4em] uppercase text-white/10">
-        NewTube
+        {{ t('seo.title') }}
       </div>
-    </div>
+    </main>
 
-    <!-- Video Grid -->
-    <div class="px-2 sm:px-4 md:px-8 py-4 md:py-8">
+    <!-- Global Infinite Feed -->
+    <div class="layout-container pb-24">
+      <div class="flex items-center gap-4 mb-12">
+        <div class="w-12 h-px bg-white/10"></div>
+        <h2 class="text-[11px] font-black uppercase tracking-[0.4em] text-white/20 italic">The Infinite Stream</h2>
+        <div class="flex-1 h-px bg-white/5"></div>
+      </div>
       <InfiniteVideoGrid />
     </div>
   </div>

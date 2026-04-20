@@ -2,11 +2,13 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
 
-  css: ['~/assets/css/main.css'],
-
   future: {
     compatibilityVersion: 4,
   },
+
+  srcDir: 'app',
+
+  css: ['~/assets/css/main.css'],
 
   modules: [
     '@nuxtjs/supabase',
@@ -16,6 +18,18 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
 
+  // i18n configuration (Nuxt 4 / v10 standards)
+  i18n: {
+    locales: [
+      { code: 'ru', language: 'ru-RU', name: 'Русский', file: 'ru.json' },
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' }
+    ],
+    defaultLocale: 'ru',
+    langDir: 'locales',
+    strategy: 'no_prefix',
+    vueI18n: './i18n.config.ts'
+  },
+
   // Supabase integration via official module
   supabase: {
     redirectOptions: {
@@ -23,17 +37,6 @@ export default defineNuxtConfig({
       callback: '/auth/confirm',
       exclude: ['/', '/watch/*', '/api/*'],
     }
-  },
-
-  // i18n configuration for RU (default) and EN
-  i18n: {
-    locales: [
-      { code: 'ru', file: 'ru.json', name: 'Русский' },
-      { code: 'en', file: 'en.json', name: 'English' }
-    ],
-    defaultLocale: 'ru',
-    lazy: true,
-    langDir: '../i18n/locales/'
   },
 
   // Motion One configuration
@@ -46,16 +49,9 @@ export default defineNuxtConfig({
     }
   },
 
-  // Required for ffmpeg.wasm
+  // Nitro configuration
   nitro: {
-    routeRules: {
-      '/**': {
-        headers: {
-          'Cross-Origin-Embedder-Policy': 'unsafe-none',
-          'Cross-Origin-Opener-Policy': 'unsafe-none',
-        }
-      }
-    }
+    // Standard Nitro config
   },
 
   devServer: {

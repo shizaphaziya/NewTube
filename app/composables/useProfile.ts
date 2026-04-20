@@ -6,14 +6,12 @@ export const useProfile = () => {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
   
-  // Shared state across all instances of useProfile
   const profile = useState<Profile | null>('user-profile-v6', () => null)
   const loading = useState('user-profile-loading-v6', () => false)
 
   const fetchProfile = async (uid?: string) => {
     const userId = uid || user.value?.id
     if (!userId) {
-      console.log('[useProfile] No userId for fetch')
       profile.value = null
       return
     }
@@ -22,7 +20,6 @@ export const useProfile = () => {
     loading.value = true
     
     try {
-      console.log('[useProfile] Fetching profile for:', userId)
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -30,11 +27,10 @@ export const useProfile = () => {
         .single()
 
       if (error) {
-        console.error('[useProfile] Fetch error:', error.message)
         profile.value = null
       } else {
-        console.log('[useProfile] Fetch success:', data?.display_name, data?.role)
         if (data) {
+          // Efficient avatar cache busting using updated_at timestamp
           if (data.avatar_url && data.avatar_url.includes('supabase.co')) {
             const timestamp = data.updated_at ? new Date(data.updated_at).getTime() : Date.now()
             const separator = data.avatar_url.includes('?') ? '&' : '?'
@@ -44,18 +40,16 @@ export const useProfile = () => {
         profile.value = data as Profile
       }
     } catch (e) {
-      console.error('[useProfile] Unexpected error:', e)
+      console.error('[Profile] Unexpected error:', e)
     } finally {
       loading.value = false
     }
   }
 
-  // Use onAuthStateChange for maximum reliability in SPA mode
+  // Auth state listener
   if (import.meta.client) {
     supabase.auth.onAuthStateChange((event, session) => {
-      console.log('[useProfile] Auth state changed:', event, session?.user?.id)
       if (session?.user) {
-        // If we don't have a profile or the ID changed, fetch it
         if (!profile.value || profile.value.id !== session.user.id) {
           fetchProfile(session.user.id)
         }
@@ -65,26 +59,20 @@ export const useProfile = () => {
     })
   }
 
-  // Also watch the Nuxt user ref just in case
+  // User ID watcher
   watch(() => user.value?.id, (newId) => {
     if (newId && (!profile.value || profile.value.id !== newId)) {
-      console.log('[useProfile] Nuxt User ID sync:', newId)
       fetchProfile(newId)
     }
   }, { immediate: true })
 
   const updateProfile = async (updates: Database['public']['Tables']['profiles']['Update']) => {
     try {
-      // Direct session check to avoid ref lag
       const { data: { session } } = await supabase.auth.getSession()
       const userId = session?.user?.id || user.value?.id
       
-      if (!userId) {
-         console.error('[useProfile] Update failed: No session detected')
-         throw new Error('Authentication required')
-      }
+      if (!userId) throw new Error('Authentication required')
 
-      console.log('[useProfile] Performing update for:', userId)
       const { data, error } = await supabase
         .from('profiles')
         .update({
@@ -96,12 +84,12 @@ export const useProfile = () => {
         .single()
       
       if (!error && data) {
-        console.log('[useProfile] Update successful')
-        profile.value = { ...data } as Profile
+        // Re-fetch to ensure all computed fields (like avatar_url with timestamp) are fresh
+        await fetchProfile(userId)
       }
       return { data, error }
     } catch (e: any) {
-      console.error('[useProfile] Update failed:', e)
+      console.error('[Profile] Update failed:', e)
       return { error: e }
     }
   }
@@ -119,3 +107,4 @@ export const useProfile = () => {
     isUser
   }
 }
+

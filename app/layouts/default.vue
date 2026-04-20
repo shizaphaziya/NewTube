@@ -3,15 +3,24 @@ const { isAdmin } = useProfile()
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#050505] text-white font-sans flex">
+  <div class="min-h-screen bg-[#050505] text-white font-sans flex relative overflow-hidden">
+    <!-- Immersive Background Layers -->
+    <div class="fixed inset-0 pointer-events-none">
+      <div class="absolute inset-x-0 -top-40 h-[1000px] bg-gradient-radial from-white/[0.03] to-transparent opacity-50 blur-[120px]"></div>
+      <div class="absolute -right-1/4 top-1/4 w-[800px] h-[800px] bg-white/[0.015] rounded-full blur-[160px] animate-float"></div>
+      <div class="absolute -left-1/4 bottom-1/4 w-[600px] h-[600px] bg-white/[0.01] rounded-full blur-[140px] animate-pulse"></div>
+      <!-- Subtle grain noise -->
+      <div class="absolute inset-0 opacity-[0.03] contrast-150 brightness-150 pointer-events-none mix-blend-screen bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+    </div>
+
     <!-- Sidebar -->
     <Sidebar />
 
     <!-- Right side: topbar + main content -->
-    <div class="flex-1 flex flex-col min-w-0 pl-0 md:pl-[72px] transition-[padding-left] duration-500 pb-24 md:pb-0">
+    <div class="flex-1 flex flex-col min-w-0 md:pl-[100px] transition-[padding-left] duration-1000 pb-24 md:pb-0 relative z-10">
       <!-- Top Bar -->
-      <header class="sticky top-0 z-30 h-[72px] flex items-center gap-4 md:gap-6 px-4 md:px-8
-                     bg-[#050505]/90 backdrop-blur-xl border-b border-white/[0.05]">
+      <header class="sticky top-0 z-40 h-[88px] flex items-center gap-4 md:gap-12 px-6 md:px-12
+                     bg-[#050505]/40 backdrop-blur-2xl border-b border-white/[0.05]">
         <!-- Mobile Logo -->
         <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-1 border-r border-white/5"><div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center"><div class="i-ph-play-fill text-black text-base translate-x-px"></div></div></NuxtLink>
 

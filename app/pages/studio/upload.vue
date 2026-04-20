@@ -1,71 +1,32 @@
 <script setup lang="ts">
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import { fetchFile, toBlobURL } from '@ffmpeg/util'
-
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { t } = useI18n()
+
+useSeoMeta({
+  title: () => `${t('studio.upload')} - NewTube`,
+  description: t('studio.broadcasting')
+})
 
 const title = ref('')
 const description = ref('')
 const videoFile = ref<File | null>(null)
 const thumbFile = ref<File | null>(null)
 
-const ffmpeg = new FFmpeg()
-const processing = ref(false)
-const processingProgress = ref(0)
 const uploading = ref(false)
 const uploadProgress = ref(0)
 const success = ref(false)
-
-const loadFFmpeg = async () => {
-  const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-  await ffmpeg.load({
-    coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-    wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-  })
-}
+const videoInput = ref<HTMLInputElement | null>(null)
+const thumbInput = ref<HTMLInputElement | null>(null)
 
 const onVideoSelect = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (file && file.size > 1073741824) { // 1GB limit
-    alert('File too large (max 1GB)')
+    alert(t('studio.file_too_large'))
     return
   }
   videoFile.value = file || null
-}
-
-const transcodeVideo = async (file: File) => {
-  if (!ffmpeg.loaded) await loadFFmpeg()
-  
-  processing.value = true
-  processingProgress.value = 0
-
-  ffmpeg.on('progress', ({ progress }) => {
-    processingProgress.value = Math.round(progress * 100)
-  })
-
-  const inputName = 'input' + file.name.substring(file.name.lastIndexOf('.'))
-  const outputName = 'output.mp4'
-
-  await ffmpeg.writeFile(inputName, await fetchFile(file))
-
-  // Compression: CRF 26 + Fast preset for balance
-  await ffmpeg.exec([
-    '-i', inputName,
-    '-c:v', 'libx264',
-    '-crf', '26',
-    '-preset', 'superfast',
-    '-c:a', 'aac',
-    '-b:a', '128k',
-    outputName
-  ])
-
-  const data = await ffmpeg.readFile(outputName)
-  processing.value = false
-
-  return new File([data], 'processed_' + file.name, { type: 'video/mp4' })
 }
 
 const handleUpload = async () => {
@@ -109,24 +70,20 @@ const handleUpload = async () => {
     })
   }
 
-
   // Auto-title logic
   const finalTitle = title.value.trim() || new Date().toLocaleString()
   
   try {
-    // Stage 1: Processing
-    const processedFile = await transcodeVideo(videoFile.value)
-
-    // Stage 2: Uploading
+    // Stage 1: Uploading
     uploading.value = true
     uploadProgress.value = 0
     
-    const videoExt = 'mp4'
-    const videoPath = `${user.value.id}/${Date.now()}.${videoExt}`
+    const fileExt = videoFile.value.name.split('.').pop() || 'mp4'
+    const videoPath = `${user.value.id}/${Date.now()}.${fileExt}`
     
     const { data: vData, error: vError } = await supabase.storage
       .from('videos')
-      .upload(videoPath, processedFile, {
+      .upload(videoPath, videoFile.value, {
         cacheControl: '3600',
         upsert: false
       })
@@ -148,7 +105,7 @@ const handleUpload = async () => {
 
     if (thumbnailBlob) {
       const thumbExt = thumbnailBlob instanceof File ? (thumbnailBlob.name.split('.').pop() || 'jpg') : 'jpg'
-      const thumbPath = `${userId}/${Date.now()}.${thumbExt}`
+      const thumbPath = `${user.value.id}/${Date.now()}.${thumbExt}`
       
       const { data: tData, error: tError } = await supabase.storage
         .from('thumbnails')
@@ -186,7 +143,6 @@ const handleUpload = async () => {
     console.error(e)
   } finally {
     uploading.value = false
-    processing.value = false
   }
 }
 </script>
@@ -226,7 +182,7 @@ const handleUpload = async () => {
                 class="relative h-64 rounded-2xl border-2 border-dashed border-white/[0.08]
                        bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20
                        transition-all duration-300 flex flex-col items-center justify-center cursor-pointer group"
-                @click="$refs.videoInput.click()"
+                @click="videoInput?.click()"
               >
                 <div v-if="!videoFile" class="text-center group-hover:scale-105 transition-transform duration-500">
                   <div class="i-ph-video-bold text-5xl text-white/5 mb-4 group-hover:text-white/20 transition-colors"></div>
@@ -243,7 +199,7 @@ const handleUpload = async () => {
 
             <div class="space-y-4">
               <label class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 ml-1">{{ t('studio.cover_artwork') }}</label>
-              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-colors cursor-pointer" @click="$refs.thumbInput.click()">
+              <div class="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-white/10 transition-colors cursor-pointer" @click="thumbInput?.click()">
                 <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-white/20 group-hover:text-white/40 transition-colors">
                   <div class="i-ph-image-bold text-2xl"></div>
                 </div>
@@ -283,20 +239,6 @@ const handleUpload = async () => {
 
         <!-- Progress/Action -->
         <div class="pt-12 border-t border-white/5">
-          <!-- Processing State (FFmpeg) -->
-          <div v-if="processing" class="space-y-6 mb-12" v-motion-fade>
-             <div class="flex justify-between items-end">
-               <div class="space-y-1">
-                 <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/60 animate-pulse">{{ t('studio.optimizing') }}</p>
-                 <p class="text-[9px] text-white/20 uppercase font-black">{{ t('studio.ffmpeg_note') }}</p>
-               </div>
-               <span class="text-2xl font-brand font-black tracking-tighter text-white tabular-nums">{{ processingProgress }}%</span>
-             </div>
-             <div class="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-               <div class="h-full bg-white transition-all duration-300 ease-out" :style="{ width: `${processingProgress}%` }"></div>
-             </div>
-          </div>
-
           <!-- Uploading State (Supabase) -->
           <div v-if="uploading" class="space-y-6 mb-12" v-motion-fade>
              <div class="flex justify-between items-end">
@@ -313,15 +255,15 @@ const handleUpload = async () => {
           
           <button 
             type="submit" 
-            :disabled="processing || uploading || !videoFile || !title"
+            :disabled="uploading || !videoFile || !title"
             class="btn-primary w-full py-6 text-sm font-black tracking-[0.4em] uppercase group"
           >
-            <span v-if="!processing && !uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">
+            <span v-if="!uploading" class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.3em]">
               {{ t('studio.publish') }}
               <div class="i-ph-rocket-launch-bold group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300"></div>
             </span>
             <span v-else class="flex items-center justify-center gap-4 text-xs font-black tracking-[0.2em]">
-              {{ processing ? t('studio.processing') : t('studio.uploading') }}
+              {{ t('studio.uploading') }}
               <div class="i-ph-circle-notch-bold animate-spin"></div>
             </span>
           </button>

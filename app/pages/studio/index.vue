@@ -4,7 +4,13 @@ const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
 
+useSeoMeta({
+  title: () => `${t('studio.command_center')} - NewTube`,
+  description: t('studio.broadcasting')
+})
+
 const { data: videos, refresh, error: asyncError } = await useAsyncData('user-videos', async () => {
+
   const { data: { user: authUser } } = await supabase.auth.getUser()
   const userId = user.value?.id || authUser?.id
   if (!userId) return []
@@ -95,20 +101,21 @@ const deleteVideo = async (id) => {
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.total_impressions') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.views.toLocaleString() }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Views</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.total_impressions') }}</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.videos') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.videos }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Videos</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.videos') }}</div>
         </div>
         <div class="glass-card p-8 space-y-3 group hover:border-white/15 transition-all duration-500">
           <div class="text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('studio.engagement') }}</div>
           <div class="text-5xl font-brand font-black text-white tabular-nums">{{ stats.engagement }}</div>
           <div class="h-px bg-white/[0.04] mt-4"></div>
-          <div class="text-[9px] text-white/5 font-black tracking-widest">Total Engagement</div>
+          <div class="text-[9px] text-white/5 font-black tracking-widest">{{ t('studio.engagement') }}</div>
         </div>
+
       </div>
 
       <!-- Video Records -->

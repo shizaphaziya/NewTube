@@ -15,8 +15,12 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   display_name TEXT,
   avatar_url TEXT,
   role TEXT DEFAULT 'user' CHECK (role IN ('guest', 'user', 'admin')),
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'blocked')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
+
 
 -- Videos table
 CREATE TABLE IF NOT EXISTS public.videos (
@@ -28,16 +32,31 @@ CREATE TABLE IF NOT EXISTS public.videos (
   thumbnail_url TEXT,
   status TEXT DEFAULT 'published' CHECK (status IN ('published', 'hidden', 'blocked')),
   view_count BIGINT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  is_18_plus BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
 );
 
--- Likes table (Composite PK)
+
+-- Likes table (Combined Reactions)
 CREATE TABLE IF NOT EXISTS public.likes (
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   video_id UUID REFERENCES public.videos(id) ON DELETE CASCADE,
+  is_dislike BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (user_id, video_id)
 );
+
+-- Subscriptions table
+CREATE TABLE IF NOT EXISTS public.subscriptions (
+  subscriber_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  creator_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (subscriber_id, creator_id)
+);
+
 
 -- Comments table (Threaded)
 CREATE TABLE IF NOT EXISTS public.comments (
@@ -75,9 +94,14 @@ CREATE POLICY "Users can update their own videos (except status)" ON public.vide
 CREATE POLICY "Admins can do everything with videos" ON public.videos
   FOR ALL USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
--- Like Policies
 CREATE POLICY "Likes are viewable by everyone" ON public.likes FOR SELECT USING (true);
 CREATE POLICY "Users can manage their own likes" ON public.likes FOR ALL USING (auth.uid() = user_id);
+
+-- Subscription Policies
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Subscriptions are viewable by everyone" ON public.subscriptions FOR SELECT USING (true);
+CREATE POLICY "Users can manage their own subscriptions" ON public.subscriptions FOR ALL USING (auth.uid() = subscriber_id);
+
 
 -- Comment Policies
 CREATE POLICY "Comments are viewable by everyone" ON public.comments FOR SELECT USING (true);
