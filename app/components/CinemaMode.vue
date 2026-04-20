@@ -18,7 +18,7 @@ const emit = defineEmits(['update:active'])
     >
       <div 
         v-if="active" 
-        class="fixed inset-0 bg-void/90 backdrop-blur-3xl z-[45] pointer-events-auto"
+        class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[45] pointer-events-auto"
         @click="emit('update:active', false)"
       ></div>
     </Transition>

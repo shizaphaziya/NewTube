@@ -1,13 +1,8 @@
 {
-  "meta": {
-    "title": "Next-Gen Video Collective",
-    "description": "A premium decentralized-feeling video platform built for the next generation of creators."
-  },
   "nav": {
     "home": "Home",
     "studio": "Studio",
     "admin": "Admin",
-    "users": "Users",
     "login": "Login",
     "logout": "Logout",
     "upload": "Upload",
@@ -37,18 +32,7 @@
     "no_metadata": "No detailed metadata available.",
     "analytics_units": "views",
     "verified_user": "Verified User",
-    "comments_title": "Comments",
-    "auth_required": "Authentication Required",
-    "identify_yourself": "Identify Yourself",
-    "guest_hint_like": "Log In to React",
-    "guest_hint_dislike": "Log In to React",
-    "guest_hint_comment": "Log in to post a comment",
-    "transmission_locked": "Transmission Locked",
-    "content_suspended": "Content Suspended",
-    "intercepted_message": "This transmission has been intercepted and blocked by the high command for violating protocol.",
-    "related_title_placeholder": "Video Title Placeholder",
-    "related_creator_placeholder": "Creator",
-    "not_found": "Video not found. It may have been removed or the link is incorrect."
+    "comments_title": "Comments"
   },
   "studio": {
     "command_center": "Dashboard",
@@ -72,23 +56,15 @@
     "entry_name_placeholder": "Video title",
     "description_placeholder": "Video description...",
     "optimizing": "Optimizing Video",
+    "ffmpeg_note": "Compressing video",
     "uploading_note": "Uploading to storage",
+    "creator": "Creator",
     "engagement": "Engagement",
     "videos": "Videos",
+    "compressing": "Compressing video",
     "uploading_storage": "Uploading video to storage",
     "active_videos": "Active Records",
-    "processing_video": "Processing Video",
-    "total_views": "Total Views",
-    "total_videos": "Total Videos",
-    "total_engagement": "Total Engagement",
-    "status_published": "Published",
-    "status_blocked": "Blocked",
-    "status_pending": "Pending",
-    "status_active": "Active",
-    "file_too_large": "File too large (max 1GB)",
-    "auth_lost": "Authentication lost during transit",
-    "upload_failed": "Upload failed",
-    "ready": "READY"
+    "processing_video": "Processing Video"
   },
   "admin": {
     "moderation": "Content Moderation",
@@ -96,30 +72,7 @@
     "actions": "Actions",
     "publish": "Publish",
     "hide": "Hide",
-    "block": "Block",
-    "users_title": "Population Control",
-    "users_subtitle": "Agent Moderation Terminal",
-    "identity": "Identity",
-    "clearance": "Clearance",
-    "access_denied": "ACCESS DENIED",
-    "clearance_required": "Level 4 Clearance Required",
-    "return_surface": "Return to Surface",
-    "high_command": "High Command",
-    "video_moderation_terminal": "Video Moderation Terminal",
-    "total_assets": "Total Assets",
-    "active": "Active",
-    "blocked": "Blocked",
-    "video_author": "Video / Author",
-    "imps": "IMPS",
-    "no_videos": "No videos found",
-    "video": "Video",
-    "user": "User",
-    "anonymous": "ANONYMOUS",
-    "registered": "Registered",
-    "role_user": "USER",
-    "role_admin": "ADMIN",
-    "unblock_account": "Unblock Account",
-    "suspend_account": "Suspend Account"
+    "block": "Block"
   },
   "auth": {
     "welcome_back": "Welcome Back",
@@ -135,41 +88,6 @@
     "check_email": "Check your email for confirmation!",
     "authentication_locked": "Authentication Required",
     "authorize_identity": "Log in",
-    "login_required": "You need to log in to access the studio.",
-    "failed": "Authentication failed"
-  },
-  "profile": {
-    "settings": "Interface Settings",
-    "identity_management": "Identity Management",
-    "avatar": "Personal Avatar",
-    "profile_picture": "Profile Picture",
-    "avatar_note": "A custom identity across the network.",
-    "name": "Display Name",
-    "display_name": "Display Name",
-    "email_locked": "Contact support to change verified email.",
-    "update": "Update Profile",
-    "save_changes": "Update Profile",
-    "success": "Profile updated successfully",
-    "update_success": "Database update complete.",
-    "delete_account": "Initiate Account Termination",
-    "confirm_deletion": "Irreversible Action",
-    "delete_warning": "Your profile and content will be hidden from the network.",
-    "confirm_delete": "Terminate",
-    "danger_zone": "Danger Zone"
-  },
-  "sidebar": {
-    "creator": "Creator",
-    "system": "System",
-    "online": "ONLINE"
-  },
-  "common": {
-    "cancel": "Abort",
-    "error": "Error",
-    "today": "Today",
-    "yesterday": "Yesterday",
-    "days_ago": "{n}d ago",
-    "weeks_ago": "{n}w ago",
-    "months_ago": "{n}mo ago",
-    "years_ago": "{n}y ago"
+    "login_required": "You need to log in to access the studio."
   }
 }

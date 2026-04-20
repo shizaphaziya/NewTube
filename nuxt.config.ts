@@ -4,8 +4,6 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  ssr: false,
-
   future: {
     compatibilityVersion: 4,
   },
@@ -34,6 +32,7 @@ export default defineNuxtConfig({
       { code: 'en', file: 'en.json', name: 'English' }
     ],
     defaultLocale: 'ru',
+    lazy: true,
     langDir: '../i18n/locales/'
   },
 
@@ -43,30 +42,28 @@ export default defineNuxtConfig({
       'pop-in': {
         initial: { scale: 0.8, opacity: 0 },
         enter: { scale: 1, opacity: 1, transition: { duration: 400, ease: 'easeOut' } }
-      },
-      'fade': {
-        initial: { opacity: 0 },
-        enter: { opacity: 1, transition: { duration: 300 } }
+      }
+    }
+  },
+
+  // Required for ffmpeg.wasm
+  nitro: {
+    routeRules: {
+      '/**': {
+        headers: {
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        }
       }
     }
   },
 
   devServer: {
     https: false, // Default
-    port: 3000,
   },
 
   experimental: {
-    viewTransition: true,
-    typedPages: false
-  },
-
-  vite: {
-    server: {
-      watch: {
-        usePolling: true
-      }
-    }
+    viewTransition: true
   },
 
   devtools: { enabled: true }

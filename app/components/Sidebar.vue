@@ -26,11 +26,9 @@ const adminItems = [
 const isActive = (link: string) => {
   const [path, query] = link.split('?')
   // If the link has a query param, check both path + query value
-    if (query) {
+  if (query) {
     const [paramKey, paramVal] = query.split('=')
-    if (paramKey) {
-      return route.path === path && route.query[paramKey] === paramVal
-    }
+    return route.path === path && route.query[paramKey] === paramVal
   }
   // Exact root match
   if (path === '/') return route.path === '/'
@@ -42,8 +40,8 @@ const isActive = (link: string) => {
 <template>
   <aside
     class="hidden md:flex fixed left-0 top-0 h-screen z-40 flex flex-col overflow-hidden
-           bg-void border-r border-white/[0.05] select-none
-           w-[72px] hover:w-64 transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-2xl"
+           bg-[#050505] border-r border-white/[0.05] select-none
+           w-[72px] hover:w-60 transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
   >
     <!-- Logo -->
     <NuxtLink to="/"
@@ -53,7 +51,7 @@ const isActive = (link: string) => {
              overflow-hidden no-underline group"
     >
       <!-- Icon mark -->
-      <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-lg bg-white transition-transform duration-300 group-hover:scale-95 shadow-lg shadow-white/10">
+      <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-white transition-transform duration-300 group-hover:scale-95">
         <div class="i-ph-play-fill text-black text-base translate-x-0.5"></div>
       </div>
       <!-- Wordmark -->
@@ -104,7 +102,7 @@ const isActive = (link: string) => {
                   h-0 opacity-0
                   transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
                   [aside:hover_&]:h-6 [aside:hover_&]:opacity-100">
-        <span class="text-[9px] font-black tracking-[0.5em] uppercase text-white/15">{{ t('sidebar.creator') }}</span>
+        <span class="text-[9px] font-black tracking-[0.5em] uppercase text-white/15">Creator</span>
       </div>
 
       <template v-for="item in creatorItems" :key="item.link">
@@ -170,7 +168,7 @@ const isActive = (link: string) => {
       <div class="ml-4 whitespace-nowrap opacity-0 w-0
                   transition-all duration-500
                   [aside:hover_&]:opacity-100 [aside:hover_&]:w-auto overflow-hidden">
-        <div class="text-[8px] font-black tracking-[0.4em] uppercase text-white/15">{{ t('sidebar.online') }}</div>
+        <div class="text-[8px] font-black tracking-[0.4em] uppercase text-white/15">ONLINE</div>
       </div>
     </div>
   </aside>

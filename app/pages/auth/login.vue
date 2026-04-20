@@ -1,11 +1,9 @@
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: false
 })
 
-import type { Database } from '~/types/database.types'
-
-const client = useSupabaseClient<Database>()
+const client = useSupabaseClient()
 const { t } = useI18n()
 const email = ref('')
 const password = ref('')
@@ -38,8 +36,8 @@ const handleAuth = async () => {
       if (error) throw error
       navigateTo('/')
     }
-  } catch (e: any) {
-    errorMsg.value = e.message || t('auth.failed')
+  } catch (e) {
+    errorMsg.value = e.message
   } finally {
     loading.value = false
   }
