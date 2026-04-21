@@ -37,8 +37,8 @@ useSeoMeta({
             { key: 'nature', label: t('categories.nature') }
           ]"
           :key="cat.key"
-          class="px-8 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-[10px] font-black uppercase tracking-[0.2em] 
-                 transition-all hover:(bg-white/10 border-white/20 scale-105) active:scale-95 whitespace-nowrap"
+          class="px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] text-[10px] font-bold uppercase tracking-wider
+                 transition-all hover:bg-white/10 active:scale-95 whitespace-nowrap"
           :class="{ 'bg-white !text-black border-white shadow-[0_0_30px_rgba(255,255,255,0.15)]': cat.key === 'all' }"
         >
           {{ cat.label }}
@@ -50,7 +50,7 @@ useSeoMeta({
         v-motion
         :initial="{ opacity: 0, scale: 0.95 }"
         :enter="{ opacity: 1, scale: 1, transition: { duration: 1000, ease: 'easeOut' } }"
-        class="mb-20 h-[300px] rounded-[3rem] bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.05] p-16 flex flex-col justify-center relative overflow-hidden"
+        class="mb-20 h-[300px] rounded-[2rem] bg-white/[0.02] border border-white/[0.05] p-16 flex flex-col justify-center relative overflow-hidden"
       >
         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] pointer-events-none"></div>
         <div class="max-w-2xl relative z-10">
@@ -66,7 +66,7 @@ useSeoMeta({
 
       <!-- Count badge — will be populated when videos load -->
       <div class="hidden md:block text-[9px] font-black tracking-[0.4em] uppercase text-white/10">
-        {{ t('seo.title') }}
+        NEWTUBE
       </div>
     </main>
 
@@ -74,7 +74,7 @@ useSeoMeta({
     <div class="layout-container pb-24">
       <div class="flex items-center gap-4 mb-12">
         <div class="w-12 h-px bg-white/10"></div>
-        <h2 class="text-[11px] font-black uppercase tracking-[0.4em] text-white/20 italic">The Infinite Stream</h2>
+        <h2 class="text-[11px] font-black uppercase tracking-[0.4em] text-white/20 italic">{{ t('home.latest') }}</h2>
         <div class="flex-1 h-px bg-white/5"></div>
       </div>
       <InfiniteVideoGrid />
