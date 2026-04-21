@@ -1,7 +1,9 @@
 <script setup>
 const supabase = useSupabaseClient()
+const { confirm: showConfirm } = useConfirm()
 const user = useSupabaseUser()
 const { t } = useI18n()
+
 const { profile } = useProfile()
 
 useSeoMeta({
@@ -43,7 +45,7 @@ const stats = computed(() => {
 })
 
 const deleteVideo = async (id) => {
-  if (!confirm(t('studio.terminate_confirm'))) return
+  if (!await showConfirm(t('studio.terminate_confirm'))) return
   const { error } = await supabase.from('videos').delete().eq('id', id)
   if (!error) refresh()
 }

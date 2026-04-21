@@ -11,7 +11,7 @@ const { toasts, removeToast } = useToast()
           v-for="toast in toasts"
           :key="toast.id"
           class="pointer-events-auto px-6 py-3.5 rounded-2xl flex items-center gap-4 min-w-[280px] max-w-sm
-                 backdrop-blur-2xl border shadow-2xl transition-all"
+                 backdrop-blur-2xl border shadow-md transition-all"
           :class="[
             toast.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-100' :
             toast.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-100' :

@@ -126,28 +126,4 @@ const isActive = (path: string, query?: string) => {
   </aside>
 </template>
 
-<style scoped>
-.nav-link {
-  display: flex !important;
-  align-items: center !important;
-  height: 4rem !important;
-  border-radius: 1.5rem !important;
-  margin-left: 1.25rem !important;
-  margin-right: 1.25rem !important;
-  transition-property: all !important;
-  transition-duration: 500ms !important;
-  position: relative !important;
-  overflow: hidden !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-}
 
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
-}
-
-.nav-link-active {
-  @apply bg-white/[0.05] border border-white/[0.05];
-}
-</style>

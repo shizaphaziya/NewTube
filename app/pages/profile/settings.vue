@@ -154,7 +154,7 @@ const handleDeleteAccount = async () => {
           <div class="relative group">
             <img 
               :src="avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`" 
-              class="w-32 h-32 rounded-full border-2 border-white/10 p-1.5 bg-void-card shadow-2xl transition-transform duration-500 group-hover:scale-105"
+              class="w-32 h-32 rounded-full border-2 border-white/10 p-1.5 bg-void-card shadow-md transition-transform duration-500 group-hover:scale-105"
             />
             <button 
               type="button"

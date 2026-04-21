@@ -11,7 +11,7 @@ const close = () => {
 <template>
   <div
     v-if="appStore.activePipVideo"
-    class="fixed bottom-20 md:bottom-6 right-4 md:right-8 z-[100] w-72 bg-black rounded-xl border border-white/10 shadow-2xl overflow-hidden flex flex-col pointer-events-auto"
+    class="fixed bottom-20 md:bottom-6 right-4 md:right-8 z-[100] w-72 bg-black rounded-xl border border-white/10 shadow-md overflow-hidden flex flex-col pointer-events-auto"
     v-motion
     :initial="{ opacity: 0, y: 50, scale: 0.9 }"
     :enter="{ opacity: 1, y: 0, scale: 1, transition: { duration: 300, ease: 'easeOut' } }"
