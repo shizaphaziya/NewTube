@@ -28,13 +28,13 @@ useSeoMeta({
       >
         <button 
           v-for="cat in [
-            { key: 'all', label: t('categories.all') },
-            { key: 'music', label: t('categories.music') },
-            { key: 'cinema', label: t('categories.cinema') },
-            { key: 'gaming', label: t('categories.gaming') },
-            { key: 'tech', label: t('categories.tech') },
-            { key: 'art', label: t('categories.art') },
-            { key: 'nature', label: t('categories.nature') }
+            { key: 'all', label: $t('categories.all') },
+            { key: 'music', label: $t('categories.music') },
+            { key: 'cinema', label: $t('categories.cinema') },
+            { key: 'gaming', label: $t('categories.gaming') },
+            { key: 'tech', label: $t('categories.tech') },
+            { key: 'art', label: $t('categories.art') },
+            { key: 'nature', label: $t('categories.nature') }
           ]"
           :key="cat.key"
           class="px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] text-[10px] font-bold uppercase tracking-wider
