@@ -1,7 +1,11 @@
 <template>
-  <NuxtLayout>
+  <div>
+    <NuxtLayout>
     <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
   </NuxtLayout>
+    <ToastContainer />
+    <AuthModal />
+  </div>
 </template>
 
 <style>

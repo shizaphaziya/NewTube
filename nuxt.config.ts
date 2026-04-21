@@ -11,6 +11,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   modules: [
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/supabase',
     '@unocss/nuxt',
     '@vueuse/motion/nuxt',

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { z } from 'zod'
+import { useToast } from '~/composables/useToast'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { t } = useI18n()
@@ -15,6 +17,7 @@ const thumbFile = ref<File | null>(null)
 
 const uploading = ref(false)
 const uploadProgress = ref(0)
+const { error: showError, success: showSuccess } = useToast()
 const success = ref(false)
 const videoInput = ref<HTMLInputElement | null>(null)
 const thumbInput = ref<HTMLInputElement | null>(null)
@@ -23,7 +26,7 @@ const onVideoSelect = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (file && file.size > 1073741824) { // 1GB limit
-    alert(t('studio.file_too_large'))
+    showError(t('studio.file_too_large'))
     return
   }
   videoFile.value = file || null
@@ -70,8 +73,20 @@ const handleUpload = async () => {
     })
   }
 
-  // Auto-title logic
+
+  const schema = z.object({
+    title: z.string().trim().min(1, 'Title is required').max(100, 'Title cannot exceed 100 characters'),
+    description: z.string().trim().max(1000, 'Description cannot exceed 1000 characters').optional()
+  })
+
   const finalTitle = title.value.trim() || new Date().toLocaleString()
+  const result = schema.safeParse({ title: finalTitle, description: description.value })
+
+  if (!result.success) {
+    showError(result.error.errors[0].message)
+    return
+  }
+
   
   try {
     // Stage 1: Uploading
@@ -136,10 +151,11 @@ const handleUpload = async () => {
     
     uploadProgress.value = 100
     success.value = true
-    setTimeout(() => navigateTo('/'), 2000)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    navigateTo('/')
     
   } catch (e: any) {
-    alert('Upload failed: ' + e.message)
+    showError('Upload failed: ' + e.message)
     console.error(e)
   } finally {
     uploading.value = false
@@ -249,7 +265,7 @@ const handleUpload = async () => {
                <span class="text-2xl font-brand font-black tracking-tighter text-white tabular-nums">{{ uploadProgress }}%</span>
              </div>
              <div class="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-               <div class="h-full bg-silver transition-all duration-700 ease-out" :style="{ width: `${uploadProgress}%` }"></div>
+               <div class="h-full bg-silver transition-all duration-700 ease-out w-[0%]" :style="{ width: `${uploadProgress}%` }"></div>
              </div>
           </div>
           

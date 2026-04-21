@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { Database } from '~/types/database.types'
+import { useAppStore } from '~/store/app'
 
 const user = useSupabaseUser()
 const client = useSupabaseClient<Database>()
 const { profile, isAdmin } = useProfile()
+const appStore = useAppStore()
+const router = useRouter()
 
 const logout = async () => {
   await client.auth.signOut()
-  navigateTo('/')
+  router.push('/')
 }
 </script>
 
@@ -33,8 +36,8 @@ const logout = async () => {
       <div class="i-ph-sign-out-bold text-lg group-hover:translate-x-0.5 transition-transform"></div>
     </button>
   </div>
-  <NuxtLink v-else to="/auth/login" class="btn-primary flex items-center gap-2 group">
+  <button v-else @click="appStore.openAuthModal()" class="btn-primary flex items-center gap-2 group">
     <div class="i-ph-user-bold transition-transform group-hover:rotate-12"></div>
     <span class="text-xs uppercase tracking-widest font-bold">{{ $t('nav.login') }}</span>
-  </NuxtLink>
+  </button>
 </template>

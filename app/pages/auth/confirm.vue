@@ -1,9 +1,10 @@
-<script setup>
+<script setup lang="ts">
 const user = useSupabaseUser()
+const router = useRouter()
 
 watch(user, () => {
   if (user.value) {
-    return navigateTo('/')
+    router.replace('/')
   }
 }, { immediate: true })
 </script>
@@ -18,8 +19,6 @@ watch(user, () => {
       <p class="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase animate-pulse">
         Confirming Access
       </p>
-      
-      <!-- Ambient light -->
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/[0.02] blur-[80px] rounded-full pointer-events-none"></div>
     </div>
   </div>

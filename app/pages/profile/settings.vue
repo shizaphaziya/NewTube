@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { z } from 'zod'
+import { useToast } from '~/composables/useToast'
 import type { Database } from '~/types/database.types'
 
 const { profile, updateProfile } = useProfile()
 const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
+const { error: showError, success: showSuccess } = useToast()
 const { t } = useI18n()
 
 useSeoMeta({
@@ -51,13 +54,24 @@ const onAvatarSelect = async (e: Event) => {
     // Add cache buster for immediate visual feedback
     avatarUrl.value = `${data.publicUrl}?t=${Date.now()}`
   } catch (e: any) {
-    alert(e.message || 'Avatar upload failed')
+    showError(e.message || 'Avatar upload failed')
   } finally {
     loading.value = false
   }
 }
 
 const handleSave = async () => {
+
+  const schema = z.object({
+    displayName: z.string().trim().min(2, 'Display name must be at least 2 characters').max(30, 'Display name cannot exceed 30 characters'),
+  })
+
+  const result = schema.safeParse({ displayName: displayName.value })
+  if (!result.success) {
+    showError(result.error.errors[0].message)
+    return
+  }
+
   if (loading.value) return
   
   loading.value = true
@@ -76,14 +90,13 @@ const handleSave = async () => {
         displayName.value = data.display_name || ''
         avatarUrl.value = data.avatar_url || ''
       }
-      setTimeout(() => {
-        success.value = false
-      }, 3000)
+
+      useTimeoutFn(() => { success.value = false }, 3000)
     } else {
       throw error
     }
   } catch (e: any) {
-    alert((t('profile.update_failed') || 'Failed to update profile') + ': ' + (e.message || e))
+    showError((t('profile.update_failed') || 'Failed to update profile') + ': ' + (e.message || e))
   } finally {
     loading.value = false
   }
@@ -112,7 +125,7 @@ const handleDeleteAccount = async () => {
       throw error
     }
   } catch (e: any) {
-    alert(e.message || 'Deletion failed')
+    showError(e.message || 'Deletion failed')
   } finally {
     deleteLoading.value = false
   }

@@ -10,10 +10,10 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['btn-primary', 'px-7 py-3.5 rounded-2xl bg-white text-black font-extrabold transition-all duration-500 hover:(bg-zinc-100 shadow-[0_0_30px_rgba(255,255,255,0.2)]) active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed tracking-tight text-xs uppercase no-underline'],
+    ['btn-primary', 'px-6 py-3 rounded-xl bg-white text-black font-bold transition-all duration-300 hover:bg-white/90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-sm no-underline'],
     ['btn-secondary', 'px-7 py-3.5 rounded-2xl bg-white/5 text-white/70 border border-white/10 transition-all duration-500 hover:(bg-white/10 text-white border-white/20) active:scale-95 tracking-tight text-xs uppercase no-underline'],
-    ['btn-premium', 'px-8 py-4 rounded-full bg-gradient-to-r from-white via-zinc-100 to-zinc-300 text-black font-black transition-all duration-500 hover:(shadow-[0_0_40px_rgba(255,255,255,0.25)] scale-[1.02]) active:scale-95 tracking-[0.2em] text-[10px] uppercase no-underline'],
-    ['glass-card', 'bg-white/[0.03] backdrop-blur-3xl border border-white/[0.07] rounded-[32px] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]'],
+    ['btn-premium', 'px-6 py-3 rounded-xl bg-white text-black font-bold transition-all duration-300 hover:bg-white/90 active:scale-95 text-sm no-underline'],
+    ['glass-card', 'bg-white/[0.02] border border-white/[0.05] rounded-2xl transition-colors hover:bg-white/[0.04]'],
     ['glass-panel', 'bg-[#0A0A0A]/60 backdrop-blur-2xl border border-white/[0.05] shadow-2xl'],
     ['glass-input', 'bg-white/[0.04] border border-white/[0.08] rounded-2xl px-5 py-3.5 text-white placeholder:text-white/20 transition-all duration-500 focus:(outline-none ring-1 ring-white/25 bg-white/[0.07] border-white/20)'],
     ['layout-container', 'max-w-screen-2xl mx-auto px-6 lg:px-16'],

@@ -56,7 +56,7 @@ const deleteVideo = async (id) => {
       <div v-if="!user"
            class="absolute inset-0 z-50 flex items-center justify-center p-6 text-center">
         <div class="glass-card p-16 max-w-md space-y-8 ring-1 ring-white/10 relative z-10"
-             style="animation: fade-in-up 0.6s cubic-bezier(0.16,1,0.3,1) both">
+             v-motion-pop-in>
           <div class="w-14 h-14 mx-auto rounded-3xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
             <div class="i-ph-lock-key-bold text-2xl text-white/40"></div>
           </div>

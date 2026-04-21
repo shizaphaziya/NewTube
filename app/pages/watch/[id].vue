@@ -1,12 +1,44 @@
 <script setup lang="ts">
+import { useAppStore } from '~/store/app'
+import { useSwipe } from '@vueuse/core'
+import { z } from 'zod'
+import { useToast } from '~/composables/useToast'
 const route = useRoute()
 const supabase = useSupabaseClient()
+const appStore = useAppStore()
+const { error: showError } = useToast()
 const user = useSupabaseUser()
 const { t } = useI18n()
 const { profile } = useProfile()
 
 const videoId = computed(() => (Array.isArray(route.params.id) ? route.params.id[0] : route.params.id) as string)
 const isCinemaMode = useState('cinema-mode', () => false)
+
+const videoContainer = ref<HTMLElement | null>(null)
+const router = useRouter()
+
+// useSwipe automatically tracks touch gestures on the video container
+const { direction, isSwiping } = useSwipe(videoContainer)
+
+// When the user completes a swipe-down gesture, save video to PiP and navigate away
+watch(isSwiping, (swiping) => {
+  if (!swiping && direction.value === 'down' && video.value) {
+    appStore.setPipVideo({
+      id: video.value.id,
+      title: video.value.title,
+      url: video.value.video_url || '',
+      user_id: video.value.user_id
+    })
+    router.back()
+  }
+})
+
+watch(video, (newVal) => {
+  if (newVal) {
+    appStore.addToHistory(newVal.id)
+  }
+}, { immediate: true })
+
 
 interface VideoWithProfile {
   id: string
@@ -62,7 +94,7 @@ const checkReaction = async () => {
 }
 
 const toggleLike = async () => {
-  if (!user.value) return navigateTo('/auth/login')
+  if (!user.value) return appStore.openAuthModal()
   if (hasLiked.value) {
     await (supabase.from('likes') as any).delete().eq('video_id', videoId.value).eq('user_id', user.value.id)
   } else {
@@ -90,13 +122,32 @@ const { data: comments, refresh: refreshComments } = await useAsyncData(`comment
 const commentContent = ref('')
 const isPosting = ref(false)
 const postComment = async () => {
-  if (!user.value) return navigateTo('/auth/login')
-  if (!commentContent.value.trim()) return
+  if (!user.value) {
+    appStore.openAuthModal()
+    return
+  }
+
+  const schema = z.object({
+    content: z.string().trim().min(1, 'Comment cannot be empty').max(1000, 'Comment is too long (max 1000 characters)')
+  })
+
+  const result = schema.safeParse({ content: commentContent.value })
+  if (!result.success) {
+    showError(result.error.errors[0].message)
+    return
+  }
+
   isPosting.value = true
-  await (supabase.from('comments') as any).insert({ video_id: videoId.value, user_id: user.value.id, content: commentContent.value })
-  commentContent.value = ''
-  await refreshComments()
-  isPosting.value = false
+  try {
+    const { error } = await (supabase.from('comments') as any).insert({ video_id: videoId.value, user_id: user.value.id, content: commentContent.value })
+    if (error) throw error
+    commentContent.value = ''
+    await refreshComments()
+  } catch (e: any) {
+    showError('Failed to post comment: ' + e.message)
+  } finally {
+    isPosting.value = false
+  }
 }
 </script>
 
@@ -175,14 +226,12 @@ const postComment = async () => {
 
               <!-- Action Bar -->
               <div class="flex items-center gap-3">
-                <button 
-                  @click="toggleLike"
-                  class="flex items-center gap-4 px-8 py-4 rounded-full bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.07] transition-all group"
-                  :class="{ '!bg-white !text-black': hasLiked }"
-                >
-                  <div :class="hasLiked ? 'i-ph-heart-fill' : 'i-ph-heart-bold'" class="text-xl"></div>
-                  <span class="text-xs font-black tracking-widest">{{ likesCount }}</span>
-                </button>
+                <PillReaction
+                  :initialLikes="likesCount"
+                  :initialDislikes="0"
+                  :initialState="hasLiked ? 'like' : 'none'"
+                  @change="handleReactionChange"
+                />
                 <button class="w-14 h-14 rounded-full bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.07] transition-all">
                   <div class="i-ph-share-network-bold text-xl"></div>
                 </button>
