@@ -89,5 +89,44 @@
     "authentication_locked": "Требуется авторизация",
     "authorize_identity": "Войти",
     "login_required": "Вам нужно войти в систему для доступа к студии."
+  },
+  "profile": {
+    "settings": "Настройки",
+    "identity_management": "Управление аккаунтом",
+    "profile_picture": "Фото профиля",
+    "avatar_note": "Ваша фотография профиля",
+    "display_name": "Отображаемое имя",
+    "email_locked": "Смена email требует обращения в поддержку.",
+    "save_changes": "Сохранить изменения",
+    "update_success": "Профиль успешно обновлен",
+    "update_failed": "Ошибка обновления профиля",
+    "danger_zone": "Опасная зона",
+    "delete_account": "Удалить аккаунт",
+    "confirm_deletion": "Удалить аккаунт?",
+    "delete_warning": "Это действие необратимо.",
+    "confirm_delete": "Удалить",
+    "update_profile": "Обновить профиль"
+  },
+  "sidebar": {
+    "creator": "Автор",
+    "system": "Система",
+    "online": "В сети"
+  },
+  "seo": {
+    "title": "NewTube",
+    "description": "Откройте для себя лучшие видео на NewTube — видеоплатформе нового поколения."
+  },
+  "common": {
+    "cancel": "Отмена",
+    "confirm_action": "Вы действительно хотите продолжить"
+  },
+  "categories": {
+    "all": "Все",
+    "music": "Музыка",
+    "cinema": "Кино",
+    "gaming": "Игры",
+    "tech": "Техно",
+    "art": "Искусство",
+    "nature": "Природа"
   }
 }

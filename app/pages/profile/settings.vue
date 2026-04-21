@@ -11,7 +11,7 @@ const { t } = useI18n()
 
 useSeoMeta({
   title: () => `${t('profile.settings')} - NewTube`,
-  description: t('profile.avatar_note')
+  description: () => t('profile.avatar_note')
 })
 
 const displayName = ref('')

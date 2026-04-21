@@ -7,7 +7,7 @@ const { t } = useI18n()
 
 useSeoMeta({
   title: () => `${t('studio.upload')} - NewTube`,
-  description: t('studio.broadcasting')
+  description: () => t('studio.broadcasting')
 })
 
 const title = ref('')

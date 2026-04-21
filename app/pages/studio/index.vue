@@ -8,7 +8,7 @@ const { profile } = useProfile()
 
 useSeoMeta({
   title: () => `${t('studio.command_center')} - NewTube`,
-  description: t('studio.broadcasting')
+  description: () => t('studio.broadcasting')
 })
 
 const { data: videos, refresh, error: asyncError } = await useAsyncData('user-videos', async () => {

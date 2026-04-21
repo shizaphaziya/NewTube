@@ -1,11 +1,11 @@
 <script setup>
 const { t } = useI18n()
 
-const feeds = [
+const feeds = computed(() => [
   { key: 'trending',      label: t('home.trending'),      icon: 'i-ph-fire-bold' },
   { key: 'latest',        label: t('home.latest'),         icon: 'i-ph-lightning-bold' },
   { key: 'subscriptions', label: t('home.subscriptions'),  icon: 'i-ph-users-four-bold' },
-]
+])
 
 
 const categories = computed(() => [
@@ -21,8 +21,8 @@ const categories = computed(() => [
 const activeFeed = ref('trending')
 
 useSeoMeta({
-  title: t('seo.title') || 'NewTube - Premium Video Signal',
-  description: t('seo.description') || 'Curated signals. High fidelity. Zero noise.'
+  title: () => t('seo.title') || 'NewTube - Premium Video Signal',
+  description: () => t('seo.description') || 'Curated signals. High fidelity. Zero noise.'
 })
 </script>
 

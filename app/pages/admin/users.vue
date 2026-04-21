@@ -9,7 +9,7 @@ const { isAdmin } = useProfile()
 
 useSeoMeta({
   title: () => `${t('admin.users_management')} - NewTube`,
-  description: t('admin.high_command')
+  description: () => t('admin.high_command')
 })
 
 const { data: users, refresh } = await useAsyncData('admin-users', async () => {

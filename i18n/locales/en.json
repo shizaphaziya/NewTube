@@ -89,5 +89,44 @@
     "authentication_locked": "Authentication Required",
     "authorize_identity": "Log in",
     "login_required": "You need to log in to access the studio."
+  },
+  "profile": {
+    "settings": "Settings",
+    "identity_management": "Manage your account",
+    "profile_picture": "Profile Picture",
+    "avatar_note": "Your profile picture.",
+    "display_name": "Display Name",
+    "email_locked": "Contact support to change verified email.",
+    "save_changes": "Update Profile",
+    "update_success": "Profile updated successfully.",
+    "update_failed": "Failed to update profile",
+    "danger_zone": "Danger Zone",
+    "delete_account": "Delete Account",
+    "confirm_deletion": "Delete Account?",
+    "delete_warning": "This action is permanent.",
+    "confirm_delete": "Delete",
+    "update_profile": "Update Profile"
+  },
+  "sidebar": {
+    "creator": "Creator",
+    "system": "System",
+    "online": "Online"
+  },
+  "seo": {
+    "title": "NewTube",
+    "description": "Discover the best videos on NewTube, the next-generation video platform."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm_action": "Are you sure you want to proceed"
+  },
+  "categories": {
+    "all": "All",
+    "music": "Music",
+    "cinema": "Cinema",
+    "gaming": "Gaming",
+    "tech": "Tech",
+    "art": "Art",
+    "nature": "Nature"
   }
 }
