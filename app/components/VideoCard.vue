@@ -23,19 +23,19 @@ defineProps<{
   <NuxtLink 
     :to="`/watch/${video.id}`"
     v-motion
-    :initial="{ opacity: 0, y: 30 }"
-    :enter="{ opacity: 1, y: 0, transition: { duration: 800, ease: [0.16, 1, 0.3, 1], delay: index * 40 } }"
+    :initial="{ opacity: 0, y: 10 }"
+    :enter="{ opacity: 1, y: 0, transition: { duration: 400, ease: 'easeOut', delay: index * 30 } }"
     class="group block no-underline focus:outline-none"
   >
     <!-- Cinematic Thumbnail Container -->
-    <div class="relative aspect-video rounded-[2rem] bg-stone-900 overflow-hidden border border-white/5 transition-all duration-700 
-                group-hover:(border-white/20 shadow-xl -translate-y-2 scale-[1.01])">
+    <div class="relative aspect-video rounded-xl bg-[#18181b] overflow-hidden border border-white/5 transition-all duration-300
+                group-hover:border-white/10 group-hover:shadow-lg">
       
       <!-- Video Thumbnail -->
       <img 
         v-if="video.thumbnail_url"
         :src="video.thumbnail_url" 
-        class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
 
       />
@@ -44,58 +44,46 @@ defineProps<{
       <video
         v-else-if="video.video_url"
         :src="video.video_url + '#t=0.5'"
-        class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         muted
         preload="metadata"
       ></video>
 
       <!-- Ultimate Placeholder -->
-      <div v-else class="w-full h-full bg-gradient-to-br from-white/5 to-white/[0.01] flex items-center justify-center">
-        <div class="i-ph-video-camera-bold text-white/5 text-4xl group-hover:scale-110 transition-transform duration-700"></div>
-      </div>
-
-      <!-- Cinema Overlay -->
-      <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md scale-50 group-hover:scale-100 transition-transform duration-500">
-          <div class="i-ph-play-fill text-black text-xl translate-x-px"></div>
-        </div>
+      <div v-else class="w-full h-full flex items-center justify-center bg-[#27272a]">
+        <div class="i-ph-video-camera text-white/20 text-4xl"></div>
       </div>
 
       <!-- Badge Overlay -->
-      <div class="absolute bottom-5 right-5 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 text-[9px] font-black tracking-widest text-white/80 uppercase shadow-md">
+      <div class="absolute bottom-2 right-2 px-2 py-1 rounded-md bg-black/80 backdrop-blur-sm text-xs font-medium text-white shadow-sm">
         {{ video.view_count || 0 }} {{ t('watch.views') }}
       </div>
     </div>
 
     <!-- Elevated Typography Section -->
-    <div class="mt-6 px-1 flex gap-5">
+    <div class="mt-3 flex gap-3">
       <!-- Creator Avatar -->
-      <div class="shrink-0 mt-1">
-        <div class="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/5 p-0.5 overflow-hidden group-hover:border-white/20 transition-colors">
-           <img 
-            :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" 
-            class="w-full h-full rounded-xl object-cover" 
-           />
-        </div>
+      <div class="shrink-0 mt-0.5">
+        <img
+          :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`"
+          class="w-9 h-9 rounded-full object-cover border border-white/5 bg-[#18181b]"
+        />
       </div>
 
-      <div class="space-y-2 flex-1 min-w-0">
-        <h3 class="text-[17px] font-brand font-black tracking-tight text-white/90 leading-tight line-clamp-2 transition-colors duration-300 group-hover:text-white group-hover:text-gradient">
+      <div class="space-y-1 flex-1 min-w-0">
+        <h3 class="text-base font-semibold text-white/90 leading-snug line-clamp-2 group-hover:text-white transition-colors">
           {{ video.title }}
         </h3>
         
-        <div class="flex flex-col gap-1">
-          <div class="text-[10px] font-black tracking-[0.2em] uppercase text-white/20 group-hover:text-white/40 transition-colors">
+        <div class="flex flex-col text-sm text-white/60">
+          <div class="group-hover:text-white/80 transition-colors">
             {{ video.profiles?.display_name }}
           </div>
-          <div class="flex items-center gap-2 text-[9px] font-bold text-white/10 uppercase tracking-[0.3em]">
+          <div class="flex items-center gap-1.5 text-xs">
             <ClientOnly><span>{{ useTimeAgo(video.created_at || '').value }}</span><template #fallback><span>...</span></template></ClientOnly>
-            <span class="w-1 h-1 rounded-full bg-white/5"></span>
-            <span class="text-emerald-500/40">Verified HQ</span>
           </div>
         </div>
       </div>
     </div>
   </NuxtLink>
 </template>
-
