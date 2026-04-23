@@ -15,7 +15,13 @@ const { data: video } = await useAsyncData(`video-${route.params.id}`, async () 
     .single()
 
   if (!error && data) {
-    supabase.rpc('increment_view_count', { video_id: data.id }).then()
+    // Basic anti-abuse: check localStorage
+    const viewKey = `viewed_${data.id}`
+    if (typeof localStorage !== 'undefined' && !localStorage.getItem(viewKey)) {
+      supabase.rpc('increment_view_count', { video_id: data.id }).then(() => {
+        localStorage.setItem(viewKey, '1')
+      })
+    }
   }
   return data
 })
