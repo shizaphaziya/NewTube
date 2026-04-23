@@ -3,7 +3,7 @@ const { t } = useI18n()
 const actions = computed(() => [
   { icon: 'i-ph-rocket-launch-bold', label: t('nav.studio'), link: '/studio/upload' },
   { icon: 'i-ph-fire-bold', label: t('home.trending'), link: '/' },
-  { icon: 'i-ph-users-four-bold', label: t('home.subscriptions'), link: '/' },
+  { icon: 'i-ph-users-four-bold', label: t('home.subscriptions'), link: '/subscriptions' },
   { icon: 'i-ph-books-bold', label: t('home.library'), link: '/' },
 ])
 </script>

@@ -1,0 +1,75 @@
+$ nuxt dev
+│
+●  Nuxt 4.4.2 (with Nitro 2.13.3, Vite 7.3.2 and Vue 3.5.32)
+
+  ➜ Local:    http://localhost:3000/
+  ➜ Network:  use --host to expose
+
+
+[@nuxt/supabase]  WARN  Missing NUXT_PUBLIC_SUPABASE_URL, set it in .env or via runtimeConfig.public.supabase.url in nuxt.config.ts.
+
+
+[@nuxt/supabase]  WARN  Missing NUXT_PUBLIC_SUPABASE_KEY, set it in .env or via runtimeConfig.public.supabase.key in nuxt.config.ts.
+
+  ➜ DevTools: press Shift + Alt + D in the browser (v3.2.4)
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+✔ Vite client built in 134ms
+✔ Vite server built in 169ms
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+[nitro] ✔ Nuxt Nitro server built in 2149ms
+ℹ Vite server warmed up in 1ms
+ℹ Vite client warmed up in 4ms
+ℹ .nuxt/dist directory has been removed. Restarting Nuxt...
+
+[@nuxt/supabase]  WARN  Missing NUXT_PUBLIC_SUPABASE_URL, set it in .env or via runtimeConfig.public.supabase.url in nuxt.config.ts.
+
+
+[@nuxt/supabase]  WARN  Missing NUXT_PUBLIC_SUPABASE_KEY, set it in .env or via runtimeConfig.public.supabase.key in nuxt.config.ts.
+
+  ➜ DevTools: press Shift + Alt + D in the browser (v3.2.4)
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+✔ Vite client built in 144ms
+✔ Vite server built in 96ms
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+
+ WARN  Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+
+[nitro] ✔ Nuxt Nitro server built in 2102ms
+ℹ Vite server warmed up in 4ms
+ℹ Vite client warmed up in 11ms
+[get-port] Unable to find an available port (tried 3000 on host "localhost"). Using alternative port 3001.
+
+  ➜ Local:    http://localhost:3001/
+  ➜ Network:  use --host to expose
+
+  ➜ DevTools: press Shift + Alt + D in the browser (v3.2.4)
+
+Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+ℹ Re-optimizing dependencies because lockfile has changed
+✔ Vite client built in 272ms
+✔ Vite server built in 153ms
+Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+Duplicated imports "useAppConfig", the one from "nitropack/runtime/internal/config" has been ignored and "/app/node_modules/@nuxt/nitro-server/dist/runtime/utils/app-config" is used
+[nitro] ✔ Nuxt Nitro server built in 3285ms
+ℹ Vite server warmed up in 2ms
+ℹ Vite client warmed up in 4ms

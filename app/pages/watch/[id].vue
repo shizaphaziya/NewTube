@@ -40,6 +40,12 @@ const { data: comments, refresh: refreshComments } = await useAsyncData(`comment
   return data || []
 })
 
+const formatCount = (count) => {
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  return count?.toString() || '0'
+}
+
 const commentContent = ref('')
 const isPosting = ref(false)
 const postComment = async () => {
@@ -57,12 +63,135 @@ const postComment = async () => {
   refreshComments()
 }
 
-// Reactions stub
 const likesCount = ref(0)
+const dislikesCount = ref(0)
 const hasLiked = ref(false)
-const handleReactionChange = (state) => {
-  console.log('Reaction state changed to:', state)
+const reactionState = ref('none')
+
+const fetchReactions = async () => {
+  if (!video.value?.id) return
+
+  // Get counts
+  const { data: likesData } = await supabase
+    .from('likes')
+    .select('is_dislike')
+    .eq('video_id', video.value.id)
+
+  if (likesData) {
+    likesCount.value = likesData.filter(l => !l.is_dislike).length
+    dislikesCount.value = likesData.filter(l => l.is_dislike).length
+  }
+
+  // Get user reaction
+  if (user.value) {
+    const { data: userLike } = await supabase
+      .from('likes')
+      .select('is_dislike')
+      .eq('video_id', video.value.id)
+      .eq('user_id', user.value.id)
+      .single()
+
+    if (userLike) {
+      reactionState.value = userLike.is_dislike ? 'dislike' : 'like'
+      hasLiked.value = !userLike.is_dislike
+    } else {
+      reactionState.value = 'none'
+      hasLiked.value = false
+    }
+  }
 }
+
+const handleReactionChange = async (state, revert) => {
+  if (!user.value) {
+    // Optionally trigger login modal
+    revert()
+    return
+  }
+
+  try {
+    if (state === 'none') {
+      await supabase
+        .from('likes')
+        .delete()
+        .eq('video_id', video.value.id)
+        .eq('user_id', user.value.id)
+    } else {
+      await supabase
+        .from('likes')
+        .upsert({
+          video_id: video.value.id,
+          user_id: user.value.id,
+          is_dislike: state === 'dislike'
+        })
+    }
+    reactionState.value = state
+  } catch (err) {
+    console.error('Failed to update reaction', err)
+    revert()
+  }
+}
+
+watch(() => video.value, () => {
+  fetchReactions()
+}, { immediate: true })
+
+// Subscriptions
+const isSubscribed = ref(false)
+const subscribersCount = ref(0)
+
+const fetchSubscriptionStatus = async () => {
+    if (!video.value?.user_id) return
+
+    const { count } = await supabase
+        .from('subscriptions')
+        .select('*', { count: 'exact', head: true })
+        .eq('creator_id', video.value.user_id)
+
+    subscribersCount.value = count || 0
+
+    if (user.value) {
+        const { data } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('creator_id', video.value.user_id)
+            .eq('subscriber_id', user.value.id)
+            .single()
+
+        isSubscribed.value = !!data
+    }
+}
+
+const toggleSubscription = async () => {
+    if (!user.value) return
+
+    try {
+        if (isSubscribed.value) {
+            await supabase
+                .from('subscriptions')
+                .delete()
+                .eq('creator_id', video.value.user_id)
+                .eq('subscriber_id', user.value.id)
+            isSubscribed.value = false
+            subscribersCount.value--
+        } else {
+            await supabase
+                .from('subscriptions')
+                .insert({
+                    creator_id: video.value.user_id,
+                    subscriber_id: user.value.id
+                })
+            isSubscribed.value = true
+            subscribersCount.value++
+        }
+    } catch (err) {
+        console.error('Failed to toggle subscription', err)
+    }
+}
+
+watch(() => video.value, () => {
+    fetchSubscriptionStatus()
+}, { immediate: true })
+
 
 useSeoMeta({
   title: () => video.value?.title ? `${video.value.title} - NewTube` : 'Watch - NewTube',
@@ -129,17 +258,18 @@ useSeoMeta({
                 </NuxtLink>
                 <div>
                   <div class="font-semibold text-white/90 text-base">{{ video?.profiles?.display_name }}</div>
-                  <div class="text-xs text-white/60">1.2M subscribers</div> <!-- Hardcoded for now to look realistic -->
+                  <div class="text-xs text-white/60">{{ formatCount(subscribersCount) }} subscribers</div>
                 </div>
-                <button class="ml-4 btn-premium px-4 py-2 text-sm rounded-full bg-white text-black font-semibold hover:bg-white/90">Subscribe</button>
+                <button v-if="user?.id !== video?.user_id" @click="toggleSubscription" class="ml-4 btn-premium px-4 py-2 text-sm rounded-full font-semibold transition-colors" :class="isSubscribed ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-black hover:bg-white/90'">{{ isSubscribed ? 'Subscribed' : 'Subscribe' }}</button>
               </div>
 
               <!-- Action Bar -->
               <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
                 <PillReaction
+                  :key="`${reactionState}-${likesCount}-${dislikesCount}`"
                   :initialLikes="likesCount"
-                  :initialDislikes="0"
-                  :initialState="hasLiked ? 'like' : 'none'"
+                  :initialDislikes="dislikesCount"
+                  :initialState="reactionState"
                   @change="handleReactionChange"
                 />
                 <button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 transition-colors text-sm font-medium">
