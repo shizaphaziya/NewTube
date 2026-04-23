@@ -16,7 +16,7 @@ export const useProfile = () => {
       return
     }
 
-    if (loading.value) return
+    if (loading.value && profile.value?.id === userId) return
     loading.value = true
     
     try {

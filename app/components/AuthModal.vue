@@ -37,6 +37,7 @@ const handleAuth = async () => {
         email: email.value,
         password: password.value,
         options: {
+          emailRedirectTo: 'https://newtubenuxt.netlify.app/auth/confirm',
           data: {
             display_name: email.value.split('@')[0],
           }
@@ -44,7 +45,13 @@ const handleAuth = async () => {
       })
       if (error) throw error
       success(t('auth.check_email') || 'Check your email for confirmation')
+
       appStore.closeAuthModal()
+      const redirectPath = useRoute().query.redirect || '/'
+      if (useRoute().path !== redirectPath) {
+         useRouter().push(redirectPath)
+      }
+
     } else {
       const { error } = await client.auth.signInWithPassword({
         email: email.value,
@@ -52,7 +59,13 @@ const handleAuth = async () => {
       })
       if (error) throw error
       success('Successfully logged in')
+
       appStore.closeAuthModal()
+      const redirectPath = useRoute().query.redirect || '/'
+      if (useRoute().path !== redirectPath) {
+         useRouter().push(redirectPath)
+      }
+
       // Refresh current page context if needed, but session state handles most
     }
   } catch (e: any) {
