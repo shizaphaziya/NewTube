@@ -137,7 +137,7 @@ const handleReactionChange = async (state, revert) => {
   }
 }
 
-watch(() => video.value, () => {
+watch([() => video.value, () => user.value], () => {
   fetchReactions()
 }, { immediate: true })
 
@@ -194,7 +194,7 @@ const toggleSubscription = async () => {
     }
 }
 
-watch(() => video.value, () => {
+watch([() => video.value, () => user.value], () => {
     fetchSubscriptionStatus()
 }, { immediate: true })
 
