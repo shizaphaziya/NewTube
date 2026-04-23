@@ -1,11 +1,15 @@
 <script setup>
 const supabase = useSupabaseClient()
+const { error: showError } = useToast()
+const { confirm: showConfirm } = useConfirm()
 const { t } = useI18n()
+
+
 const { isAdmin } = useProfile()
 
 useSeoMeta({
   title: () => `${t('admin.users_management')} - NewTube`,
-  description: t('admin.high_command')
+  description: () => t('admin.high_command')
 })
 
 const { data: users, refresh } = await useAsyncData('admin-users', async () => {
@@ -20,7 +24,7 @@ const { data: users, refresh } = await useAsyncData('admin-users', async () => {
 }, { watch: [isAdmin] })
 
 const updateUserRole = async (userId, newRole) => {
-  if (!confirm(`${t('common.confirm_action')}?`)) return
+  if (!await showConfirm(`${t('common.confirm_action')}?`)) return
   
   const { error } = await supabase
     .from('profiles')
@@ -30,7 +34,7 @@ const updateUserRole = async (userId, newRole) => {
   if (!error) {
     refresh()
   } else {
-    alert(error.message)
+    showError(error.message)
   }
 }
 </script>

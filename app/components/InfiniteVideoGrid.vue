@@ -47,14 +47,12 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-10 sm:gap-x-6">
       <VideoCard
         v-for="(video, idx) in videos"
         :key="video.id"
         :video="video"
-        v-motion
-        :initial="{ opacity: 0, y: 40 }"
-        :enter="{ opacity: 1, y: 0, transition: { duration: 1000, ease: [0.16, 1, 0.3, 1], delay: (idx % pageSize) * 100 } }"
+        :index="idx"
       />
 
       <!-- Skeletons -->
@@ -64,16 +62,16 @@ onMounted(() => {
     </div>
 
     <!-- Scroll Sentinel -->
-    <div ref="loadMoreTrigger" class="h-40 flex items-center justify-center mt-20">
-      <div v-if="loading && videos.length > 0" class="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
-      <p v-if="!hasMore && videos.length > 0" class="text-white/10 text-[9px] font-black tracking-[0.5em] uppercase">
-        ∎ {{ $t('home.no_videos') }}
+    <div ref="loadMoreTrigger" class="h-20 flex items-center justify-center mt-10">
+      <div v-if="loading && videos.length > 0" class="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+      <p v-if="!hasMore && videos.length > 0" class="text-white/40 text-sm font-medium">
+        {{ $t('home.no_videos') }}
       </p>
     </div>
 
-    <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-60 text-center">
-      <div class="i-ph-video-camera-slash text-8xl text-white/[0.02] mb-10"></div>
-      <h2 class="text-4xl font-brand tracking-widest text-white/20 uppercase italic">{{ $t('home.no_videos') }}</h2>
+    <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
+      <div class="i-ph-video-camera-slash text-6xl text-white/10 mb-6"></div>
+      <h2 class="text-2xl font-medium text-white/40">{{ $t('home.no_videos') }}</h2>
     </div>
   </div>
 </template>

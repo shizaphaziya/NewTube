@@ -3,16 +3,16 @@ const { t } = useI18n()
 const route = useRoute()
 const { isAdmin } = useProfile()
 
-const navItems = [
-  { icon: 'i-ph-house-line-bold', label: t('nav.home'),          link: '/' },
-  { icon: 'i-ph-fire-bold',       label: t('home.trending'),     link: '/?feed=trending' },
-  { icon: 'i-ph-lightning-bold',  label: t('home.latest'),       link: '/?feed=latest' },
-]
+const navItems = computed(() => [
+  { icon: 'i-ph-house', activeIcon: 'i-ph-house-fill', label: t('nav.home'),          link: '/' },
+  { icon: 'i-ph-fire', activeIcon: 'i-ph-fire-fill', label: t('home.trending'),     link: '/?feed=trending' },
+  { icon: 'i-ph-lightning', activeIcon: 'i-ph-lightning-fill', label: t('home.latest'),       link: '/?feed=latest' },
+])
 
-const studioItems = [
-  { icon: 'i-ph-circles-four-bold', label: t('nav.studio'),      link: '/studio' },
-  { icon: 'i-ph-upload-simple-bold',label: t('nav.upload'),      link: '/studio/upload' },
-]
+const studioItems = computed(() => [
+  { icon: 'i-ph-video-camera', activeIcon: 'i-ph-video-camera-fill', label: t('nav.studio'),      link: '/studio' },
+  { icon: 'i-ph-upload-simple', activeIcon: 'i-ph-upload-simple-fill', label: t('nav.upload'),      link: '/studio/upload' },
+])
 
 const isActive = (path: string, query?: string) => {
   if (query) {
@@ -27,127 +27,77 @@ const isActive = (path: string, query?: string) => {
 
 <template>
   <aside 
-    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-10
-           bg-[#050505]/40 backdrop-blur-3xl border-r border-white/[0.05]
-           w-[100px] hover:w-[280px] transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
-           group/aside overflow-hidden select-none"
+    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-6
+           bg-void border-r border-white/5
+           w-[80px] lg:w-[240px] transition-all duration-300
+           overflow-hidden select-none"
   >
     <!-- Brand Logo -->
-    <NuxtLink to="/" class="flex flex-col items-center px-6 mb-12 no-underline group/logo h-12">
-      <div class="flex items-center gap-4 transition-all duration-500">
-        <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(255,255,255,0.1)] group-hover/logo:scale-95 transition-transform">
-          <div class="i-ph-play-fill text-black text-xl translate-x-px"></div>
+    <NuxtLink to="/" class="flex items-center px-6 mb-8 no-underline h-10 group/logo">
+      <div class="flex items-center gap-4 w-full">
+        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0">
+          <div class="i-ph-play-fill text-black text-sm translate-x-px"></div>
         </div>
-        <div class="opacity-0 group-hover/aside:opacity-100 transition-all duration-700 overflow-hidden whitespace-nowrap">
-          <span class="text-lg font-brand font-black tracking-[0.2em] italic text-gradient">NEWTUBE</span>
+        <div class="hidden lg:block overflow-hidden whitespace-nowrap">
+          <span class="text-xl font-brand font-bold tracking-tight text-white">NewTube</span>
         </div>
       </div>
     </NuxtLink>
 
     <!-- Main Navigation -->
-    <nav class="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-none">
+    <nav class="flex-1 px-3 space-y-1 overflow-y-auto scrollbar-none">
       <template v-for="item in navItems" :key="item.link">
         <NuxtLink
           :to="item.link"
-          class="nav-link group"
-          :class="{ 'nav-link-active bg-white/[0.05] shadow-[inset_0_0_20px_rgba(255,255,255,0.02)]': isActive(item.link) }"
+          class="flex items-center gap-4 px-3 py-2.5 rounded-lg no-underline transition-colors"
+          :class="isActive(item.link) ? 'bg-[#27272a] text-white' : 'text-white/60 hover:bg-[#18181b] hover:text-white'"
         >
-          <!-- Active Indicator (Glow Bar) -->
-          <div 
-            v-if="isActive(item.link)"
-            class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-[0_0_15px_rgba(255,255,255,0.5)]"
-          ></div>
-          
-          <div class="flex items-center gap-6 w-full ml-4">
-            <div :class="[item.icon, isActive(item.link) ? 'text-white' : 'text-white/30']" class="text-2xl transition-transform duration-500 group-hover:scale-110 shrink-0"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover/aside:opacity-100 transition-all duration-700 delay-75"
-                  :class="isActive(item.link) ? 'text-white' : 'text-white/20'">
-              {{ item.label }}
-            </span>
-          </div>
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0"></div>
+          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+            {{ item.label }}
+          </span>
         </NuxtLink>
       </template>
 
-      <div class="h-px bg-white/5 my-8 mx-5"></div>
-
-      <!-- Studio Section -->
-      <div class="px-5 mb-2 opacity-0 group-hover/aside:opacity-100 transition-opacity duration-500">
-        <span class="text-[9px] font-black tracking-[0.4em] uppercase text-white/10 italic">{{ t('sidebar.creator') }}</span>
-      </div>
+      <div class="h-px bg-white/10 my-4 mx-3"></div>
       
       <template v-for="item in studioItems" :key="item.link">
         <NuxtLink
           :to="item.link"
-          class="nav-link group"
-          :class="{ 'nav-link-active bg-white/[0.05]': isActive(item.link) }"
+          class="flex items-center gap-4 px-3 py-2.5 rounded-lg no-underline transition-colors"
+          :class="isActive(item.link) ? 'bg-[#27272a] text-white' : 'text-white/60 hover:bg-[#18181b] hover:text-white'"
         >
-          <div v-if="isActive(item.link)"
-               class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
-          
-          <div class="flex items-center gap-6 w-full ml-4">
-            <div :class="[item.icon, isActive(item.link) ? 'text-white' : 'text-white/30']" class="text-2xl transition-transform duration-500 group-hover:scale-110 shrink-0"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover/aside:opacity-100 transition-all duration-700 delay-75"
-                  :class="isActive(item.link) ? 'text-white' : 'text-white/20'">
-              {{ item.label }}
-            </span>
-          </div>
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0"></div>
+          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+            {{ item.label }}
+          </span>
         </NuxtLink>
       </template>
 
       <!-- Admin -->
       <template v-if="isAdmin">
-        <div class="h-px bg-red-500/10 my-8 mx-5"></div>
-        <NuxtLink to="/admin" class="nav-link group/admin">
-          <div class="flex items-center gap-6 w-full ml-4">
-            <div class="i-ph-shield-checkered-bold text-2xl text-red-500/20 group-hover/admin:text-red-500 transition-colors shrink-0"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover/aside:opacity-100 text-red-500/30 group-hover/admin:text-red-500 transition-all duration-700">
-              {{ t('admin.high_command') }}
-            </span>
-          </div>
+        <div class="h-px bg-red-500/10 my-4 mx-3"></div>
+        <NuxtLink to="/admin" class="flex items-center gap-4 px-3 py-2.5 rounded-lg no-underline transition-colors text-red-400/60 hover:bg-red-500/10 hover:text-red-400">
+          <div class="i-ph-shield-checkered text-2xl shrink-0"></div>
+          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+            {{ t('admin.high_command') || 'Admin' }}
+          </span>
         </NuxtLink>
       </template>
     </nav>
 
     <!-- Bottom Actions -->
-    <div class="px-4 mt-auto">
+    <div class="px-3 mt-auto">
       <NuxtLink 
         to="/profile/settings"
-        class="nav-link mb-2 group/settings"
-        :class="{ 'bg-white/5': isActive('/profile/settings') }"
+        class="flex items-center gap-4 px-3 py-2.5 rounded-lg no-underline transition-colors"
+        :class="isActive('/profile/settings') ? 'bg-[#27272a] text-white' : 'text-white/60 hover:bg-[#18181b] hover:text-white'"
       >
-          <div class="flex items-center gap-6 w-full ml-4">
-            <div class="i-ph-gear-six-bold text-2xl text-white/20 group-hover/settings:rotate-90 group-hover/settings:text-white transition-all duration-700 shrink-0"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover/aside:opacity-100 text-white/20 group-hover/settings:text-white transition-all duration-700">
-              {{ t('profile.settings') }}
-            </span>
-          </div>
+        <div class="i-ph-gear-six text-2xl shrink-0"></div>
+        <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+          {{ t('profile.settings') }}
+        </span>
       </NuxtLink>
     </div>
   </aside>
 </template>
-
-<style scoped>
-.nav-link {
-  display: flex !important;
-  align-items: center !important;
-  height: 4rem !important;
-  border-radius: 1.5rem !important;
-  margin-left: 1.25rem !important;
-  margin-right: 1.25rem !important;
-  transition-property: all !important;
-  transition-duration: 500ms !important;
-  position: relative !important;
-  overflow: hidden !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-}
-
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
-}
-
-.nav-link-active {
-  @apply bg-white/[0.05] border border-white/[0.05];
-}
-</style>
