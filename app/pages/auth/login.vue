@@ -5,12 +5,12 @@ definePageMeta({
   layout: 'default'
 })
 
-const appStore = useAppStore()
+
 const router = useRouter()
 
 onMounted(() => {
   router.replace(useRoute().query.redirect || '/')
-  appStore.openAuthModal()
+  useAppStore().openAuthModal()
 })
 </script>
 

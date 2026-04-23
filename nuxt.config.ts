@@ -34,8 +34,8 @@ export default defineNuxtConfig({
 
   // Supabase integration via official module
   supabase: {
-    url: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
-    key: process.env.NUXT_PUBLIC_SUPABASE_KEY || '',
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL || 'https://yzxtitdkdfnpbsvvmxmq.supabase.co',
+    key: process.env.NUXT_PUBLIC_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6eHRpdGRrZGZucGJzdnZteG1xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjU2NDEsImV4cCI6MjA5MTc0MTY0MX0.KHSmCOGXSuoymWojTW0nInAXDFDxqgdKVXzXw6mlLJ0',
     redirectOptions: {
       login: '/auth/login',
       callback: '/auth/confirm',
