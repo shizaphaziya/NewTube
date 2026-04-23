@@ -1,17 +1,28 @@
 <script setup>
 const { t } = useI18n()
 
-const feeds = [
+const feeds = computed(() => [
   { key: 'trending',      label: t('home.trending'),      icon: 'i-ph-fire-bold' },
   { key: 'latest',        label: t('home.latest'),         icon: 'i-ph-lightning-bold' },
   { key: 'subscriptions', label: t('home.subscriptions'),  icon: 'i-ph-users-four-bold' },
-]
+])
+
+
+const categories = computed(() => [
+  { key: 'all', label: t('categories.all') },
+  { key: 'music', label: t('categories.music') },
+  { key: 'cinema', label: t('categories.cinema') },
+  { key: 'gaming', label: t('categories.gaming') },
+  { key: 'tech', label: t('categories.tech') },
+  { key: 'art', label: t('categories.art') },
+  { key: 'nature', label: t('categories.nature') }
+])
 
 const activeFeed = ref('trending')
 
 useSeoMeta({
-  title: t('seo.title') || 'NewTube - Premium Video Signal',
-  description: t('seo.description') || 'Curated signals. High fidelity. Zero noise.'
+  title: () => t('seo.title') || 'NewTube - Premium Video Signal',
+  description: () => t('seo.description') || 'Curated signals. High fidelity. Zero noise.'
 })
 </script>
 
@@ -27,15 +38,7 @@ useSeoMeta({
         class="flex items-center gap-3 mb-16 overflow-x-auto pb-4 scrollbar-none"
       >
         <button 
-          v-for="cat in [
-            { key: 'all', label: $t('categories.all') },
-            { key: 'music', label: $t('categories.music') },
-            { key: 'cinema', label: $t('categories.cinema') },
-            { key: 'gaming', label: $t('categories.gaming') },
-            { key: 'tech', label: $t('categories.tech') },
-            { key: 'art', label: $t('categories.art') },
-            { key: 'nature', label: $t('categories.nature') }
-          ]"
+          v-for="cat in categories"
           :key="cat.key"
           class="px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] text-[10px] font-bold uppercase tracking-wider
                  transition-all hover:bg-white/10 active:scale-95 whitespace-nowrap"

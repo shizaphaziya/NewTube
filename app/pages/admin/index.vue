@@ -4,7 +4,9 @@ definePageMeta({
 })
 
 const supabase = useSupabaseClient()
+const { error: showError } = useToast()
 const { t } = useI18n()
+
 
 const { data: videos, refresh } = await useAsyncData('admin-videos', async () => {
   const { data } = await supabase
@@ -23,7 +25,7 @@ const updateStatus = async (videoId, status) => {
   if (!error) {
     refresh()
   } else {
-    alert(error.message)
+    showError(error.message)
   }
 }
 
@@ -48,7 +50,7 @@ const getStatusColor = (status) => {
       </div>
     </div>
 
-    <div class="glass-card overflow-hidden border-white/5 shadow-2xl rounded-[32px]">
+    <div class="glass-card overflow-hidden border-white/5 shadow-md rounded-[32px]">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse">
           <thead>

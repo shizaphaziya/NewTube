@@ -105,6 +105,9 @@ const toggleLike = async () => {
 }
 
 onMounted(async () => {
+  if (video.value) {
+    appStore.addToHistory(video.value.id)
+  }
   await checkReaction()
   // Increment view
   await (supabase as any).rpc('increment_view_count', { video_id_param: videoId.value })
@@ -121,6 +124,24 @@ const { data: comments, refresh: refreshComments } = await useAsyncData(`comment
 
 const commentContent = ref('')
 const isPosting = ref(false)
+
+const handleReactionChange = async (newState: 'like' | 'dislike' | 'none', revert: () => void) => {
+  if (!user.value) {
+    appStore.openAuthModal()
+    revert()
+    return
+  }
+
+  const isDislike = newState === 'dislike'
+  const isNone = newState === 'none'
+
+  if (isNone) {
+    await supabase.from('likes').delete().match({ video_id: videoId.value, user_id: user.value.id })
+  } else {
+    await supabase.from('likes').upsert({ video_id: videoId.value, user_id: user.value.id, is_dislike: isDislike })
+  }
+}
+
 const postComment = async () => {
   if (!user.value) {
     appStore.openAuthModal()
@@ -165,8 +186,8 @@ const postComment = async () => {
     <!-- Main Player Section (Full Width if Cinema) -->
     <div :class="isCinemaMode ? 'w-full px-0' : 'layout-container pt-12 md:pt-20'" class="relative z-10 transition-all duration-1000">
       <div 
-        class="group/player relative aspect-video bg-black overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] transition-all duration-1000"
-        :class="isCinemaMode ? 'w-full h-screen max-h-[85vh]' : 'rounded-[3rem] border border-white/[0.05] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)]'"
+        class="group/player relative aspect-video bg-black overflow-hidden shadow-lg transition-all duration-1000"
+        :class="isCinemaMode ? 'w-full h-screen max-h-[85vh]' : 'rounded-[3rem] border border-white/[0.05] shadow-xl'"
       >
         <!-- Actual Video Player -->
         <video 
@@ -247,7 +268,7 @@ const postComment = async () => {
             <div class="flex items-center gap-6 text-[10px] font-black tracking-[0.3em] uppercase text-white/20">
               <span class="text-white/40">{{ video?.view_count || 0 }} Views</span>
               <span class="w-1.5 h-1.5 rounded-full bg-white/5"></span>
-              <span>Logged: {{ useTimeAgo(video?.created_at || '').value }}</span>
+              <ClientOnly><span>Logged: {{ useTimeAgo(video?.created_at || '').value }}</span><template #fallback><span>Logged: ...</span></template></ClientOnly>
             </div>
             <p class="text-white/40 text-sm leading-[1.8] tracking-wide whitespace-pre-wrap font-medium">
               {{ video?.description || 'No additional metadata retrieved for this signal.' }}
@@ -292,7 +313,7 @@ const postComment = async () => {
                 <div class="flex-1 space-y-2">
                   <div class="flex items-center gap-3">
                     <span class="text-xs font-black uppercase tracking-widest text-white/80">{{ comment.profiles?.display_name }}</span>
-                    <span class="text-[9px] font-bold text-white/10 uppercase tracking-[0.2em]">{{ useTimeAgo(comment.created_at).value }}</span>
+                    <ClientOnly><span class="text-[9px] font-bold text-white/10 uppercase tracking-[0.2em]">{{ useTimeAgo(comment.created_at).value }}</span><template #fallback><span class="text-[9px] font-bold text-white/10 uppercase tracking-[0.2em]">...</span></template></ClientOnly>
                   </div>
                   <p class="text-white/40 text-sm leading-relaxed max-w-2xl group-hover/comment:text-white/60 transition-colors">
                     {{ comment.content }}
@@ -317,7 +338,7 @@ const postComment = async () => {
               :to="`/watch/${related.id}`"
               class="flex gap-5 group/related no-underline"
             >
-              <div class="relative w-40 aspect-video rounded-2xl overflow-hidden border border-white/5 bg-void-card shrink-0 transition-all duration-500 group-hover/related:(border-white/20 -translate-y-1 shadow-2xl)">
+              <div class="relative w-40 aspect-video rounded-2xl overflow-hidden border border-white/5 bg-void-card shrink-0 transition-all duration-500 group-hover/related:(border-white/20 -translate-y-1 shadow-md)">
                 <img :src="related.thumbnail_url || ''" class="w-full h-full object-cover transition-transform duration-700 group-hover/related:scale-110" />
                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/related:opacity-100 transition-opacity flex items-center justify-center">
                   <div class="i-ph-play-fill text-white text-lg"></div>
@@ -338,13 +359,4 @@ const postComment = async () => {
   </div>
 </template>
 
-<style scoped>
-@keyframes slow-spin {
-  from { transform: translate(-50%, -10%) rotate(0deg); }
-  to { transform: translate(-50%, -10%) rotate(360deg); }
-}
 
-.animate-slow-spin {
-  animation: slow-spin 60s linear infinite;
-}
-</style>

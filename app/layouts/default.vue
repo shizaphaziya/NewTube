@@ -62,6 +62,7 @@ const { isAdmin } = useProfile()
         <slot />
       </main>
       <MiniPlayer />
+      <ConfirmModal />
 
 
       <!-- Mobile Navigation -->

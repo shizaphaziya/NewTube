@@ -9,6 +9,7 @@ type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
 
 const supabase = useSupabaseClient<Database>()
 const { t } = useI18n()
+const { confirm: showConfirm } = useConfirm()
 const { profile } = useProfile()
 
 // Security check: Only admins allowed
@@ -33,7 +34,7 @@ const toggleBlock = async (video: VideoWithProfile) => {
 }
 
 const deleteVideo = async (id: string) => {
-  if (!confirm(t('studio.terminate_confirm'))) return
+  if (!await showConfirm(t('studio.terminate_confirm'))) return
   const { error } = await supabase.from('videos').delete().eq('id', id)
   if (!error) refresh()
 }

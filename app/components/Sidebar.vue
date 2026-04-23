@@ -3,16 +3,16 @@ const { t } = useI18n()
 const route = useRoute()
 const { isAdmin } = useProfile()
 
-const navItems = [
+const navItems = computed(() => [
   { icon: 'i-ph-house-line-bold', label: t('nav.home'),          link: '/' },
   { icon: 'i-ph-fire-bold',       label: t('home.trending'),     link: '/?feed=trending' },
   { icon: 'i-ph-lightning-bold',  label: t('home.latest'),       link: '/?feed=latest' },
-]
+])
 
-const studioItems = [
+const studioItems = computed(() => [
   { icon: 'i-ph-circles-four-bold', label: t('nav.studio'),      link: '/studio' },
   { icon: 'i-ph-upload-simple-bold',label: t('nav.upload'),      link: '/studio/upload' },
-]
+])
 
 const isActive = (path: string, query?: string) => {
   if (query) {

@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { useTimeoutFn } from '@vueuse/core'
 
 export interface Toast {
   id: string
@@ -20,7 +21,7 @@ export const useToast = () => {
     toasts.value.push({ id, message, type, duration })
 
     if (duration > 0) {
-      setTimeout(() => {
+      useTimeoutFn(() => {
         removeToast(id)
       }, duration)
     }

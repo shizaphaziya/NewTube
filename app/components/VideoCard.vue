@@ -29,7 +29,7 @@ defineProps<{
   >
     <!-- Cinematic Thumbnail Container -->
     <div class="relative aspect-video rounded-[2rem] bg-stone-900 overflow-hidden border border-white/5 transition-all duration-700 
-                group-hover:(border-white/20 shadow-[0_30px_80px_-15px_rgba(0,0,0,0.7),0_0_50px_rgba(255,255,255,0.02)] -translate-y-2 scale-[1.01])">
+                group-hover:(border-white/20 shadow-xl -translate-y-2 scale-[1.01])">
       
       <!-- Video Thumbnail -->
       <img 
@@ -37,7 +37,7 @@ defineProps<{
         :src="video.thumbnail_url" 
         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         loading="lazy"
-        :style="{ viewTransitionName: `video-thumb-${video.id}` }"
+
       />
       
       <!-- Fallback Frame -->
@@ -56,13 +56,13 @@ defineProps<{
 
       <!-- Cinema Overlay -->
       <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-2xl scale-50 group-hover:scale-100 transition-transform duration-500">
+        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md scale-50 group-hover:scale-100 transition-transform duration-500">
           <div class="i-ph-play-fill text-black text-xl translate-x-px"></div>
         </div>
       </div>
 
       <!-- Badge Overlay -->
-      <div class="absolute bottom-5 right-5 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 text-[9px] font-black tracking-widest text-white/80 uppercase shadow-2xl">
+      <div class="absolute bottom-5 right-5 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 text-[9px] font-black tracking-widest text-white/80 uppercase shadow-md">
         {{ video.view_count || 0 }} {{ t('watch.views') }}
       </div>
     </div>
@@ -89,7 +89,7 @@ defineProps<{
             {{ video.profiles?.display_name }}
           </div>
           <div class="flex items-center gap-2 text-[9px] font-bold text-white/10 uppercase tracking-[0.3em]">
-            <span>{{ useTimeAgo(video.created_at || '').value }}</span>
+            <ClientOnly><span>{{ useTimeAgo(video.created_at || '').value }}</span><template #fallback><span>...</span></template></ClientOnly>
             <span class="w-1 h-1 rounded-full bg-white/5"></span>
             <span class="text-emerald-500/40">Verified HQ</span>
           </div>
@@ -99,10 +99,3 @@ defineProps<{
   </NuxtLink>
 </template>
 
-<style scoped>
-/* Smooth transitions for all elements */
-* {
-  transition-property: all;
-  transition-duration: 500ms;
-}
-</style>

@@ -8,16 +8,18 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', state: 'like' | 'dislike' | 'none'): void
+  (e: 'change', state: 'like' | 'dislike' | 'none', revert: () => void): void
 }>()
 
 const currentState = ref(props.initialState)
 const localLikes = ref(props.initialLikes)
 const localDislikes = ref(props.initialDislikes)
 
-// Optimistic UI toggle: instantly update the local state to make the app feel blazing fast,
-// before receiving confirmation from the server.
 const toggleLike = () => {
+  const previousState = currentState.value
+  const previousLikes = localLikes.value
+  const previousDislikes = localDislikes.value
+
   if (currentState.value === 'like') {
     currentState.value = 'none'
     localLikes.value--
@@ -26,10 +28,18 @@ const toggleLike = () => {
     currentState.value = 'like'
     localLikes.value++
   }
-  emit('change', currentState.value)
+  emit('change', currentState.value, () => {
+    currentState.value = previousState
+    localLikes.value = previousLikes
+    localDislikes.value = previousDislikes
+  })
 }
 
 const toggleDislike = () => {
+  const previousState = currentState.value
+  const previousLikes = localLikes.value
+  const previousDislikes = localDislikes.value
+
   if (currentState.value === 'dislike') {
     currentState.value = 'none'
     localDislikes.value--
@@ -38,7 +48,11 @@ const toggleDislike = () => {
     currentState.value = 'dislike'
     localDislikes.value++
   }
-  emit('change', currentState.value)
+  emit('change', currentState.value, () => {
+    currentState.value = previousState
+    localLikes.value = previousLikes
+    localDislikes.value = previousDislikes
+  })
 }
 
 const formatCount = (count: number) => {

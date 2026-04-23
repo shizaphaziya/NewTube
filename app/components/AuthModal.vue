@@ -72,7 +72,7 @@ const handleAuth = async () => {
         @click.self="appStore.closeAuthModal"
       >
         <div
-          class="bg-[#0f0f0f] border border-white/10 rounded-[2rem] w-full max-w-sm p-10 relative shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden"
+          class="bg-[#0f0f0f] border border-white/10 rounded-[2rem] w-full max-w-sm p-10 relative shadow-xl overflow-hidden"
           v-motion
           :initial="{ opacity: 0, scale: 0.95, y: 10 }"
           :enter="{ opacity: 1, scale: 1, y: 0, transition: { duration: 400, ease: 'easeOut' } }"
@@ -151,13 +151,3 @@ const handleAuth = async () => {
   </Teleport>
 </template>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

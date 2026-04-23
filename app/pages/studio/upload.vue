@@ -7,7 +7,7 @@ const { t } = useI18n()
 
 useSeoMeta({
   title: () => `${t('studio.upload')} - NewTube`,
-  description: t('studio.broadcasting')
+  description: () => t('studio.broadcasting')
 })
 
 const title = ref('')
@@ -151,7 +151,7 @@ const handleUpload = async () => {
     
     uploadProgress.value = 100
     success.value = true
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await nextTick()
     navigateTo('/')
     
   } catch (e: any) {
@@ -264,9 +264,7 @@ const handleUpload = async () => {
                </div>
                <span class="text-2xl font-brand font-black tracking-tighter text-white tabular-nums">{{ uploadProgress }}%</span>
              </div>
-             <div class="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-               <div class="h-full bg-silver transition-all duration-700 ease-out w-[0%]" :style="{ width: `${uploadProgress}%` }"></div>
-             </div>
+             <progress :value="uploadProgress" max="100" class="w-full h-[2px] rounded-full overflow-hidden appearance-none [&::-webkit-progress-bar]:bg-white/5 [&::-webkit-progress-value]:bg-silver [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-700"></progress>
           </div>
           
           <button 
