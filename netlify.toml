@@ -1,6 +1,6 @@
 [build]
   command = "bun install && bun run generate"
-  publish = "dist"
+  publish = ".output/public"
 
 [build.environment]
   BUN_VERSION = "1.0.3"
