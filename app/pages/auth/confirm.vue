@@ -4,7 +4,7 @@ const router = useRouter()
 
 watch(user, () => {
   if (user.value) {
-    router.replace('/')
+    router.replace(useRoute().query.redirect || '/')
   }
 }, { immediate: true })
 </script>

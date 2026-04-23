@@ -9,7 +9,7 @@ const appStore = useAppStore()
 const router = useRouter()
 
 onMounted(() => {
-  router.replace('/')
+  router.replace(useRoute().query.redirect || '/')
   appStore.openAuthModal()
 })
 </script>

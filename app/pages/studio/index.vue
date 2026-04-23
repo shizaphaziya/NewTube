@@ -70,7 +70,7 @@ const deleteVideo = async (id) => {
               {{ t('auth.login_required') }}
             </p>
           </div>
-          <NuxtLink to="/auth/login" class="btn-primary w-full inline-flex">
+          <NuxtLink :to="'/auth/login?redirect=' + $route.fullPath" class="btn-primary w-full inline-flex">
             {{ t('auth.authorize_identity') }}
           </NuxtLink>
         </div>
