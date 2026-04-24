@@ -44,6 +44,76 @@ const stats = computed(() => {
   }
 })
 
+const editingVideo = ref(null)
+const editForm = ref({ title: '', description: '', is_18_plus: false, thumbnailFile: null })
+const isSaving = ref(false)
+const thumbnailInput = ref(null)
+
+const openEditModal = (video) => {
+  editingVideo.value = video
+  editForm.value = {
+    title: video.title,
+    description: video.description || '',
+    is_18_plus: video.is_18_plus || false,
+    thumbnailFile: null
+  }
+}
+
+const closeEditModal = () => {
+  editingVideo.value = null
+}
+
+const handleThumbnailSelect = (e) => {
+  editForm.value.thumbnailFile = e.target.files[0]
+}
+
+const saveVideo = async () => {
+  if (!editingVideo.value) return
+  isSaving.value = true
+
+  try {
+    let thumbnailUrl = editingVideo.value.thumbnail_url
+
+    if (editForm.value.thumbnailFile) {
+      const thumbExt = editForm.value.thumbnailFile.name.split('.').pop()
+      const thumbFileName = `${Math.random()}.${thumbExt}`
+      const thumbPath = `${user.value.id}/${thumbFileName}`
+
+      await supabase.storage
+        .from('thumbnails')
+        .upload(thumbPath, editForm.value.thumbnailFile, {
+            contentType: editForm.value.thumbnailFile.type
+        })
+
+      const { data: { publicUrl: tUrl } } = supabase.storage
+        .from('thumbnails')
+        .getPublicUrl(thumbPath)
+
+      thumbnailUrl = tUrl
+    }
+
+    const { error } = await supabase
+      .from('videos')
+      .update({
+        title: editForm.value.title,
+        description: editForm.value.description,
+        is_18_plus: editForm.value.is_18_plus,
+        thumbnail_url: thumbnailUrl
+      })
+      .eq('id', editingVideo.value.id)
+
+    if (error) throw error
+
+    refresh()
+    closeEditModal()
+  } catch (error) {
+    console.error('Failed to update video', error)
+    alert('Failed to update video: ' + error.message)
+  } finally {
+    isSaving.value = false
+  }
+}
+
 const deleteVideo = async (id) => {
   if (!await showConfirm(t('studio.terminate_confirm'))) return
   const { error } = await supabase.from('videos').delete().eq('id', id)
@@ -190,6 +260,13 @@ const deleteVideo = async (id) => {
 
               <!-- Hover Actions (Desktop) / Normal Actions (Mobile) -->
               <div class="flex sm:absolute sm:right-6 sm:top-1/2 sm:-translate-y-1/2 items-center gap-2 sm:opacity-0 group-hover:opacity-100 transition-opacity bg-[#18181b] sm:bg-[#18181b]/90 sm:backdrop-blur-sm sm:pl-4 rounded-l-lg py-1 mt-2 sm:mt-0">
+                 <button
+                  @click="openEditModal(video)"
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                  title="Edit video"
+                >
+                  <div class="i-ph-pencil-simple text-lg"></div>
+                </button>
                  <NuxtLink
                   :to="`/watch/${video.id}`"
                   class="w-8 h-8 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
@@ -210,8 +287,87 @@ const deleteVideo = async (id) => {
         </div>
       </div>
     </div>
+
+    <!-- Edit Video Modal -->
+    <Transition name="fade">
+      <div v-if="editingVideo" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeEditModal"></div>
+
+        <div class="bg-[#18181b] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative z-10 flex flex-col max-h-[90vh]">
+          <div class="flex items-center justify-between p-6 border-b border-white/10">
+            <h2 class="text-xl font-semibold text-white">Edit Video</h2>
+            <button @click="closeEditModal" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors">
+              <div class="i-ph-x text-xl"></div>
+            </button>
+          </div>
+
+          <div class="p-6 space-y-6 overflow-y-auto">
+            <!-- Thumbnail -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-white/90">Thumbnail</label>
+              <div class="flex items-end gap-4">
+                <div class="w-32 aspect-video rounded-lg overflow-hidden bg-[#27272a] border border-white/10 shrink-0">
+                   <img v-if="editingVideo.thumbnail_url && !editForm.thumbnailFile" :src="editingVideo.thumbnail_url" class="w-full h-full object-cover" />
+                   <div v-else-if="editForm.thumbnailFile" class="w-full h-full flex items-center justify-center text-xs text-white/60">New image selected</div>
+                   <div v-else class="w-full h-full flex items-center justify-center">
+                     <div class="i-ph-image text-white/20"></div>
+                   </div>
+                </div>
+                <div class="flex-1">
+                  <input type="file" accept="image/*" class="hidden" ref="thumbnailInput" @change="handleThumbnailSelect" />
+                  <button @click="$refs.thumbnailInput.click()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white font-medium transition-colors">
+                    Change Thumbnail
+                  </button>
+                  <p class="text-xs text-white/40 mt-2" v-if="editForm.thumbnailFile">{{ editForm.thumbnailFile.name }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-white/90">Title</label>
+              <input v-model="editForm.title" type="text" class="glass-input w-full" placeholder="Video title" />
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-white/90">Description</label>
+              <textarea v-model="editForm.description" class="glass-input w-full min-h-[100px] resize-y" placeholder="Video description"></textarea>
+            </div>
+
+            <!-- 18+ Toggle -->
+            <div class="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+              <div class="space-y-1">
+                <div class="text-sm font-medium text-white">Age Restriction (18+)</div>
+                <div class="text-xs text-white/60">Only show this video to users 18 and older.</div>
+              </div>
+              <button
+                @click="editForm.is_18_plus = !editForm.is_18_plus"
+                class="w-12 h-6 rounded-full transition-colors relative"
+                :class="editForm.is_18_plus ? 'bg-red-500' : 'bg-white/20'"
+              >
+                <div
+                  class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform"
+                  :class="editForm.is_18_plus ? 'translate-x-6' : 'translate-x-0'"
+                ></div>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-6 border-t border-white/10 flex justify-end gap-3 bg-white/[0.02] rounded-b-2xl">
+            <button @click="closeEditModal" class="px-4 py-2 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-colors">
+              Cancel
+            </button>
+            <button @click="saveVideo" :disabled="isSaving || !editForm.title" class="btn-primary text-sm">
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
+
 
 <style scoped>
 .fade-enter-active, .fade-leave-active {
