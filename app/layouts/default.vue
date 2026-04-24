@@ -70,7 +70,11 @@ const { isAdmin } = useProfile()
           <div class="i-ph-house text-2xl"></div>
           <span class="text-[10px] font-medium">{{ $t('nav.home') || 'Home' }}</span>
         </NuxtLink>
-        <NuxtLink to="/?feed=trending" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/50 hover:text-white active:scale-95 transition-all">
+        <NuxtLink to="/shorts" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/50 hover:text-white active:scale-95 transition-all">
+          <div class="i-ph-tiktok-logo text-2xl"></div>
+          <span class="text-[10px] font-medium">{{ $t('nav.shorts') || 'Shorts' }}</span>
+        </NuxtLink>
+        <NuxtLink to="/?feed=trending" class="flex flex-col items-center justify-center w-16 h-full gap-1 text-white/50 hover:text-white active:scale-95 transition-all hidden sm:flex">
           <div class="i-ph-fire text-2xl"></div>
           <span class="text-[10px] font-medium">{{ $t('home.trending') || 'Trending' }}</span>
         </NuxtLink>

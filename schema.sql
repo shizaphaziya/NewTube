@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.videos (
   thumbnail_url TEXT,
   status TEXT DEFAULT 'published' CHECK (status IN ('published', 'hidden', 'blocked')),
   view_count BIGINT DEFAULT 0,
+  is_short BOOLEAN DEFAULT false,
   is_18_plus BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -95,12 +96,15 @@ CREATE POLICY "Admins can do everything with videos" ON public.videos
   FOR ALL USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin');
 
 CREATE POLICY "Likes are viewable by everyone" ON public.likes FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own likes" ON public.likes FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own likes" ON public.likes FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own likes" ON public.likes FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own likes" ON public.likes FOR DELETE USING (auth.uid() = user_id);
 
 -- Subscription Policies
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Subscriptions are viewable by everyone" ON public.subscriptions FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own subscriptions" ON public.subscriptions FOR ALL USING (auth.uid() = subscriber_id);
+CREATE POLICY "Users can insert their own subscriptions" ON public.subscriptions FOR INSERT WITH CHECK (auth.uid() = subscriber_id);
+CREATE POLICY "Users can delete their own subscriptions" ON public.subscriptions FOR DELETE USING (auth.uid() = subscriber_id);
 
 
 -- Comment Policies

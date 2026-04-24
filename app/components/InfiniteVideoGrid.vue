@@ -19,6 +19,7 @@ const fetchVideos = async () => {
     .from('videos')
     .select('*, profiles:profiles!videos_user_id_fkey(display_name, avatar_url)')
     .eq('status', 'published')
+    .eq('is_short', false)
     .order('created_at', { ascending: false })
     .range(from, to)
 

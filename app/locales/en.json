@@ -7,7 +7,8 @@
     "login": "Login",
     "logout": "Logout",
     "upload": "Upload",
-    "search": "Search..."
+    "search": "Search...",
+    "shorts": "Shorts"
   },
   "home": {
     "quick_actions": "Quick Access",
@@ -144,6 +145,7 @@
     "gaming": "Gaming",
     "tech": "Tech",
     "art": "Art",
-    "nature": "Nature"
+    "nature": "Nature",
+    "shorts": "Shorts"
   }
 }

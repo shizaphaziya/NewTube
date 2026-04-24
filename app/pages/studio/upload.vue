@@ -7,7 +7,9 @@ const form = ref({
   title: '',
   description: '',
   videoFile: null,
-  thumbnailFile: null
+  thumbnailFile: null,
+  isShort: false,
+  thumbnailBlob: null
 })
 
 const isUploading = ref(false)
@@ -17,8 +19,46 @@ const progress = ref({
 })
 const uploadSuccess = ref(false)
 
-const handleVideoSelect = (e) => {
-  form.value.videoFile = e.target.files[0]
+const handleVideoSelect = async (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  form.value.videoFile = file
+
+  // Extract duration, resolution and generate thumbnail
+  const videoUrl = URL.createObjectURL(file)
+  const video = document.createElement('video')
+  video.src = videoUrl
+
+  await new Promise(resolve => {
+    video.onloadedmetadata = () => {
+      const isVertical = video.videoHeight > video.videoWidth
+      const isShortDuration = video.duration <= 60
+      form.value.isShort = isVertical && isShortDuration
+      resolve()
+    }
+  })
+
+  // Generate thumbnail from 5th second (or middle if shorter than 5s)
+  const targetTime = Math.min(5, video.duration / 2)
+  video.currentTime = targetTime
+
+  await new Promise(resolve => {
+    video.onseeked = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      canvas.toBlob(blob => {
+        if (blob) {
+            form.value.thumbnailBlob = blob
+        }
+        URL.revokeObjectURL(videoUrl)
+        resolve()
+      }, 'image/jpeg', 0.8)
+    }
+  })
 }
 
 const handleThumbnailSelect = (e) => {
@@ -48,15 +88,19 @@ const uploadVideo = async () => {
       .getPublicUrl(videoPath)
 
     let thumbnailUrl = null
-    if (form.value.thumbnailFile) {
+    if (form.value.thumbnailFile || form.value.thumbnailBlob) {
       progress.value = { status: 'Uploading thumbnail', percent: 60 }
-      const thumbExt = form.value.thumbnailFile.name.split('.').pop()
+
+      const fileToUpload = form.value.thumbnailFile || form.value.thumbnailBlob
+      const thumbExt = form.value.thumbnailFile ? form.value.thumbnailFile.name.split('.').pop() : 'jpg'
       const thumbFileName = `${Math.random()}.${thumbExt}`
       const thumbPath = `${user.value.id}/${thumbFileName}`
 
       await supabase.storage
         .from('thumbnails')
-        .upload(thumbPath, form.value.thumbnailFile)
+        .upload(thumbPath, fileToUpload, {
+            contentType: form.value.thumbnailFile ? form.value.thumbnailFile.type : 'image/jpeg'
+        })
 
       const { data: { publicUrl: tUrl } } = supabase.storage
         .from('thumbnails')
@@ -74,6 +118,7 @@ const uploadVideo = async () => {
       description: form.value.description,
       video_url: videoUrl,
       thumbnail_url: thumbnailUrl,
+      is_short: form.value.isShort,
       status: 'published'
     })
 
@@ -81,7 +126,7 @@ const uploadVideo = async () => {
 
     progress.value = { status: 'Done', percent: 100 }
     uploadSuccess.value = true
-    form.value = { title: '', description: '', videoFile: null, thumbnailFile: null }
+    form.value = { title: '', description: '', videoFile: null, thumbnailFile: null, isShort: false, thumbnailBlob: null }
   } catch (error) {
     console.error('Upload failed:', error)
     alert('Upload failed: ' + error.message)
