@@ -60,7 +60,7 @@ const postComment = async () => {
 
   await supabase.from('comments').insert({
     video_id: route.params.id,
-    user_id: user.value.id,
+
     content: commentContent.value.trim()
   })
 
@@ -126,7 +126,7 @@ const handleReactionChange = async (state, revert) => {
         .from('likes')
         .upsert({
           video_id: video.value.id,
-          user_id: user.value.id,
+
           is_dislike: state === 'dislike'
         })
     }
@@ -184,7 +184,7 @@ const toggleSubscription = async () => {
                 .from('subscriptions')
                 .insert({
                     creator_id: video.value.user_id,
-                    subscriber_id: user.value.id
+
                 })
             isSubscribed.value = true
             subscribersCount.value++
