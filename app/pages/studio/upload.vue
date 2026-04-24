@@ -2,6 +2,7 @@
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { t } = useI18n()
+const { error: showError, success: showSuccess } = useToast()
 
 const form = ref({
   title: '',
