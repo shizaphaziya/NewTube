@@ -421,8 +421,8 @@ useSeoMeta({
                 class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/20 hover:bg-black/40 transition-colors text-sm"
               >
                 <span class="text-white/80">18+ Restriction</span>
-                <div class="w-8 h-4 rounded-full transition-colors relative" :class="video?.is_18_plus ? 'bg-red-500' : 'bg-white/20'">
-                  <div class="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform" :class="video?.is_18_plus ? 'translate-x-4' : 'translate-x-0'"></div>
+                <div class="w-12 h-6 rounded-full transition-colors relative shrink-0" :class="video?.is_18_plus ? 'bg-red-500' : 'bg-white/20'">
+                  <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="video?.is_18_plus ? 'translate-x-6' : 'translate-x-0'"></div>
                 </div>
               </button>
 
