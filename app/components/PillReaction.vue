@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+
 
 const props = defineProps<{
   initialLikes: number
@@ -54,6 +54,11 @@ const toggleDislike = () => {
     localDislikes.value = previousDislikes
   })
 }
+
+import { watch } from 'vue'
+watch(() => props.initialState, (newVal) => { currentState.value = newVal })
+watch(() => props.initialLikes, (newVal) => { localLikes.value = newVal })
+watch(() => props.initialDislikes, (newVal) => { localDislikes.value = newVal })
 
 const formatCount = (count: number) => {
   if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
