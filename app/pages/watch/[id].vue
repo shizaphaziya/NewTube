@@ -38,6 +38,55 @@ const { data: relatedVideos } = await useAsyncData(`related-${route.params.id}`,
   return data || []
 })
 
+const toggle18Plus = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+
+    const newValue = !video.value.is_18_plus
+    const { error } = await supabase
+        .from('videos')
+        .update({ is_18_plus: newValue })
+        .eq('id', video.value.id)
+
+    if (!error) {
+        video.value.is_18_plus = newValue
+        video.value = { ...video.value }
+    } else {
+        console.error('Error toggling 18+', error)
+    }
+}
+
+const toggleBlock = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+
+    const newStatus = video.value.status === 'blocked' ? 'published' : 'blocked'
+    const { error } = await supabase
+        .from('videos')
+        .update({ status: newStatus })
+        .eq('id', video.value.id)
+
+    if (!error) {
+        video.value.status = newStatus
+        video.value = { ...video.value }
+    } else {
+        console.error('Error toggling block', error)
+    }
+}
+
+const deleteVideo = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+    if (!await showConfirm('Are you sure you want to delete this video?')) return
+
+    const { error } = await supabase.from('videos').delete().eq('id', video.value.id)
+    if (!error) {
+        navigateTo('/')
+    } else {
+        console.error('Error deleting video', error)
+    }
+}
+
 const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${route.params.id}`, async () => {
   const { data } = await supabase
     .from('comments')
