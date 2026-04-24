@@ -417,7 +417,7 @@ useSeoMeta({
 
             <div class="space-y-2">
               <button
-                @click="toggle18Plus"
+                @click.prevent="toggle18Plus"
                 class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/20 hover:bg-black/40 transition-colors text-sm"
               >
                 <span class="text-white/80">18+ Restriction</span>
@@ -427,7 +427,7 @@ useSeoMeta({
               </button>
 
               <button
-                @click="toggleBlock"
+                @click.prevent="toggleBlock"
                 class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/20 hover:bg-black/40 transition-colors text-sm"
               >
                 <span class="text-white/80">Status</span>
@@ -437,7 +437,7 @@ useSeoMeta({
               </button>
 
               <button
-                @click="deleteVideo"
+                @click.prevent="deleteVideo"
                 class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors text-sm font-medium mt-2"
               >
                 <div class="i-ph-trash-bold"></div>
