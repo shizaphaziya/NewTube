@@ -69,6 +69,7 @@ const uploadVideo = async () => {
 
     const { error: dbError } = await supabase.from('videos').insert({
 
+      user_id: user.value.id,
       title: form.value.title,
       description: form.value.description,
       video_url: videoUrl,

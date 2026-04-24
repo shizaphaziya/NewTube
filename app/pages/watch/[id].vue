@@ -126,6 +126,7 @@ const handleReactionChange = async (state, revert) => {
         .from('likes')
         .upsert({
           video_id: video.value.id,
+          user_id: user.value.id,
 
           is_dislike: state === 'dislike'
         })
@@ -184,6 +185,7 @@ const toggleSubscription = async () => {
                 .from('subscriptions')
                 .insert({
                     creator_id: video.value.user_id,
+                    subscriber_id: user.value.id,
 
                 })
             isSubscribed.value = true
