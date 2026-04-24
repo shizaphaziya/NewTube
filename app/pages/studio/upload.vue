@@ -68,6 +68,7 @@ const uploadVideo = async () => {
     progress.value = { status: 'Finalizing', percent: 90 }
 
     const { error: dbError } = await supabase.from('videos').insert({
+
       user_id: user.value.id,
       title: form.value.title,
       description: form.value.description,
