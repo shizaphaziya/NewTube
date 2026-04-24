@@ -7,7 +7,8 @@
     "login": "Вход",
     "logout": "Выход",
     "upload": "Загрузить",
-    "search": "Поиск..."
+    "search": "Поиск...",
+    "shorts": "Shorts"
   },
   "home": {
     "quick_actions": "Быстрый доступ",
@@ -144,6 +145,7 @@
     "gaming": "Игры",
     "tech": "Техно",
     "art": "Искусство",
-    "nature": "Природа"
+    "nature": "Природа",
+    "shorts": "Shorts"
   }
 }
