@@ -133,12 +133,12 @@ watchEffect(() => {
                 <td class="px-6 py-6">
                   <button
                     @click.prevent="toggle18Plus(video)"
-                    class="w-12 h-6 rounded-full transition-colors relative"
+                    class="w-12 h-6 rounded-full transition-colors relative shrink-0 block"
                     :class="video.is_18_plus ? 'bg-red-500' : 'bg-white/20'"
                     title="Toggle 18+ Age Restriction"
                   >
                     <div
-                      class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform"
+                      class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200"
                       :class="video.is_18_plus ? 'translate-x-6' : 'translate-x-0'"
                     ></div>
                   </button>
