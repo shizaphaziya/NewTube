@@ -23,6 +23,15 @@ const { data: videos, refresh } = await useAsyncData('admin-videos', async () =>
   return (data as unknown || []) as VideoWithProfile[]
 })
 
+const toggle18Plus = async (video: VideoWithProfile) => {
+  const { error } = await supabase
+    .from('videos')
+    .update({ is_18_plus: !video.is_18_plus })
+    .eq('id', video.id)
+
+  if (!error) refresh()
+}
+
 const toggleBlock = async (video: VideoWithProfile) => {
   const newStatus = video.status === 'blocked' ? 'published' : 'blocked'
   const { error } = await supabase
@@ -98,6 +107,7 @@ watchEffect(() => {
               <tr class="border-b border-white/5 bg-white/[0.02]">
                 <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.video_author') }}</th>
                 <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('watch.views') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">18+</th>
                 <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.status') }}</th>
                 <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest text-right">{{ t('admin.actions') }}</th>
               </tr>
@@ -119,6 +129,19 @@ watchEffect(() => {
                 </td>
                 <td class="px-6 py-6">
                   <div class="text-[10px] font-black text-white/40 tabular-nums uppercase tracking-widest">{{ (video.view_count || 0).toLocaleString() }} {{ t('admin.imps') }}</div>
+                </td>
+                <td class="px-6 py-6">
+                  <button
+                    @click.prevent="toggle18Plus(video)"
+                    class="w-12 h-6 rounded-full transition-colors relative shrink-0 block"
+                    :class="video.is_18_plus ? 'bg-red-500' : 'bg-white/20'"
+                    title="Toggle 18+ Age Restriction"
+                  >
+                    <div
+                      class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200"
+                      :class="video.is_18_plus ? 'translate-x-6' : 'translate-x-0'"
+                    ></div>
+                  </button>
                 </td>
                 <td class="px-6 py-6">
                   <span 

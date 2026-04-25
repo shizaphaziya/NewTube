@@ -3,7 +3,8 @@ const route = useRoute()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { t } = useI18n()
-const { profile } = useProfile()
+const { profile, isAdmin } = useProfile()
+const { confirm: showConfirm } = useConfirm()
 
 const isCinemaMode = ref(false)
 
@@ -36,6 +37,55 @@ const { data: relatedVideos } = await useAsyncData(`related-${route.params.id}`,
     .limit(8)
   return data || []
 })
+
+const toggle18Plus = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+
+    const newValue = !video.value.is_18_plus
+    const { error } = await supabase
+        .from('videos')
+        .update({ is_18_plus: newValue })
+        .eq('id', video.value.id)
+
+    if (!error) {
+        video.value.is_18_plus = newValue
+        video.value = { ...video.value }
+    } else {
+        console.error('Error toggling 18+', error)
+    }
+}
+
+const toggleBlock = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+
+    const newStatus = video.value.status === 'blocked' ? 'published' : 'blocked'
+    const { error } = await supabase
+        .from('videos')
+        .update({ status: newStatus })
+        .eq('id', video.value.id)
+
+    if (!error) {
+        video.value.status = newStatus
+        video.value = { ...video.value }
+    } else {
+        console.error('Error toggling block', error)
+    }
+}
+
+const deleteVideo = async () => {
+    if (!video.value) return
+    if (!isAdmin.value) return
+    if (!await showConfirm('Are you sure you want to delete this video?')) return
+
+    const { error } = await supabase.from('videos').delete().eq('id', video.value.id)
+    if (!error) {
+        navigateTo('/')
+    } else {
+        console.error('Error deleting video', error)
+    }
+}
 
 const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${route.params.id}`, async () => {
   const { data } = await supabase
@@ -358,6 +408,44 @@ useSeoMeta({
 
         <!-- Sidebar Column -->
         <div class="space-y-6">
+          <!-- Admin Panel -->
+          <div v-if="isAdmin" class="bg-red-500/10 border border-red-500/20 rounded-xl p-4 space-y-4">
+            <h3 class="text-sm font-bold text-red-400 uppercase tracking-widest flex items-center gap-2">
+              <div class="i-ph-shield-warning-bold text-lg"></div>
+              Admin Controls
+            </h3>
+
+            <div class="space-y-2">
+              <button
+                @click.prevent="toggle18Plus"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/20 hover:bg-black/40 transition-colors text-sm"
+              >
+                <span class="text-white/80">18+ Restriction</span>
+                <div class="w-12 h-6 rounded-full transition-colors relative shrink-0" :class="video?.is_18_plus ? 'bg-red-500' : 'bg-white/20'">
+                  <div class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform" :class="video?.is_18_plus ? 'translate-x-6' : 'translate-x-0'"></div>
+                </div>
+              </button>
+
+              <button
+                @click.prevent="toggleBlock"
+                class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/20 hover:bg-black/40 transition-colors text-sm"
+              >
+                <span class="text-white/80">Status</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider" :class="video?.status === 'blocked' ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'">
+                  {{ video?.status === 'blocked' ? 'Blocked' : 'Published' }}
+                </span>
+              </button>
+
+              <button
+                @click.prevent="deleteVideo"
+                class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors text-sm font-medium mt-2"
+              >
+                <div class="i-ph-trash-bold"></div>
+                Delete Video
+              </button>
+            </div>
+          </div>
+
           <div class="space-y-4">
             <NuxtLink 
               v-for="related in relatedVideos" 
