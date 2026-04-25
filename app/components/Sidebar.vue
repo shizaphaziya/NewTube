@@ -30,47 +30,52 @@ const isActive = (path: string, query?: string) => {
 <template>
   <aside 
     class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-6
-           bg-void border-r border-neutral-900
-           w-[72px] lg:w-[240px] transition-all duration-300
-           overflow-hidden select-none"
+           bg-transparent border-r border-transparent
+           w-[80px] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+           hover:bg-black/90 hover:backdrop-blur-xl hover:border-white/10 hover:w-[240px] hover:shadow-[20px_0_40px_rgba(0,0,0,0.5)]
+           group/sidebar overflow-hidden select-none"
   >
     <!-- Brand Logo -->
-    <NuxtLink to="/" class="flex items-center px-4 lg:px-6 mb-8 no-underline h-10 group/logo">
-      <div class="flex items-center gap-3 w-full">
-        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0">
+    <NuxtLink to="/" class="flex items-center px-6 mb-8 no-underline h-10 shrink-0">
+      <div class="flex items-center gap-4 w-full">
+        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-transform duration-500 group-hover/sidebar:rotate-[360deg]">
           <div class="i-ph-play-fill text-black text-sm translate-x-px"></div>
         </div>
-        <div class="hidden lg:block overflow-hidden whitespace-nowrap">
-          <span class="text-lg font-brand font-semibold tracking-tight text-white">NewTube</span>
+        <div class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-100 overflow-hidden whitespace-nowrap">
+          <span class="text-xl font-brand font-bold tracking-tight text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">NewTube</span>
         </div>
       </div>
     </NuxtLink>
 
     <!-- Main Navigation -->
-    <nav class="flex-1 px-3 space-y-1 overflow-y-auto scrollbar-none">
+    <nav class="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-none pb-4">
       <template v-for="item in navItems" :key="item.link">
         <NuxtLink
           :to="item.link"
-          class="flex items-center gap-3 px-3 py-2 rounded-md no-underline transition-colors"
-          :class="isActive(item.link) ? 'bg-neutral-900 text-white' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
+          class="flex items-center gap-4 px-2 py-2.5 rounded-xl no-underline transition-all duration-300 relative overflow-hidden group/item"
+          :class="isActive(item.link) ? 'text-white bg-neutral-900/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
         >
-          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-xl shrink-0"></div>
-          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+          <!-- Active state background glow -->
+          <div v-if="isActive(item.link)" class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity"></div>
+
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-transform duration-300 group-hover/item:scale-110 relative z-10"></div>
+
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-75 text-sm font-medium whitespace-nowrap relative z-10">
             {{ item.label }}
           </span>
         </NuxtLink>
       </template>
 
-      <div class="h-px bg-neutral-900 my-4 mx-3"></div>
+      <div class="h-px bg-gradient-to-r from-neutral-800 to-transparent my-4 mx-2"></div>
       
       <template v-for="item in studioItems" :key="item.link">
         <NuxtLink
           :to="item.link"
-          class="flex items-center gap-3 px-3 py-2 rounded-md no-underline transition-colors"
-          :class="isActive(item.link) ? 'bg-neutral-900 text-white' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
+          class="flex items-center gap-4 px-2 py-2.5 rounded-xl no-underline transition-all duration-300 group/item"
+          :class="isActive(item.link) ? 'text-white bg-neutral-900/80' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
         >
-          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-xl shrink-0"></div>
-          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-transform duration-300 group-hover/item:scale-110"></div>
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-75 text-sm font-medium whitespace-nowrap">
             {{ item.label }}
           </span>
         </NuxtLink>
@@ -78,10 +83,10 @@ const isActive = (path: string, query?: string) => {
 
       <!-- Admin -->
       <template v-if="isAdmin">
-        <div class="h-px bg-red-900/30 my-4 mx-3"></div>
-        <NuxtLink to="/admin" class="flex items-center gap-3 px-3 py-2 rounded-md no-underline transition-colors text-red-400/80 hover:bg-red-950/50 hover:text-red-400">
-          <div class="i-ph-shield-checkered text-xl shrink-0"></div>
-          <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+        <div class="h-px bg-gradient-to-r from-red-900/30 to-transparent my-4 mx-2"></div>
+        <NuxtLink to="/admin" class="flex items-center gap-4 px-2 py-2.5 rounded-xl no-underline transition-all duration-300 text-red-400/80 hover:bg-red-950/40 hover:text-red-400 group/item">
+          <div class="i-ph-shield-checkered text-2xl shrink-0 transition-transform duration-300 group-hover/item:scale-110"></div>
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-75 text-sm font-medium whitespace-nowrap">
             {{ t('admin.high_command') || 'Admin' }}
           </span>
         </NuxtLink>
@@ -89,14 +94,14 @@ const isActive = (path: string, query?: string) => {
     </nav>
 
     <!-- Bottom Actions -->
-    <div class="px-3 mt-auto">
+    <div class="px-4 mt-auto">
       <NuxtLink 
         to="/profile/settings"
-        class="flex items-center gap-3 px-3 py-2 rounded-md no-underline transition-colors"
-        :class="isActive('/profile/settings') ? 'bg-neutral-900 text-white' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
+        class="flex items-center gap-4 px-2 py-2.5 rounded-xl no-underline transition-all duration-300 group/item"
+        :class="isActive('/profile/settings') ? 'text-white bg-neutral-900/80' : 'text-neutral-400 hover:bg-neutral-900/50 hover:text-white'"
       >
-        <div class="i-ph-gear-six text-xl shrink-0"></div>
-        <span class="hidden lg:block text-sm font-medium whitespace-nowrap">
+        <div class="i-ph-gear-six text-2xl shrink-0 transition-transform duration-300 group-hover/item:rotate-90"></div>
+        <span class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 delay-75 text-sm font-medium whitespace-nowrap">
           {{ t('profile.settings') }}
         </span>
       </NuxtLink>
