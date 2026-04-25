@@ -14,47 +14,48 @@ html {
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv02","cv03","cv04","cv11";
   scroll-behavior: smooth;
+  background-color: #000000;
 }
 
 body {
-  background-color: #050505;
-  color: #ffffff;
+  background-color: #000000;
+  color: #ededed;
   min-height: 100vh;
 }
 
-/* --- Global link reset (CRITICAL: removes all underlines) --- */
+/* --- Global link reset --- */
 a {
   text-decoration: none !important;
   color: inherit;
 }
 
-/* --- Scrollbar styling --- */
+/* --- Minimal Scrollbar styling --- */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
-  border-radius: 99px;
+  background: #222;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.15);
+  background: #333;
 }
 
 /* --- Selection --- */
 ::selection {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.2);
   color: #fff;
 }
 
 /* --- Focus rings --- */
 :focus-visible {
-  outline: 2px solid rgba(255,255,255,0.3);
-  outline-offset: 2px;
-  border-radius: 8px;
+  outline: 2px solid rgba(255,255,255,0.4);
+  outline-offset: 1px;
+  border-radius: 4px;
 }
 
 /* --- Smooth image rendering --- */
@@ -67,7 +68,7 @@ img {
    Page Transitions
    ============================================================ */
 .page-enter-active {
-  animation: nt-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: nt-fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .page-leave-active {
   transition: opacity 0.2s ease;
@@ -79,7 +80,7 @@ img {
 @keyframes nt-fade-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -88,13 +89,13 @@ img {
 }
 
 /* ============================================================
-   Glass Surfaces — Hardware accelerated
+   Glass Surfaces — Vercel Style
    ============================================================ */
 .glass-surface {
-  background: rgba(255,255,255,0.025);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1a1a1a;
 }
 
 /* ============================================================
@@ -108,7 +109,7 @@ img {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: rgba(255,255,255,0.03);
+  background: #111;
 }
 
 .skeleton::after {
@@ -117,7 +118,7 @@ img {
   inset: 0;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255,255,255,0.05) 50%,
+    rgba(255,255,255,0.02) 50%,
     transparent 100%
   );
   animation: shimmer-sweep 2s ease-in-out infinite;
@@ -127,13 +128,10 @@ img {
    Typography utilities
    ============================================================ */
 .text-muted {
-  color: rgba(255,255,255,0.3);
+  color: #888888;
 }
 .text-faint {
-  color: rgba(255,255,255,0.12);
-}
-.text-ghost {
-  color: rgba(255,255,255,0.05);
+  color: #444444;
 }
 
 /* Tabular numbers for stats */

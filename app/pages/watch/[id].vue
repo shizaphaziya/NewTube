@@ -263,7 +263,7 @@ useSeoMeta({
     <!-- Main Player Section (Full Width if Cinema) -->
     <div :class="isCinemaMode ? 'w-full px-0' : 'layout-container pt-6 md:pt-8'" class="relative z-10 transition-all duration-300">
       <div 
-        class="group/player relative aspect-video bg-black overflow-hidden"
+        class="group/player relative aspect-video w-full overflow-hidden bg-black bg-black overflow-hidden"
         :class="isCinemaMode ? 'w-full h-screen max-h-[85vh]' : 'rounded-xl border border-white/5 shadow-xl'"
       >
         <!-- Actual Video Player -->
@@ -277,8 +277,8 @@ useSeoMeta({
         ></video>
         
         <!-- Processing State -->
-        <div v-else class="w-full h-full flex flex-col items-center justify-center gap-4 bg-[#18181b]">
-          <div class="w-10 h-10 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
+        <div v-else class="w-full h-full flex flex-col items-center justify-center gap-4 bg-neutral-900">
+          <div class="w-10 h-10 rounded-full border-2 border-neutral-800 border-t-white animate-spin"></div>
           <span class="text-sm font-medium text-white/40">Loading Video...</span>
         </div>
 
@@ -286,7 +286,7 @@ useSeoMeta({
         <div class="absolute top-4 right-4 flex gap-4 opacity-0 group-hover/player:opacity-100 transition-all duration-300">
           <button 
             @click="isCinemaMode = !isCinemaMode"
-            class="w-10 h-10 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
+            class="w-10 h-10 rounded-lg bg-black/60 backdrop-blur-md border border-neutral-800 flex items-center justify-center text-white/80 hover:text-white hover:bg-black/80 transition-all"
           >
             <div :class="isCinemaMode ? 'i-ph-arrows-in' : 'i-ph-arrows-out'" class="text-xl"></div>
           </button>
@@ -301,24 +301,24 @@ useSeoMeta({
         <div class="lg:col-span-2 space-y-6">
           <!-- Title & Actions -->
           <div class="space-y-4">
-            <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight">
+            <h1 class="text-xl md:text-2xl font-semibold text-white leading-tight" :style="`view-transition-name: video-title-${video?.id}`">
               {{ video?.title }}
             </h1>
 
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-neutral-800">
               <!-- Creator Info -->
               <div class="flex items-center gap-4">
                 <NuxtLink :to="`/profile/${video?.user_id}`" class="shrink-0">
                   <img 
                     :src="video?.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video?.user_id}`" 
-                    class="w-12 h-12 rounded-full border border-white/10 object-cover bg-[#18181b]"
+                    class="w-12 h-12 rounded-full border border-neutral-800 object-cover bg-neutral-900"
                   />
                 </NuxtLink>
                 <div>
                   <div class="font-semibold text-white/90 text-base">{{ video?.profiles?.display_name }}</div>
                   <div class="text-xs text-white/60">{{ formatCount(subscribersCount) }} subscribers</div>
                 </div>
-                <button v-if="user?.id !== video?.user_id" @click="toggleSubscription" class="ml-4 btn-premium px-4 py-2 text-sm rounded-full font-semibold transition-colors" :class="isSubscribed ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-black hover:bg-white/90'">{{ isSubscribed ? 'Subscribed' : 'Subscribe' }}</button>
+                <button v-if="user?.id !== video?.user_id" @click="toggleSubscription" class="ml-4 btn-premium px-4 py-2 text-sm rounded-full font-semibold transition-colors" :class="isSubscribed ? 'bg-neutral-800 text-white hover:bg-white/20' : 'bg-white text-black hover:bg-white/90'">{{ isSubscribed ? 'Subscribed' : 'Subscribe' }}</button>
               </div>
 
               <!-- Action Bar -->
@@ -330,11 +330,11 @@ useSeoMeta({
                   :initialState="reactionState"
                   @change="handleReactionChange"
                 />
-                <button class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 transition-colors text-sm font-medium">
+                <button class="flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors text-sm font-medium">
                   <div class="i-ph-share-network text-lg"></div>
                   Share
                 </button>
-                <button class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/15 transition-colors">
+                <button class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 transition-colors">
                   <div class="i-ph-dots-three text-xl"></div>
                 </button>
               </div>
@@ -342,7 +342,7 @@ useSeoMeta({
           </div>
 
           <!-- Description Box -->
-          <div class="bg-[#18181b] rounded-xl p-4 md:p-6 space-y-4">
+          <div class="bg-neutral-900 rounded-xl p-4 md:p-6 space-y-4">
             <div class="flex items-center gap-2 text-sm font-medium text-white/90">
               <span>{{ (video?.view_count || 0).toLocaleString() }} views</span>
               <span class="w-1 h-1 rounded-full bg-white/40"></span>
@@ -364,18 +364,18 @@ useSeoMeta({
             <div class="flex gap-4">
               <img 
                 :src="profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.id}`" 
-                class="w-10 h-10 rounded-full border border-white/10 object-cover shrink-0 bg-[#18181b]"
+                class="w-10 h-10 rounded-full border border-neutral-800 object-cover shrink-0 bg-neutral-900"
               />
               <div class="flex-1 space-y-3">
                 <textarea 
                   v-model="commentContent"
                   placeholder="Add a comment..."
-                  class="w-full bg-transparent border-b border-white/10 pb-2 text-sm text-white focus:(outline-none border-white/40) transition-colors resize-none overflow-hidden placeholder:text-white/40"
+                  class="w-full bg-transparent border-b border-neutral-800 pb-2 text-sm text-white focus:(outline-none border-white/40) transition-colors resize-none overflow-hidden placeholder:text-white/40"
                   rows="1"
                   @input="(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px' }"
                 ></textarea>
                 <div class="flex justify-end gap-2" v-if="commentContent.length > 0">
-                   <button @click="commentContent = ''" class="px-4 py-2 rounded-full text-sm font-medium text-white/80 hover:bg-white/10">
+                   <button @click="commentContent = ''" class="px-4 py-2 rounded-full text-sm font-medium text-white/80 hover:bg-neutral-800">
                     Cancel
                   </button>
                   <button @click="postComment" :disabled="isPosting" class="px-4 py-2 rounded-full text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50">
@@ -390,7 +390,7 @@ useSeoMeta({
               <div v-for="comment in comments" :key="comment.id" class="flex gap-4 group/comment">
                 <img 
                   :src="comment.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`" 
-                  class="w-10 h-10 rounded-full bg-[#18181b] border border-white/10 object-cover shrink-0"
+                  class="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 object-cover shrink-0"
                 />
                 <div class="flex-1 space-y-1">
                   <div class="flex items-center gap-2">
@@ -453,7 +453,7 @@ useSeoMeta({
               :to="`/watch/${related.id}`"
               class="flex gap-2.5 group/related no-underline"
             >
-              <div class="relative w-40 aspect-video rounded-xl overflow-hidden bg-[#18181b] shrink-0">
+              <div class="relative w-40 aspect-video w-full overflow-hidden bg-black rounded-xl overflow-hidden bg-neutral-900 shrink-0">
                 <img :src="related.thumbnail_url || ''" class="w-full h-full object-cover transition-transform duration-300 group-hover/related:scale-105" />
               </div>
               <div class="flex-1 min-w-0 py-0.5 space-y-1">

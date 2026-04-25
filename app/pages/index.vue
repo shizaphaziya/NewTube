@@ -25,16 +25,19 @@ useSeoMeta({
       <!-- Category Swiper -->
       <div 
         v-motion
-        :initial="{ opacity: 0, y: -10 }"
-        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 100 } }"
-        class="flex items-center gap-3 mb-10 overflow-x-auto pb-4 scrollbar-none"
+        :initial="{ opacity: 0, y: -4 }"
+        :enter="{ opacity: 1, y: 0, transition: { duration: 400, delay: 50, ease: 'ease-out' } }"
+        class="flex items-center gap-2 mb-10 overflow-x-auto pb-4 scrollbar-none"
       >
         <button 
           v-for="cat in categories"
           :key="cat.key"
-          class="px-4 py-1.5 rounded-lg bg-white/5 border border-white/5 text-sm font-medium text-white/80
-                 transition-all hover:bg-white/10 active:scale-95 whitespace-nowrap"
-          :class="{ 'bg-white !text-black border-white shadow-md': cat.key === 'all' }"
+          class="px-4 py-1.5 rounded-full border text-sm font-medium transition-all whitespace-nowrap active:scale-95"
+          :class="[
+            cat.key === 'all'
+              ? 'bg-white border-white text-black hover:bg-neutral-200'
+              : 'bg-transparent border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600'
+          ]"
         >
           {{ cat.label }}
         </button>
@@ -43,7 +46,7 @@ useSeoMeta({
       <!-- Global Infinite Feed -->
       <div class="pb-24">
         <div class="flex items-center gap-4 mb-8">
-          <h2 class="text-xl font-semibold text-white/90">{{ t('home.latest') }}</h2>
+          <h2 class="text-xl font-semibold tracking-tight text-white/90">{{ t('home.latest') }}</h2>
         </div>
         <InfiniteVideoGrid />
       </div>
