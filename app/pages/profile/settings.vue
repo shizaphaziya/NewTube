@@ -6,6 +6,45 @@ const { t } = useI18n()
 const { profile, refresh } = useProfile()
 const isSaving = ref(false)
 
+const loading = ref(false)
+const fileInput = ref(null)
+
+const handleAvatarUpload = async (event) => {
+  try {
+    loading.value = true
+    const file = event.target.files[0]
+    if (!file) return
+
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${user.value.id}-${Math.random()}.${fileExt}`
+
+    // Upload to avatars bucket (as defined in RLS)
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) throw uploadError
+
+    // Stage 3: Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath)
+
+    form.value.avatar_url = publicUrl
+    await saveProfile() // auto-save
+  } catch (e) {
+    console.error('Avatar update failed:', e.message)
+    alert('Failed to update avatar: ' + e.message)
+  } finally {
+    loading.value = false
+  }
+}
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+
 const form = ref({
   display_name: '',
   avatar_url: ''
@@ -80,11 +119,24 @@ useSeoMeta({
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-white/90">{{ t('profile.profile_picture') }} URL</label>
               <input
-                v-model="form.avatar_url"
-                type="url"
-                class="glass-input w-full"
+                ref="fileInput"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="handleAvatarUpload"
+              />
+              <div class="flex items-center gap-4">
+                <button @click="triggerFileInput" type="button" class="btn-primary py-2 px-4 text-sm" :disabled="loading">
+                  <span v-if="loading" class="i-ph-spinner animate-spin"></span>
+                  <span v-else>{{ t('profile.upload_new') || 'Upload New' }}</span>
+                </button>
+                <input
+                  v-model="form.avatar_url"
+                  type="url"
+                class="glass-input flex-1"
                 :placeholder="t('profile.avatar_url_placeholder')"
               />
+              </div>
             </div>
             <p class="text-xs text-white/40">{{ t('profile.avatar_note') }}</p>
           </div>
