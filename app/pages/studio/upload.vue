@@ -90,7 +90,7 @@ const uploadVideo = async () => {
 
     let thumbnailUrl = null
     if (form.value.thumbnailFile || form.value.thumbnailBlob) {
-      progress.value = { status: 'Uploading thumbnail', percent: 60 }
+      progress.value = { status: t('studio.uploading_thumbnail'), percent: 60 }
 
       const fileToUpload = form.value.thumbnailFile || form.value.thumbnailBlob
       const thumbExt = form.value.thumbnailFile ? form.value.thumbnailFile.name.split('.').pop() : 'jpg'
@@ -110,7 +110,7 @@ const uploadVideo = async () => {
       thumbnailUrl = tUrl
     }
 
-    progress.value = { status: 'Finalizing', percent: 90 }
+    progress.value = { status: t('studio.finalizing'), percent: 90 }
 
     const { error: dbError } = await supabase.from('videos').insert({
 
@@ -125,12 +125,14 @@ const uploadVideo = async () => {
 
     if (dbError) throw dbError
 
-    progress.value = { status: 'Done', percent: 100 }
+    progress.value = { status: t('studio.done'), percent: 100 }
     uploadSuccess.value = true
     form.value = { title: '', description: '', videoFile: null, thumbnailFile: null, isShort: false, thumbnailBlob: null }
   } catch (error) {
-    console.error('Upload failed:', error)
-    alert('Upload failed: ' + error.message)
+    showError({
+      title: t('studio.failed_upload'),
+      description: error.message
+    })
   } finally {
     isUploading.value = false
   }
@@ -154,7 +156,7 @@ const uploadVideo = async () => {
         <div class="flex items-center justify-center md:justify-start gap-3">
           <div class="h-px w-8 bg-primary-500/40"></div>
           <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-            Broadcasting to the VOID
+            {{ t('studio.uploading_content_hint') }}
           </p>
         </div>
       </div>
@@ -178,10 +180,10 @@ const uploadVideo = async () => {
           </div>
           <div class="pt-4 flex gap-4">
             <button @click="uploadSuccess = false" class="btn-primary rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs">
-              Upload another
+              {{ t('studio.upload_another') }}
             </button>
             <NuxtLink to="/studio" class="glass-button rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs">
-              Go to Dashboard
+              {{ t('studio.go_dashboard') }}
             </NuxtLink>
           </div>
         </div>
@@ -192,7 +194,7 @@ const uploadVideo = async () => {
             <div class="lg:col-span-2 space-y-6">
               <!-- Video Dropzone -->
               <div v-motion-slide-visible-left class="space-y-3">
-                <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">Video Transmission</label>
+                <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ t('studio.video_file') }}</label>
                 <div class="group relative aspect-[9/16] lg:aspect-square rounded-[2rem] overflow-hidden border-2 border-dashed border-white/5 hover:border-primary-500/40 transition-all duration-500 bg-white/[0.02]">
                   <input
                     type="file"
@@ -209,11 +211,11 @@ const uploadVideo = async () => {
                     
                     <div v-if="form.videoFile" class="space-y-1">
                       <div class="text-white font-black uppercase tracking-tight text-sm line-clamp-1 px-4">{{ form.videoFile.name }}</div>
-                      <div class="text-primary-500 text-[10px] font-bold uppercase tracking-widest">{{ (form.videoFile.size / 1024 / 1024).toFixed(1) }} MB Ready</div>
+                      <div class="text-primary-500 text-[10px] font-bold uppercase tracking-widest">{{ (form.videoFile.size / 1024 / 1024).toFixed(1) }} {{ t('studio.mb_ready') }}</div>
                     </div>
                     <div v-else class="space-y-2">
-                      <div class="text-white/60 text-xs font-bold uppercase tracking-widest">Drop source here</div>
-                      <div class="text-white/20 text-[9px] uppercase tracking-tighter">MP4, MOV or WebM</div>
+                      <div class="text-white/60 text-xs font-bold uppercase tracking-widest">{{ t('studio.drop_source') }}</div>
+                      <div class="text-white/20 text-[9px] uppercase tracking-tighter">{{ t('studio.video_formats') }}</div>
                     </div>
                   </div>
 
@@ -234,13 +236,13 @@ const uploadVideo = async () => {
                   />
                   <div class="w-24 aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-white/10 relative group-hover:border-white/20">
                     <div v-if="!form.thumbnailFile" class="i-ph-image-duotone text-2xl text-white/10"></div>
-                    <div v-else class="text-[8px] text-primary-500 font-black uppercase tracking-widest">SELECTED</div>
+                    <div v-else class="text-[8px] text-primary-500 font-black uppercase tracking-widest">{{ t('studio.selected') }}</div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
                   <div class="flex-1 min-w-0">
                     <div v-if="form.thumbnailFile" class="text-white text-xs font-bold truncate uppercase tracking-tight">{{ form.thumbnailFile.name }}</div>
-                    <div v-else class="text-white/40 text-xs font-bold uppercase tracking-widest">Select Image</div>
-                    <p class="text-[9px] text-white/20 uppercase mt-1">16:9 Recommended</p>
+                    <div v-else class="text-white/40 text-xs font-bold uppercase tracking-widest">{{ t('studio.select_image') }}</div>
+                    <p class="text-[9px] text-white/20 uppercase mt-1">{{ t('studio.recommended_ratio') }}</p>
                   </div>
                 </div>
               </div>
@@ -285,7 +287,7 @@ const uploadVideo = async () => {
                     </div>
                     <div v-else class="flex items-center gap-2 text-white/20">
                       <div class="i-ph-info text-sm"></div>
-                      <p class="text-[9px] font-bold uppercase tracking-widest">Metadata encryption enabled</p>
+                      <p class="text-[9px] font-bold uppercase tracking-widest">{{ t('studio.safety_protocols') }}</p>
                     </div>
                   </div>
                   <button 
@@ -295,7 +297,7 @@ const uploadVideo = async () => {
                   >
                     <div class="flex items-center justify-center gap-3">
                       <div v-if="isUploading" class="i-ph-circle-notch animate-spin text-lg"></div>
-                      <span>{{ isUploading ? 'Transmitting' : t('studio.publish') }}</span>
+                      <span>{{ isUploading ? t('studio.uploading') : t('studio.publish') }}</span>
                     </div>
                   </button>
                 </div>
@@ -308,9 +310,9 @@ const uploadVideo = async () => {
                     <div class="i-ph-warning-diamond text-xl"></div>
                   </div>
                   <div class="space-y-1">
-                    <h4 class="text-[10px] font-black text-white uppercase tracking-widest">Safety Protocols</h4>
+                    <h4 class="text-[10px] font-black text-white uppercase tracking-widest">{{ t('studio.safety_protocols') }}</h4>
                     <p class="text-[11px] text-white/40 leading-relaxed">
-                      By transmitting content to the VOID, you confirm that your material adheres to the community broadcast protocols. All violations will be terminated.
+                      {{ t('studio.safety_protocols_hint') }}
                     </p>
                   </div>
                 </div>

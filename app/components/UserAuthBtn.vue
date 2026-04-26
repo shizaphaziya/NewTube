@@ -30,7 +30,7 @@ const logout = async () => {
           {{ profile?.display_name || user.email?.split('@')[0] }}
         </span>
         <span class="text-[10px] font-600 text-void-500 hidden sm:block uppercase tracking-wider mt-1 group-hover:text-primary-400 transition-colors">
-          {{ isAdmin ? 'Creator Pro' : 'Explorer' }}
+          {{ isAdmin ? $t('nav.status_pro') : $t('nav.status_user') }}
         </span>
       </div>
     </NuxtLink>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { isAdmin } = useProfile()
 const searchQuery = ref('')
 
@@ -43,11 +44,12 @@ const handleSearch = () => {
           <div class="flex-1 max-w-2xl mx-auto md:ml-0">
             <form @submit.prevent="handleSearch" class="relative flex items-center group w-full">
               <div class="absolute left-4 i-ph-magnifying-glass text-void-500 text-xl pointer-events-none transition-all group-focus-within:(text-primary-500 scale-110) group-hover:text-void-300"></div>
-              <input
+              <input 
                 v-model="searchQuery"
-                type="search"
-                :placeholder="$t('nav.search') || 'Search the future of video...'"
-                class="glass-input w-full pl-12 pr-4 h-11 transition-all"
+                type="text" 
+                :placeholder="$t('nav.search')"
+                class="glass-input w-full py-4 px-14 rounded-2xl text-sm font-medium focus:ring-primary-500/20"
+                @keyup.enter="handleSearch"
               />
               <div class="absolute right-4 hidden md:flex items-center gap-1 px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-[10px] font-bold text-void-500 group-focus-within:opacity-0 transition-opacity">
                 <span>⌘</span><span>K</span>
@@ -61,7 +63,7 @@ const handleSearch = () => {
               v-if="isAdmin"
               to="/admin"
               class="w-10 h-10 rounded-xl flex items-center justify-center bg-void-800/40 border border-white/10 hover:(bg-primary-500/10 border-primary-500/50 text-primary-400) text-void-400 transition-all duration-300 no-underline shadow-lg"
-              title="Admin"
+              :title="$t('admin.title')"
             >
               <div class="i-ph-shield-checkered text-2xl"></div>
             </NuxtLink>
@@ -82,24 +84,24 @@ const handleSearch = () => {
 
       <!-- Mobile Navigation -->
       <nav class="flex md:hidden fixed bottom-6 left-6 right-6 h-16 rounded-2xl bg-void-900/80 backdrop-blur-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 items-center justify-around px-4">
-        <NuxtLink to="/" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
-          <div class="i-ph-house text-2xl"></div>
-          <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">{{ $t('nav.home') }}</span>
+        <NuxtLink to="/" class="group flex flex-col items-center gap-1.5 py-4 rounded-2xl hover:bg-white/5 transition-all">
+          <div class="i-ph-house-duotone text-2xl text-white/40 group-hover:text-primary-500 transition-colors"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white">{{ $t('nav.home') }}</span>
         </NuxtLink>
-        <NuxtLink to="/shorts" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
-          <div class="i-ph-tiktok-logo text-2xl"></div>
-          <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">Shorts</span>
+        <NuxtLink to="/shorts" class="group flex flex-col items-center gap-1.5 py-4 rounded-2xl hover:bg-white/5 transition-all">
+          <div class="i-ph-lightning-duotone text-2xl text-white/40 group-hover:text-primary-500 transition-colors"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white">{{ $t('nav.shorts') }}</span>
         </NuxtLink>
         <NuxtLink to="/studio" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
           <div class="i-ph-plus-circle-fill text-3xl text-primary-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
         </NuxtLink>
-        <NuxtLink to="/subscriptions" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
-          <div class="i-ph-users-three text-2xl"></div>
-          <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">Subs</span>
+        <NuxtLink to="/subscriptions" class="group flex flex-col items-center gap-1.5 py-4 rounded-2xl hover:bg-white/5 transition-all">
+          <div class="i-ph-stack-duotone text-2xl text-white/40 group-hover:text-primary-500 transition-colors"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white">{{ $t('nav.subscriptions') }}</span>
         </NuxtLink>
-        <NuxtLink to="/profile/settings" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
-          <div class="i-ph-user-circle text-2xl"></div>
-          <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">You</span>
+        <NuxtLink to="/profile/settings" class="group flex flex-col items-center gap-1.5 py-4 rounded-2xl hover:bg-white/5 transition-all">
+          <div class="i-ph-user-circle-duotone text-2xl text-white/40 group-hover:text-primary-500 transition-colors"></div>
+          <span class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white">{{ $t('nav.you') }}</span>
         </NuxtLink>
       </nav>
 

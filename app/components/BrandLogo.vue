@@ -18,7 +18,7 @@ defineProps({
     <!-- Wordmark — hidden when `minimal` -->
     <div v-if="!minimal" class="flex items-baseline gap-1">
       <span class="text-xl font-sans font-bold tracking-tighter text-white">
-        VOID
+        NewTube
       </span>
       <span class="text-[9px] font-mono font-medium text-void-500 uppercase">
         v2.0

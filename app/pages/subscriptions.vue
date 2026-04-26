@@ -4,8 +4,8 @@ const user = useSupabaseUser()
 const { t } = useI18n()
 
 useSeoMeta({
-  title: () => `${t('home.subscriptions')} - NewTube VOID`,
-  description: 'Manage your synchronized creator signals.'
+  title: () => `${t('home.subscriptions')} - ${t('seo.title')}`,
+  description: t('subscriptions.description')
 })
 
 const { data: subscriptions } = await useAsyncData('user-subscriptions-list', async () => {
@@ -46,22 +46,22 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
         <div class="space-y-4">
           <div class="flex items-center gap-3">
             <div class="h-1 w-10 bg-primary-500 rounded-full"></div>
-            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">Signal Network</span>
+            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">{{ t('subscriptions.network') }}</span>
           </div>
           <h1 class="text-5xl md:text-6xl font-900 text-white uppercase tracking-tighter italic leading-none">
             {{ t('home.subscriptions') }}
           </h1>
-          <p class="text-white/30 text-[11px] font-black uppercase tracking-[0.2em]">Synchronized feeds from your followed nodes</p>
+          <p class="text-white/30 text-[11px] font-black uppercase tracking-[0.2em]">{{ t('subscriptions.subtitle') }}</p>
         </div>
 
         <div class="flex items-center gap-4">
           <button class="px-8 py-3.5 rounded-xl glass-card border-white/10 hover:(border-primary-500/50 bg-primary-500/5) text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all flex items-center gap-3">
             <div class="i-ph-arrows-clockwise-duotone"></div>
-            Resync Network
+            {{ t('subscriptions.resync') }}
           </button>
           <button class="px-8 py-3.5 rounded-xl btn-primary text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-primary-500/20 active:scale-95 transition-all flex items-center gap-3">
             <div class="i-ph-gear-duotone"></div>
-            Manage
+            {{ t('subscriptions.manage') }}
           </button>
         </div>
       </div>
@@ -69,7 +69,7 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
       <!-- Subscribed Channels Bar -->
       <div v-if="user && subscriptions?.length" v-motion-fade-in class="mb-16">
         <div class="flex items-center gap-4 mb-8">
-           <h3 class="text-xs font-black text-white/20 uppercase tracking-[0.3em]">Active Nodes</h3>
+           <h3 class="text-xs font-black text-white/20 uppercase tracking-[0.3em]">{{ t('subscriptions.active_nodes') }}</h3>
            <div class="flex-1 h-px bg-white/5"></div>
         </div>
         <div class="flex items-center gap-8 overflow-x-auto pb-6 scrollbar-none">
@@ -91,12 +91,12 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
           <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl animate-glow">
             <div class="i-ph-lock-duotone text-5xl text-primary-500"></div>
           </div>
-          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">Identification Required</h2>
+          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t('subscriptions.id_required') }}</h2>
           <p class="text-white/30 text-[11px] font-black uppercase tracking-widest leading-loose max-w-md mb-10">
-            Sign in to synchronize with your preferred creator network and access personal transmissions.
+            {{ t('subscriptions.id_required_subtitle') }}
           </p>
           <NuxtLink to="/auth/login" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 active:scale-95 transition-all">
-            Authorize Identity
+            {{ t('auth.authorize_identity') }}
           </NuxtLink>
       </div>
 
@@ -110,12 +110,12 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
           <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl">
             <div class="i-ph-users-three-duotone text-5xl text-white/10"></div>
           </div>
-          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">No Active Signals</h2>
+          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t('subscriptions.no_active') }}</h2>
           <p class="text-white/30 text-[11px] font-black uppercase tracking-widest leading-loose max-w-md mb-10">
-            Your network is currently silent. Explore the discovery nodes to find new creators to synchronize with.
+            {{ t('subscriptions.no_active_subtitle') }}
           </p>
           <NuxtLink to="/" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 active:scale-95 transition-all">
-            Explore Network
+            {{ t('subscriptions.explore') }}
           </NuxtLink>
       </div>
 

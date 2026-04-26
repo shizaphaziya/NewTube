@@ -74,7 +74,7 @@ const isHovered = ref(false)
       <!-- Views Badge -->
       <div class="absolute bottom-4 right-4 px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 text-[9px] font-black text-white tracking-[0.1em] uppercase flex items-center gap-2 transform group-hover:translate-y-[-2px] transition-transform duration-500 shadow-2xl">
         <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></div>
-        {{ (video.view_count || 0).toLocaleString() }} SIGNAL
+        {{ (video.view_count || 0).toLocaleString() }} {{ t('watch.views') }}
       </div>
     </div>
 
@@ -100,8 +100,6 @@ const isHovered = ref(false)
             <div class="i-ph-seal-check-fill text-primary-500 text-[14px]"></div>
           </div>
           <div class="flex items-center gap-3 mt-1 opacity-60">
-            <span>Synchronized</span>
-            <div class="w-1 h-1 rounded-full bg-white/20"></div>
             <ClientOnly>
               <span>{{ useTimeAgo(video.created_at || '').value }}</span>
               <template #fallback><span>...</span></template>

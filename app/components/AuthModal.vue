@@ -15,8 +15,8 @@ const validationError = ref('')
 
 // Zod Schema
 const authSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters')
+  email: z.string().email(t('auth.invalid_email')),
+  password: z.string().min(6, t('auth.password_min'))
 })
 
 // Handles form submission for both Sign In and Sign Up using Supabase Auth
@@ -43,7 +43,7 @@ const handleAuth = async () => {
         }
       })
       if (error) throw error
-      success(t('auth.check_email') || 'Check your email for confirmation')
+      success(t('auth.check_email'))
       appStore.closeAuthModal()
     } else {
       const { error } = await client.auth.signInWithPassword({
@@ -51,7 +51,7 @@ const handleAuth = async () => {
         password: password.value
       })
       if (error) throw error
-      success('Successfully logged in')
+      success(t('auth.login_success'))
       appStore.closeAuthModal()
       // Refresh current page context if needed, but session state handles most
     }
@@ -89,10 +89,10 @@ const handleAuth = async () => {
               <div class="i-ph-play-fill text-black text-xl translate-x-px"></div>
             </div>
             <h2 class="text-2xl font-sans font-bold tracking-tight text-white mb-2">
-              {{ isRegister ? (t('auth.join') || 'Join VOID') : (t('auth.welcome') || 'Welcome Back') }}
+              {{ isRegister ? t('auth.join') : t('auth.welcome') }}
             </h2>
             <p class="text-[10px] font-mono font-medium text-void-500 uppercase tracking-widest">
-              {{ t('auth.required_action') || 'Access Protocol Required' }}
+              {{ t('auth.required_action') }}
             </p>
           </div>
 
@@ -108,7 +108,7 @@ const handleAuth = async () => {
                   v-model="email"
                   type="email"
                   required
-                  :placeholder="t('auth.email') || 'Email address'"
+                  :placeholder="t('auth.email')"
                   class="glass-input w-full pl-11 h-11"
                 />
               </div>
@@ -118,7 +118,7 @@ const handleAuth = async () => {
                   v-model="password"
                   type="password"
                   required
-                  :placeholder="t('auth.password') || 'Password'"
+                  :placeholder="t('auth.password')"
                   class="glass-input w-full pl-11 h-11"
                 />
               </div>
@@ -129,7 +129,7 @@ const handleAuth = async () => {
               :disabled="loading"
               class="btn-primary w-full h-11 mt-2"
             >
-              <span v-if="!loading">{{ isRegister ? (t('auth.create_account') || 'Create Account') : (t('auth.sign_in') || 'Sign In') }}</span>
+              <span v-if="!loading">{{ isRegister ? t('auth.create_account') : t('auth.sign_in') }}</span>
               <div v-else class="i-ph-circle-notch animate-spin text-lg"></div>
             </button>
           </form>
@@ -139,7 +139,7 @@ const handleAuth = async () => {
               @click="isRegister = !isRegister"
               class="text-[11px] font-medium text-void-500 hover:text-white transition-colors"
             >
-              {{ isRegister ? (t('auth.already_have_account') || 'Already have an account? Sign In') : (t('auth.no_account') || 'No account? Create one') }}
+              {{ isRegister ? t('auth.already_have_account') : t('auth.no_account') }}
             </button>
           </div>
         </div>

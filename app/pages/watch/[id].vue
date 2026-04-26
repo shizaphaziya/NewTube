@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useAppStore } from '~/store/app'
 const route = useRoute()
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const { profile, isAdmin } = useProfile()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const appStore = useAppStore()
 
 const videoId = route.params.id as string
 
@@ -54,7 +56,7 @@ const fetchComments = async () => {
 }
 
 const submitComment = async () => {
-  if (!user.value) return navigateTo('/auth/login')
+  if (!user.value) return appStore.openAuthModal()
   if (!newComment.value.trim()) return
   
   isPosting.value = true
@@ -72,11 +74,13 @@ const submitComment = async () => {
 }
 
 const toggleLike = () => {
+  if (!user.value) return appStore.openAuthModal()
   isLiked.value = !isLiked.value
   likesCount.value += isLiked.value ? 1 : -1
 }
 
 const toggleSubscribe = () => {
+  if (!user.value) return appStore.openAuthModal()
   isSubscribed.value = !isSubscribed.value
 }
 
@@ -90,7 +94,7 @@ onMounted(() => {
 })
 
 useSeoMeta({
-  title: () => video.value ? `${video.value.title} - NewTube` : 'Loading...',
+  title: () => video.value ? `${video.value.title} - ${t('seo.title')}` : t('common.loading'),
   description: () => video.value?.description || '',
   ogImage: () => video.value?.thumbnail_url
 })
@@ -121,7 +125,7 @@ useSeoMeta({
           <div class="absolute inset-0 bg-void-950 flex items-center justify-center" v-if="!video?.video_url">
             <div class="space-y-4 text-center">
               <div class="i-ph-broadcast text-5xl text-primary-500 animate-pulse"></div>
-              <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Establishing Link...</p>
+              <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">{{ t('common.loading') }}</p>
             </div>
           </div>
 
@@ -152,7 +156,7 @@ useSeoMeta({
           <!-- Title & Engagement -->
           <div v-motion-slide-visible-bottom class="space-y-8">
             <h1 class="text-4xl md:text-5xl font-900 text-white leading-tight uppercase tracking-tighter italic">
-              {{ video?.title || 'Loading Transmission...' }}
+              {{ video?.title || t('watch.loading_video') }}
             </h1>
 
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-10 p-8 glass-card border-white/5 rounded-[2.5rem] relative overflow-hidden group">
@@ -172,12 +176,12 @@ useSeoMeta({
                      {{ video?.profiles?.display_name }}
                      <div class="i-ph-seal-check-fill text-primary-500 text-lg"></div>
                    </NuxtLink>
-                   <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Broadcast Tier: Alpha</p>
+                   <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{{ t('watch.quality') }}</p>
                  </div>
                  <button @click="toggleSubscribe" 
                          class="ml-6 px-10 py-3.5 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden group/sub shadow-2xl"
                          :class="isSubscribed ? 'glass-card border-white/10 text-white/40' : 'btn-primary text-white shadow-primary-500/20'">
-                   <span class="relative z-10">{{ isSubscribed ? 'Subscribed' : 'Join Network' }}</span>
+                   <span class="relative z-10">{{ isSubscribed ? t('watch.subscribed') : t('watch.subscribe') }}</span>
                    <div v-if="!isSubscribed" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/sub:translate-x-full transition-transform duration-1000"></div>
                  </button>
                </div>
@@ -192,13 +196,13 @@ useSeoMeta({
                      <span class="text-xs font-black uppercase tracking-widest">{{ likesCount.toLocaleString() }}</span>
                    </button>
                    <div class="w-px h-8 bg-white/5 mx-1"></div>
-                   <button class="px-6 h-full rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all">
+                   <button @click="() => !user ? navigateTo('/auth/login') : null" class="px-6 h-full rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all">
                      <div class="i-ph-thumbs-down-duotone text-2xl"></div>
                    </button>
                  </div>
                  <button class="h-14 px-8 rounded-2xl glass-card border-white/10 hover:(border-white/30 bg-white/5) transition-all text-[11px] font-black uppercase tracking-widest text-white/60 hover:text-white flex items-center gap-3">
                    <div class="i-ph-share-network-duotone text-2xl text-primary-500"></div>
-                   Share
+                   {{ t('watch.share') }}
                  </button>
                  <button class="w-14 h-14 rounded-2xl glass-card border-white/10 flex items-center justify-center hover:bg-white/5 transition-all text-white/40 hover:text-white">
                    <div class="i-ph-dots-three-bold text-3xl"></div>
@@ -213,16 +217,16 @@ useSeoMeta({
              <div class="flex items-center gap-4 mb-8">
                <div class="h-1 w-10 bg-primary-500 rounded-full"></div>
                <div class="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-white/40">
-                 <span class="text-white">{{ (video?.view_count || 0).toLocaleString() }} Impressions</span>
-                 <span>Synchronized {{ new Date(video?.created_at).toLocaleDateString() }}</span>
+                 <span class="text-white">{{ (video?.view_count || 0).toLocaleString() }} {{ t('watch.views') }}</span>
+                 <span>{{ t('watch.published_on') }} {{ new Date(video?.created_at).toLocaleDateString(locale) }}</span>
                </div>
              </div>
              <p class="text-white/60 text-lg font-medium leading-[2] whitespace-pre-wrap relative z-10 max-w-4xl">
-               {{ video?.description || 'This transmission carries no explicit data payload.' }}
+               {{ video?.description || t('watch.no_description') }}
              </p>
-             <div class="flex flex-wrap gap-3 mt-10 relative z-10">
-               <span v-for="tag in ['#VOID', '#NEWTUBE', '#TRANSMISSION', '#FUTURE']" :key="tag" class="px-4 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-primary-500 hover:(bg-primary-500 text-white) transition-all cursor-pointer uppercase tracking-widest">
-                 {{ tag }}
+             <div v-if="video?.tags?.length" class="flex flex-wrap gap-3 mt-10 relative z-10">
+               <span v-for="tag in video.tags" :key="tag" class="px-4 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-primary-500 hover:(bg-primary-500 text-white) transition-all cursor-pointer uppercase tracking-widest">
+                 #{{ tag }}
                </span>
              </div>
           </div>
@@ -231,11 +235,11 @@ useSeoMeta({
           <div class="space-y-12">
             <div class="flex items-center justify-between border-b border-white/5 pb-8">
               <h3 class="text-3xl font-900 text-white uppercase tracking-tighter italic">
-                {{ comments.length }} Signal Responses
+                {{ comments.length }} {{ t('watch.comments') }}
               </h3>
               <div class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.2em]">
                 <div class="i-ph-sort-ascending-duotone text-xl"></div>
-                Frequency Sort
+                {{ t('watch.sort_by') }}
               </div>
             </div>
 
@@ -250,7 +254,7 @@ useSeoMeta({
                 <div class="relative">
                   <textarea 
                     v-model="newComment"
-                    placeholder="Contribute to the collective consciousness..."
+                    :placeholder="t('watch.add_comment_placeholder')"
                     class="glass-input w-full min-h-[120px] rounded-[2rem] py-6 px-8 text-base font-medium focus:ring-primary-500/20 transition-all resize-none shadow-xl"
                   ></textarea>
                   <div class="absolute bottom-6 right-8 flex items-center gap-4">
@@ -264,12 +268,12 @@ useSeoMeta({
                 </div>
                 <div class="flex justify-end gap-6">
                   <button @click="newComment = ''" class="text-[11px] font-black text-white/20 hover:text-white uppercase tracking-[0.3em] transition-all">
-                    Purge
+                    {{ t('watch.cancel') }}
                   </button>
                   <button @click="submitComment" 
                           :disabled="!newComment.trim() || isPosting"
-                          class="btn-primary rounded-xl px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.2)] disabled:opacity-30 active:scale-95 transition-all">
-                    {{ isPosting ? 'Broadcasting...' : 'Broadcast Response' }}
+                          class="btn-primary rounded-xl px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] disabled:opacity-30 active:scale-95 transition-all">
+                    {{ isPosting ? t('watch.posting_btn') : t('watch.post') }}
                   </button>
                 </div>
               </div>
@@ -294,13 +298,13 @@ useSeoMeta({
                       {{ comment.content }}
                     </p>
                     <div class="flex items-center gap-8 pt-2">
-                      <button class="flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-primary-500 transition-colors uppercase tracking-[0.2em]">
+                      <button @click="toggleLike" class="flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-primary-500 transition-colors uppercase tracking-[0.2em]">
                         <div class="i-ph-thumbs-up-duotone text-xl"></div>
-                        Resonate
+                        {{ t('watch.like') }}
                       </button>
                       <button class="flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-white transition-colors uppercase tracking-[0.2em]">
                         <div class="i-ph-chat-circle-dots-duotone text-xl"></div>
-                        Echo
+                        {{ t('watch.reply') }}
                       </button>
                     </div>
                   </div>
@@ -314,7 +318,7 @@ useSeoMeta({
         <div class="space-y-10">
            <div class="flex items-center gap-4 border-b border-white/5 pb-6">
              <div class="h-1 w-8 bg-primary-500"></div>
-             <h3 class="text-xl font-900 text-white uppercase tracking-tighter italic">Incoming Signals</h3>
+             <h3 class="text-xl font-900 text-white uppercase tracking-tighter italic">{{ t('watch.up_next') }}</h3>
            </div>
            
            <div class="space-y-8">
@@ -335,7 +339,7 @@ useSeoMeta({
                   <div class="space-y-1">
                     <p class="text-[10px] font-black text-white/40 uppercase tracking-widest truncate">{{ v.profiles?.display_name }}</p>
                     <div class="flex items-center gap-3 text-[9px] font-bold text-white/20 uppercase tracking-widest">
-                      <span>{{ (v.view_count || 0).toLocaleString() }} Views</span>
+                      <span>{{ (v.view_count || 0).toLocaleString() }} {{ t('watch.views') }}</span>
                       <span>•</span>
                       <span>{{ new Date(v.created_at).toLocaleDateString() }}</span>
                     </div>
@@ -347,10 +351,10 @@ useSeoMeta({
            <!-- Sidebar Promo/Ad Aesthetic -->
            <div class="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary-600 to-indigo-700 text-white space-y-6 shadow-2xl relative overflow-hidden group">
              <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000"></div>
-             <h4 class="text-2xl font-black uppercase tracking-tighter italic leading-none">Upgrade to <br/>Void Premium</h4>
-             <p class="text-white/80 text-xs font-bold uppercase tracking-widest leading-relaxed">Unlock the full spectrum of the future with zero interruptions.</p>
+             <h4 class="text-2xl font-black uppercase tracking-tighter italic leading-none" v-html="t('watch.upgrade_premium')"></h4>
+             <p class="text-white/80 text-xs font-bold uppercase tracking-widest leading-relaxed">{{ t('watch.upgrade_hint') }}</p>
              <button class="w-full py-4 rounded-xl bg-white text-void font-black text-[11px] uppercase tracking-[0.3em] hover:scale-105 transition-transform shadow-xl">
-               Ascend Now
+               {{ t('watch.upgrade_now') }}
              </button>
            </div>
         </div>

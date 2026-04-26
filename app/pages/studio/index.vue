@@ -2,12 +2,13 @@
 const supabase = useSupabaseClient()
 const { confirm: showConfirm } = useConfirm()
 const user = useSupabaseUser()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { error: showError } = useToast()
 
 const { profile } = useProfile()
 
 useSeoMeta({
-  title: () => `${t('studio.command_center')} - NewTube Studio`,
+  title: () => `${t('studio.command_center')} - ${t('studio.page_title')}`,
   description: () => t('studio.broadcasting')
 })
 
@@ -108,7 +109,10 @@ const saveVideo = async () => {
     closeEditModal()
   } catch (error) {
     console.error('Failed to update video', error)
-    alert('Failed to update video: ' + error.message)
+    showError({
+      title: t('studio.failed_update'),
+      description: error.message
+    })
   } finally {
     isSaving.value = false
   }
@@ -145,14 +149,14 @@ const deleteVideo = async (id) => {
           </div>
           <div class="space-y-3">
             <h2 class="text-2xl font-black text-white uppercase tracking-tight italic">
-              {{ t('auth.authentication_locked') }}
+              {{ $t('auth.authentication_locked') }}
             </h2>
             <p class="text-white/40 text-sm font-medium leading-relaxed">
-              {{ t('auth.login_required') }}
+              {{ $t('auth.login_required') }}
             </p>
           </div>
           <NuxtLink to="/auth/login" class="btn-primary w-full inline-flex rounded-xl py-4 font-black uppercase tracking-widest text-xs">
-            {{ t('auth.authorize_identity') }}
+            {{ $t('auth.authorize_identity') }}
           </NuxtLink>
         </div>
         <div class="absolute inset-0 bg-void/90 backdrop-blur-md"></div>
@@ -165,19 +169,19 @@ const deleteVideo = async (id) => {
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <div class="h-1 w-8 bg-primary-500"></div>
-            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">Command Center</span>
+            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ $t('studio.command_center') }}</span>
           </div>
           <h1 class="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter italic">
-            Dashboard
+            {{ $t('studio.command_center') }}
           </h1>
           <p class="text-white/40 text-sm font-medium">
-            Welcome back, <span class="text-white">{{ profile?.display_name || 'Creator' }}</span>
+            {{ $t('studio.welcome') }}, <span class="text-white">{{ profile?.display_name || $t('studio.creator') }}</span>
           </p>
         </div>
 
         <NuxtLink to="/studio/upload" class="btn-primary flex items-center gap-3 rounded-xl px-8 py-4 font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all">
           <div class="i-ph-plus-circle-duotone text-lg"></div>
-          {{ t('studio.upload') }}
+          {{ $t('studio.upload') }}
         </NuxtLink>
       </div>
 
@@ -187,7 +191,7 @@ const deleteVideo = async (id) => {
              :key="key" :delay="i * 100"
              class="glass-card p-8 group hover:border-primary-500/20 transition-all duration-500">
           <div class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4 group-hover:text-primary-500 transition-colors">
-            {{ t(`studio.${key === 'views' ? 'total_impressions' : key}`) }}
+            {{ $t(`studio.total_${key}`) }}
           </div>
           <div class="flex items-end justify-between">
             <div class="text-4xl font-black text-white tracking-tighter tabular-nums">
@@ -208,7 +212,7 @@ const deleteVideo = async (id) => {
       <div v-motion-fade-in :delay="300" class="space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-black text-white uppercase tracking-tight italic">
-            Channel content
+            {{ $t('studio.channel_content') }}
           </h2>
           <button @click="refresh" class="text-white/20 hover:text-white transition-colors">
             <div class="i-ph-arrows-clockwise text-xl"></div>
@@ -223,12 +227,12 @@ const deleteVideo = async (id) => {
           </div>
           <div class="space-y-2">
             <p class="text-white/60 text-base font-bold uppercase tracking-tight">
-              {{ t('studio.no_records') }}
+              {{ $t('studio.no_records') }}
             </p>
-            <p class="text-white/30 text-xs uppercase tracking-widest italic">The VOID is silent.</p>
+            <p class="text-white/30 text-xs uppercase tracking-widest italic">{{ $t('studio.no_records_hint') }}</p>
           </div>
           <NuxtLink to="/studio/upload" class="btn-primary mt-4 rounded-xl px-10 py-4 font-black uppercase tracking-widest text-xs">
-            Broadcast Now
+            {{ $t('studio.upload') }}
           </NuxtLink>
         </div>
 
@@ -236,10 +240,10 @@ const deleteVideo = async (id) => {
         <div v-else class="glass-card overflow-hidden border-white/5 shadow-2xl">
           <!-- Table Header -->
           <div class="hidden sm:grid grid-cols-[1fr_120px_140px_100px] gap-6 px-8 py-5 border-b border-white/5 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
-            <div>Transmissions</div>
-            <div class="text-right">Security</div>
-            <div class="text-right">Broadcast Date</div>
-            <div class="text-right">Impressions</div>
+            <div>{{ $t('studio.video_header') }}</div>
+            <div class="text-right">{{ $t('studio.security_header') }}</div>
+            <div class="text-right">{{ $t('studio.date_header') }}</div>
+            <div class="text-right">{{ $t('studio.views_header') }}</div>
           </div>
 
           <div class="divide-y divide-white/5">
@@ -263,13 +267,13 @@ const deleteVideo = async (id) => {
                 </div>
                 <div class="flex-1 min-w-0 space-y-2 py-1">
                   <h3 class="font-bold text-base text-white truncate group-hover:text-primary-500 transition-colors tracking-tight">{{ video.title }}</h3>
-                  <p class="text-xs text-white/30 line-clamp-2 leading-relaxed font-medium">{{ video.description || 'No data recorded' }}</p>
+                  <p class="text-xs text-white/30 line-clamp-2 leading-relaxed font-medium">{{ video.description || $t('studio.no_description') }}</p>
 
                   <!-- Mobile only meta -->
                   <div class="flex sm:hidden items-center gap-3 text-[10px] font-black text-white/20 mt-3 uppercase tracking-widest">
-                    <span>{{ video.created_at ? new Date(video.created_at).toLocaleDateString() : '—' }}</span>
+                    <span>{{ video.created_at ? new Date(video.created_at).toLocaleDateString(locale) : '—' }}</span>
                     <span>•</span>
-                    <span>{{ (video.view_count || 0).toLocaleString() }} views</span>
+                    <span>{{ (video.view_count || 0).toLocaleString() }} {{ $t('common.views') }}</span>
                   </div>
                 </div>
               </div>
@@ -278,11 +282,11 @@ const deleteVideo = async (id) => {
               <div class="hidden sm:flex items-center justify-end">
                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-500/10 text-primary-500 text-[10px] font-black uppercase tracking-widest border border-primary-500/20">
                   <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-glow"></div>
-                  Public
+                  {{ $t('studio.visibility_public') }}
                 </span>
               </div>
               <div class="hidden sm:block text-[11px] font-bold text-white/40 text-right uppercase tracking-tighter">
-                {{ video.created_at ? new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—' }}
+                {{ video.created_at ? new Date(video.created_at).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' }) : '—' }}
               </div>
               <div class="hidden sm:block text-base font-black text-white text-right tabular-nums tracking-tighter">
                 {{ (video.view_count || 0).toLocaleString() }}
@@ -293,14 +297,14 @@ const deleteVideo = async (id) => {
                  <button
                   @click="openEditModal(video)"
                   class="w-10 h-10 rounded-xl flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10 transition-all shadow-xl"
-                  title="Modify transmission"
+                  :title="$t('studio.edit_video')"
                 >
                   <div class="i-ph-pencil-simple-duotone text-xl"></div>
                 </button>
                  <NuxtLink
                   :to="`/watch/${video.id}`"
                   class="w-10 h-10 rounded-xl flex items-center justify-center text-white/40 hover:text-primary-500 hover:bg-primary-500/10 border border-transparent hover:border-primary-500/20 transition-all shadow-xl"
-                  title="Preview broadcast"
+                  :title="$t('studio.watch_video')"
                 >
                   <div class="i-ph-eye-duotone text-xl"></div>
                 </NuxtLink>
@@ -308,7 +312,7 @@ const deleteVideo = async (id) => {
                 <button
                   @click="deleteVideo(video.id)"
                   class="w-10 h-10 rounded-xl flex items-center justify-center text-white/40 hover:text-red-500 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all shadow-xl"
-                  title="Terminate signal"
+                  :title="$t('studio.delete_video')"
                 >
                   <div class="i-ph-trash-duotone text-xl"></div>
                 </button>
@@ -334,8 +338,8 @@ const deleteVideo = async (id) => {
         <div class="glass-card border-white/10 w-full max-w-xl shadow-[0_0_100px_-20px_rgba(0,0,0,0.8)] relative z-10 flex flex-col max-h-[90vh] overflow-hidden">
           <div class="flex items-center justify-between p-8 border-b border-white/5 bg-white/[0.01]">
             <div class="space-y-1">
-              <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">Transmission Update</span>
-              <h2 class="text-xl font-black text-white uppercase tracking-tight italic">Edit Metadata</h2>
+              <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.3em]">{{ $t('studio.video_update') }}</span>
+              <h2 class="text-xl font-black text-white uppercase tracking-tight italic">{{ $t('studio.edit_metadata') }}</h2>
             </div>
             <button @click="closeEditModal" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all">
               <div class="i-ph-x text-2xl"></div>
@@ -345,11 +349,11 @@ const deleteVideo = async (id) => {
           <div class="p-8 space-y-8 overflow-y-auto custom-scrollbar">
             <!-- Thumbnail -->
             <div class="space-y-3">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">Display Artwork</label>
+              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ $t('studio.thumbnail') }}</label>
               <div class="flex items-end gap-6 p-4 rounded-3xl bg-white/[0.02] border border-white/5 group">
                 <div class="w-48 aspect-video rounded-2xl overflow-hidden bg-void-900 border border-white/10 shrink-0 shadow-2xl relative">
                    <img v-if="editingVideo.thumbnail_url && !editForm.thumbnailFile" :src="editingVideo.thumbnail_url" class="w-full h-full object-cover" />
-                   <div v-else-if="editForm.thumbnailFile" class="w-full h-full flex items-center justify-center text-[10px] text-primary-500 font-black uppercase tracking-widest bg-primary-500/10 italic">Updated</div>
+                   <div v-else-if="editForm.thumbnailFile" class="w-full h-full flex items-center justify-center text-[10px] text-primary-500 font-black uppercase tracking-widest bg-primary-500/10 italic">{{ $t('studio.updated') }}</div>
                    <div v-else class="w-full h-full flex items-center justify-center">
                      <div class="i-ph-image-duotone text-3xl text-white/10"></div>
                    </div>
@@ -357,31 +361,31 @@ const deleteVideo = async (id) => {
                 <div class="flex-1 space-y-3">
                   <input type="file" accept="image/*" class="hidden" ref="thumbnailInput" @change="handleThumbnailSelect" />
                   <button @click="$refs.thumbnailInput.click()" class="w-full px-6 py-3 glass-button rounded-xl text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
-                    Change Image
+                    {{ $t('studio.change_image') }}
                   </button>
                   <p class="text-[9px] text-white/20 font-bold uppercase text-center" v-if="editForm.thumbnailFile">{{ editForm.thumbnailFile.name }}</p>
-                  <p class="text-[9px] text-white/20 font-bold uppercase text-center italic" v-else>JPG or PNG under 2MB</p>
+                  <p class="text-[9px] text-white/20 font-bold uppercase text-center italic" v-else>{{ $t('studio.file_limit_hint') }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Title -->
             <div class="space-y-3">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">Signal Identity</label>
-              <input v-model="editForm.title" type="text" class="glass-input w-full rounded-2xl py-4 px-6 text-sm font-medium" placeholder="Video title" />
+              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ $t('studio.video_title') }}</label>
+              <input v-model="editForm.title" type="text" class="glass-input w-full rounded-2xl py-4 px-6 text-sm font-medium" :placeholder="$t('studio.video_title_placeholder')" />
             </div>
 
             <!-- Description -->
             <div class="space-y-3">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">Manifest Details</label>
-              <textarea v-model="editForm.description" class="glass-input w-full min-h-[150px] resize-none rounded-3xl py-5 px-6 text-sm font-medium" placeholder="Video description"></textarea>
+              <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ $t('studio.video_description') }}</label>
+              <textarea v-model="editForm.description" class="glass-input w-full min-h-[150px] resize-none rounded-3xl py-5 px-6 text-sm font-medium" :placeholder="$t('studio.video_description_placeholder')"></textarea>
             </div>
 
             <!-- 18+ Toggle -->
             <div class="flex items-center justify-between p-6 rounded-3xl border border-white/5 bg-white/[0.01] hover:border-primary-500/20 transition-all duration-500">
               <div class="space-y-1">
-                <div class="text-sm font-bold text-white uppercase tracking-tight italic">Age Restriction (18+)</div>
-                <div class="text-[11px] text-white/30 font-medium">Restricts visibility to authenticated adults only.</div>
+                <div class="text-sm font-bold text-white uppercase tracking-tight italic">{{ $t('studio.age_restriction') }}</div>
+                <div class="text-[11px] text-white/30 font-medium">{{ $t('studio.age_restriction_hint') }}</div>
               </div>
               <button
                 @click="editForm.is_18_plus = !editForm.is_18_plus"
@@ -398,12 +402,12 @@ const deleteVideo = async (id) => {
 
           <div class="p-8 border-t border-white/5 flex justify-end gap-4 bg-white/[0.01]">
             <button @click="closeEditModal" class="px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 transition-all">
-              Cancel
+              {{ $t('studio.cancel') }}
             </button>
             <button @click="saveVideo" :disabled="isSaving || !editForm.title" class="btn-primary rounded-xl px-10 py-4 text-[10px] font-black uppercase tracking-widest shadow-2xl disabled:opacity-50 hover:scale-105 active:scale-95 transition-all">
               <div class="flex items-center gap-2">
                 <div v-if="isSaving" class="i-ph-circle-notch animate-spin"></div>
-                <span>{{ isSaving ? 'Updating' : 'Apply Changes' }}</span>
+                <span>{{ isSaving ? $t('studio.saving') : $t('studio.apply_changes') }}</span>
               </div>
             </button>
           </div>

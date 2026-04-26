@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAppStore } from '~/store/app'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 
@@ -34,13 +35,33 @@ const onScroll = (e: any) => {
   }
 }
 
+const appStore = useAppStore()
+
 // Interaction states for current video
 const isLiked = ref(false)
-const toggleLike = () => { isLiked.value = !isLiked.value }
+const isSubscribed = ref(false)
+
+const toggleLike = () => { 
+  if (!user.value) return appStore.openAuthModal()
+  isLiked.value = !isLiked.value 
+}
+
+const toggleSubscribe = () => {
+  if (!user.value) return appStore.openAuthModal()
+  isSubscribed.value = !isSubscribed.value
+}
+
+const handleComment = () => {
+  if (!user.value) return appStore.openAuthModal()
+  // Just open modal for now if they click the comment button in shorts
+  // (In a full app, this would open a comment drawer)
+}
+
+const { t } = useI18n()
 
 useSeoMeta({
-  title: 'Shorts - NewTube VOID',
-  description: 'Vertical cinematic transmissions.'
+  title: () => `${t('shorts.title')} - ${t('seo.title')}`,
+  description: () => t('shorts.subtitle')
 })
 </script>
 
@@ -65,7 +86,7 @@ useSeoMeta({
               <div class="i-ph-broadcast text-3xl text-primary-500 animate-spin-slow"></div>
             </div>
           </div>
-          <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] animate-pulse">Scanning Signals</p>
+          <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] animate-pulse">{{ t('shorts.loading') }}</p>
         </div>
       </div>
 
@@ -74,8 +95,8 @@ useSeoMeta({
         <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/5 flex items-center justify-center mb-8 shadow-2xl">
           <div class="i-ph-video-camera-slash text-5xl text-white/10"></div>
         </div>
-        <h2 class="text-2xl font-900 text-white uppercase tracking-tighter italic mb-4">No Transmissions</h2>
-        <p class="text-white/40 text-[11px] font-black uppercase tracking-widest leading-loose">The frequency is currently silent. Check back later for incoming vertical data.</p>
+        <h2 class="text-2xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t('shorts.no_shorts') }}</h2>
+        <p class="text-white/40 text-[11px] font-black uppercase tracking-widest leading-loose">{{ t('shorts.no_shorts_subtitle') }}</p>
       </div>
 
       <!-- Shorts -->
@@ -100,91 +121,61 @@ useSeoMeta({
           <!-- Glass Overlays -->
           <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 pointer-events-none"></div>
 
-          <!-- Top Progress Indicator -->
-          <div class="absolute top-6 left-6 right-6 flex gap-2 z-20">
-            <div v-for="n in videos.length" :key="n" 
-                 class="h-1 flex-1 rounded-full bg-white/10 overflow-hidden transition-all duration-300"
-                 :class="{ 'bg-white/30': index === activeIndex }">
-              <div v-if="index === activeIndex" class="h-full bg-primary-500 w-full animate-progress"></div>
-            </div>
-          </div>
-
-          <!-- Bottom Info -->
-          <div class="absolute bottom-10 left-8 right-20 z-10 space-y-6 pointer-events-auto">
-            <div v-motion-slide-visible-bottom class="space-y-4">
-              <NuxtLink :to="`/profile/${video.user_id}`" class="flex items-center gap-4 no-underline group/creator">
-                <div class="relative">
-                  <div class="absolute -inset-1 bg-primary-500 rounded-full opacity-0 group-hover/creator:opacity-40 blur-md transition-opacity"></div>
-                  <img :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" 
-                       class="w-12 h-12 rounded-xl border-2 border-white/20 object-cover relative z-10" />
-                </div>
-                <div class="space-y-0.5">
-                  <h3 class="font-black text-white uppercase tracking-tighter italic text-lg shadow-black/50 drop-shadow-lg">
-                    {{ video.profiles?.display_name }}
-                  </h3>
-                  <p class="text-[9px] font-black text-primary-500 uppercase tracking-widest">Live Broadcast</p>
-                </div>
-                <button class="ml-2 px-4 py-1.5 rounded-lg bg-primary-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary-500/20 active:scale-95 transition-all">
-                  Join
+          <!-- Bottom Metadata -->
+          <div class="absolute bottom-0 left-0 right-0 p-8 pt-20 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-auto">
+            <div class="space-y-6">
+              <div class="flex items-center gap-4">
+                <NuxtLink :to="`/profile/${video.user_id}`" class="group no-underline flex items-center gap-4">
+                  <div class="relative">
+                    <div class="absolute -inset-1 bg-white/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <img :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`" 
+                         class="w-12 h-12 rounded-xl border-2 border-white/20 relative z-10" />
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-sm font-900 text-white uppercase tracking-tighter italic">{{ video.profiles?.display_name }}</span>
+                    <span class="text-[9px] font-black text-white/40 uppercase tracking-widest">{{ t('watch.verified_user') }}</span>
+                  </div>
+                </NuxtLink>
+                <button 
+                  @click="toggleSubscribe()"
+                  class="ml-4 px-6 py-2.5 rounded-lg bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-primary-500 hover:text-white transition-all active:scale-95"
+                >
+                  {{ isSubscribed ? t('watch.membership_active') : t('watch.join_collective') }}
                 </button>
-              </NuxtLink>
-              
-              <h4 class="text-white font-medium text-base leading-snug line-clamp-2 drop-shadow-xl pr-4">
-                {{ video.title }}
-              </h4>
+              </div>
 
-              <div class="flex items-center gap-4 text-[10px] font-black text-white/40 uppercase tracking-widest">
-                <div class="flex items-center gap-1.5">
-                  <div class="i-ph-broadcast"></div>
-                  {{ (video.view_count || 0).toLocaleString() }} Imp.
+              <!-- Action Buttons -->
+              <div class="absolute bottom-8 right-4 flex flex-col items-center gap-6 z-40">
+                <div class="flex flex-col items-center gap-2 group/action cursor-pointer" @click="toggleLike">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-primary-500/20 group-hover/action:border-primary-500/50 transition-all active:scale-90">
+                    <div :class="[isLiked ? 'i-ph-heart-fill text-primary-500' : 'i-ph-heart text-white']" class="text-2xl"></div>
+                  </div>
+                  <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.like') }}</span>
                 </div>
-                <span>•</span>
-                <div class="flex items-center gap-1.5">
-                  <div class="i-ph-music-note-duotone text-primary-500"></div>
-                  Original Transmission
+
+                <div class="flex flex-col items-center gap-2 group/action cursor-pointer" @click="handleComment">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all active:scale-90">
+                    <div class="i-ph-chat-circle text-white text-2xl"></div>
+                  </div>
+                  <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.comment') }}</span>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 group/action cursor-pointer">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all active:scale-90">
+                    <div class="i-ph-share-fat text-white text-2xl"></div>
+                  </div>
+                  <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.share') }}</span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Right Actions Bar -->
-          <div class="absolute bottom-10 right-6 z-20 flex flex-col items-center gap-8 pointer-events-auto">
-            <div class="flex flex-col items-center gap-1.5 group/action">
-              <button @click="toggleLike" 
-                      class="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/80 hover:(bg-primary-500 text-white border-primary-400 scale-110 shadow-[0_0_20px_rgba(239,68,68,0.3)]) transition-all duration-500"
-                      :class="{ 'bg-primary-500 text-white border-primary-400 shadow-[0_0_20px_rgba(239,68,68,0.4)]': isLiked }">
-                <div :class="[isLiked ? 'i-ph-heart-fill' : 'i-ph-heart-duotone', 'text-2xl transition-transform group-hover/action:scale-125']"></div>
-              </button>
-              <span class="text-[10px] font-black text-white/60 uppercase tracking-widest">Signal</span>
-            </div>
-
-            <div class="flex flex-col items-center gap-1.5 group/action">
-              <button class="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/80 hover:(bg-white/20 text-white border-white/30 scale-110) transition-all duration-500">
-                <div class="i-ph-chat-circle-dots-duotone text-2xl group-hover/action:scale-125 transition-transform"></div>
-              </button>
-              <span class="text-[10px] font-black text-white/60 uppercase tracking-widest">Echo</span>
-            </div>
-
-            <div class="flex flex-col items-center gap-1.5 group/action">
-              <button class="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/80 hover:(bg-white/20 text-white border-white/30 scale-110) transition-all duration-500">
-                <div class="i-ph-share-network-duotone text-2xl group-hover/action:scale-125 transition-transform"></div>
-              </button>
-              <span class="text-[10px] font-black text-white/60 uppercase tracking-widest">Beam</span>
-            </div>
-
-            <div class="flex flex-col items-center gap-1.5 group/action">
-              <button class="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/80 hover:(bg-white/20 text-white border-white/30 scale-110) transition-all duration-500">
-                <div class="i-ph-dots-three-bold text-2xl group-hover/action:scale-125 transition-transform"></div>
-              </button>
-            </div>
-            
-            <!-- Music Vinyl Effect -->
-            <div class="relative mt-4 group/music cursor-pointer">
-              <div class="absolute -inset-2 bg-primary-500/20 rounded-full blur-md opacity-0 group-hover/music:opacity-100 transition-opacity"></div>
-              <div class="w-12 h-12 rounded-full bg-void-900 border-2 border-white/10 flex items-center justify-center animate-spin-slow relative z-10 shadow-2xl overflow-hidden">
-                <img :src="video.thumbnail_url" class="w-full h-full object-cover opacity-50" />
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="w-3 h-3 bg-black rounded-full border border-white/20 shadow-inner"></div>
+              <!-- Title & Sound -->
+              <div class="max-w-[70%]">
+                <p class="text-sm font-medium text-white line-clamp-2 leading-relaxed mb-4">{{ video.title }}</p>
+                <div class="flex items-center gap-2 text-white/60">
+                  <div class="i-ph-music-notes text-xs"></div>
+                  <div class="text-[10px] font-black uppercase tracking-widest overflow-hidden whitespace-nowrap relative">
+                    <span class="inline-block animate-marquee">{{ t('shorts.original_sound') }} - {{ video.profiles?.display_name }}</span>
+                  </div>
                 </div>
               </div>
             </div>

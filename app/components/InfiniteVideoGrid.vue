@@ -66,7 +66,7 @@ onMounted(() => {
     <div ref="loadMoreTrigger" class="h-40 flex flex-col items-center justify-center mt-12 gap-4">
       <div v-if="loading && videos.length > 0" class="flex flex-col items-center gap-4">
         <div class="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
-        <p class="text-[10px] font-bold text-void-500 uppercase tracking-widest animate-pulse">Syncing Void...</p>
+        <p class="text-[10px] font-bold text-void-500 uppercase tracking-widest animate-pulse">{{ $t('home.syncing') }}</p>
       </div>
       <div v-if="!hasMore && videos.length > 0" class="flex flex-col items-center gap-6 opacity-60">
         <div class="w-12 h-px bg-gradient-to-r from-transparent via-void-700 to-transparent"></div>
@@ -82,7 +82,7 @@ onMounted(() => {
         <div class="absolute -top-4 -right-4 w-12 h-12 bg-white/5 rounded-full blur-xl"></div>
       </div>
       <h2 class="text-3xl font-brand tracking-tighter text-white mb-2">{{ $t('home.no_videos') }}</h2>
-      <p class="text-void-500 text-sm max-w-xs mx-auto">The void is currently silent. Be the first to break the silence.</p>
+      <p class="text-void-500 text-sm max-w-xs mx-auto">{{ $t('home.no_videos_subtitle') }}</p>
     </div>
   </div>
 </template>

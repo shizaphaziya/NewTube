@@ -49,12 +49,12 @@ useSeoMeta({
         <div class="flex items-center gap-6">
           <div class="h-1.5 w-12 bg-primary-500 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)]"></div>
           <h2 class="text-4xl font-900 text-white uppercase tracking-tighter italic">
-            {{ t('home.latest') }}
+            {{ $t('home.latest') }}
           </h2>
         </div>
         
         <div class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.3em] hover:text-primary-500 transition-all cursor-pointer group">
-          <span>Expand Spectrum</span>
+          <span>{{ $t('home.view_all') }}</span>
           <div class="i-ph-arrow-right text-xl group-hover:translate-x-2 transition-transform"></div>
         </div>
       </div>

@@ -37,6 +37,10 @@ const getStatusColor = (status) => {
     default: return 'text-white/40 bg-white/5'
   }
 }
+
+useSeoMeta({
+  title: () => `${t('admin.title')} - ${t('seo.title')}`
+})
 </script>
 
 <template>
@@ -55,10 +59,10 @@ const getStatusColor = (status) => {
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-white/5 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 border-b border-white/5">
-              <th class="px-8 py-6">Video</th>
-              <th class="px-8 py-6">User</th>
-              <th class="px-8 py-6">Status</th>
-              <th class="px-8 py-6 text-right">Actions</th>
+              <th class="px-8 py-6">{{ t('admin.signal') }}</th>
+              <th class="px-8 py-6">{{ t('admin.node') }}</th>
+              <th class="px-8 py-6">{{ t('admin.status') }}</th>
+              <th class="px-8 py-6 text-right">{{ t('admin.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5">
@@ -90,7 +94,7 @@ const getStatusColor = (status) => {
                       'text-white/30 bg-white/5 border-white/5'
                     ]"
                   >
-                    {{ video.status }}
+                    {{ t(`admin.${video.status}`) }}
                   </span>
                 </div>
               </td>
@@ -128,7 +132,7 @@ const getStatusColor = (status) => {
       </div>
       
       <div v-if="!videos?.length" class="py-32 text-center text-white/5 font-black uppercase tracking-[0.5em] text-sm">
-        No videos found
+        {{ t('admin.no_signals') }}
       </div>
     </div>
   </div>

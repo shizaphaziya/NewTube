@@ -29,8 +29,8 @@ watch(() => route.query.q, () => {
 }, { immediate: true })
 
 useSeoMeta({
-  title: () => `${query.value} - Search Results`,
-  description: 'Searching the future of video.'
+  title: () => `${query.value} - ${t('search.title')}`,
+  description: t('search.description')
 })
 </script>
 
@@ -45,18 +45,18 @@ useSeoMeta({
         <div class="space-y-4">
           <div class="flex items-center gap-3">
             <div class="h-1 w-10 bg-primary-500 rounded-full"></div>
-            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">Query Processing</span>
+            <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em]">{{ t('search.query_processing') }}</span>
           </div>
           <h1 class="text-4xl md:text-5xl font-900 text-white uppercase tracking-tighter italic leading-none">
-            Results for: <span class="text-primary-500 underline decoration-white/10 decoration-2 underline-offset-8">{{ query }}</span>
+            {{ t('search.results_for') }} <span class="text-primary-500 underline decoration-white/10 decoration-2 underline-offset-8">{{ query }}</span>
           </h1>
-          <p class="text-white/30 text-[11px] font-black uppercase tracking-[0.2em]">{{ videos.length }} Signals Detected</p>
+          <p class="text-white/30 text-[11px] font-black uppercase tracking-[0.2em]">{{ videos.length }} {{ t('search.videos_found') }}</p>
         </div>
 
         <div class="flex items-center gap-4">
            <div class="glass-card border-white/10 rounded-xl px-6 py-3 flex items-center gap-4">
              <div class="i-ph-funnel-duotone text-white/40"></div>
-             <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Filter: Relevance</span>
+             <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">{{ t('search.filter_relevance') }}</span>
            </div>
         </div>
       </div>
@@ -77,9 +77,9 @@ useSeoMeta({
           <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl">
             <div class="i-ph-magnifying-glass-slash-duotone text-5xl text-white/10"></div>
           </div>
-          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">No Matches Found</h2>
+          <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t('search.no_matches') }}</h2>
           <p class="text-white/30 text-[11px] font-black uppercase tracking-widest leading-loose max-w-md">
-            The signal "{{ query }}" did not resonate with any existing data nodes in our network.
+            {{ t('search.no_matches_subtitle', { query: query }) }}
           </p>
       </div>
 
@@ -100,7 +100,7 @@ useSeoMeta({
               
               <!-- Badge -->
               <div v-if="video.is_short" class="absolute top-4 right-4 px-3 py-1 rounded-lg bg-primary-600 text-white text-[9px] font-black uppercase tracking-widest shadow-xl">
-                Short
+                {{ t('search.short') }}
               </div>
               
               <!-- Duration Placeholder -->
@@ -116,9 +116,9 @@ useSeoMeta({
               </h2>
               
               <div class="flex items-center gap-6 text-[10px] font-black text-white/40 uppercase tracking-widest">
-                <span>{{ (video.view_count || 0).toLocaleString() }} Impressions</span>
+                <span>{{ (video.view_count || 0).toLocaleString() }} {{ t('search.impressions') }}</span>
                 <span>•</span>
-                <span>Synchronized {{ new Date(video.created_at).toLocaleDateString() }}</span>
+                <span>{{ t('search.synchronized') }} {{ new Date(video.created_at).toLocaleDateString() }}</span>
               </div>
 
               <div class="flex items-center gap-4 py-2">
@@ -131,7 +131,7 @@ useSeoMeta({
               </div>
 
               <p class="text-white/30 text-sm font-medium line-clamp-2 leading-relaxed max-w-2xl">
-                {{ video.description || 'No description provided for this transmission.' }}
+                {{ video.description || t('search.no_description') }}
               </p>
             </div>
           </NuxtLink>
