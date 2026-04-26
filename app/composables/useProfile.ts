@@ -5,7 +5,7 @@ type Profile = Database['public']['Tables']['profiles']['Row']
 export const useProfile = () => {
   const supabase = useSupabaseClient<Database>()
   const user = useSupabaseUser()
-  
+  const nuxtApp = useNuxtApp()
   const profile = useState<Profile | null>('user-profile-v6', () => null)
   const loading = useState('user-profile-loading-v6', () => false)
 
@@ -16,15 +16,20 @@ export const useProfile = () => {
       return
     }
 
-    if (loading.value) return
+    if ((nuxtApp as any)._profileFetchPromise) {
+      await (nuxtApp as any)._profileFetchPromise
+      return
+    }
+
     loading.value = true
     
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
+    (nuxtApp as any)._profileFetchPromise = (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single()
 
       if (error) {
         profile.value = null
@@ -43,7 +48,11 @@ export const useProfile = () => {
       console.error('[Profile] Unexpected error:', e)
     } finally {
       loading.value = false
+      (nuxtApp as any)._profileFetchPromise = null
     }
+    })()
+
+    await (nuxtApp as any)._profileFetchPromise
   }
 
   // Auth state listener
