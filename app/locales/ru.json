@@ -204,6 +204,7 @@
     "login_success": "Вход выполнен успешно.",
     "required_action": "Требуется вход",
     "invalid_email": "Некорректный email адрес.",
+    "invalid_video_format": "Недопустимый формат видео. Разрешенные форматы: MP4, MOV, WebM.",
     "password_min": "Пароль должен быть не менее 8 символов."
   },
   "profile": {
