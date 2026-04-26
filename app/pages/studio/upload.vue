@@ -43,23 +43,33 @@ const handleVideoSelect = async (e) => {
   const targetTime = Math.min(5, video.duration / 2)
   video.currentTime = targetTime
 
-  await new Promise(resolve => {
-    video.onseeked = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+  try {
+    await new Promise((resolve, reject) => {
+      video.onseeked = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = video.videoWidth
+          canvas.height = video.videoHeight
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      canvas.toBlob(blob => {
-        if (blob) {
-            form.value.thumbnailBlob = blob
+          canvas.toBlob(blob => {
+            if (blob) {
+                form.value.thumbnailBlob = blob
+            }
+            URL.revokeObjectURL(videoUrl)
+            resolve()
+          }, 'image/jpeg', 0.8)
+        } catch (e) {
+          reject(e)
         }
-        URL.revokeObjectURL(videoUrl)
-        resolve()
-      }, 'image/jpeg', 0.8)
-    }
-  })
+      }
+      video.onerror = () => reject(new Error('Video loading failed'))
+    })
+  } catch (e) {
+    // Gracefully handle thumbnail generation failure without warning
+    URL.revokeObjectURL(videoUrl)
+  }
 }
 
 const handleThumbnailSelect = (e) => {
