@@ -9,24 +9,11 @@
 </template>
 
 <style>
-body {
-  @apply bg-void text-white;
-}
-
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-/* View Transition API — navigation */
+/* View Transition API — Advanced Macro */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.2s;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 ::view-transition-old(video-thumb-*),
@@ -35,29 +22,50 @@ body {
   height: 100%;
   overflow: clip;
   object-fit: cover;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+::view-transition-old(video-title-*),
+::view-transition-new(video-title-*) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+
+/* Blur the old view during transition for a cinematic effect */
+::view-transition-old(root) {
+  animation: nt-fade-out 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-::-webkit-scrollbar-thumb {
-  background: #3f3f46;
-  border-radius: 4px;
+::view-transition-new(root) {
+  animation: nt-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+
+@keyframes nt-fade-out {
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(0.96);
+  }
+}
+
+@keyframes nt-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
 }
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-none {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
