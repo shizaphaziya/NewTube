@@ -9,10 +9,6 @@
 </template>
 
 <style>
-body {
-  @apply bg-void text-white;
-}
-
 /* View Transition API — Advanced Macro */
 ::view-transition-old(root),
 ::view-transition-new(root) {

@@ -3,7 +3,7 @@ const { isAdmin } = useProfile()
 </script>
 
 <template>
-  <div class="min-h-screen bg-void text-white font-sans flex relative overflow-hidden">
+  <div class="min-h-screen bg-black text-white font-sans flex relative overflow-hidden">
 
     <!-- Sidebar -->
     <Sidebar />
