@@ -10,19 +10,19 @@ const { toasts, removeToast } = useToast()
         <div
           v-for="toast in toasts"
           :key="toast.id"
-          class="pointer-events-auto px-6 py-3.5 rounded-2xl flex items-center gap-4 min-w-[280px] max-w-sm
-                 backdrop-blur-2xl border shadow-md transition-all"
+          class="pointer-events-auto px-6 py-3.5 rounded-md flex items-center gap-4 min-w-[280px] max-w-sm
+                 backdrop-blur-2xl border shadow-xl transition-all"
           :class="[
-            toast.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-100' :
-            toast.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-100' :
-            'bg-white/5 border-white/10 text-white'
+            toast.type === 'error' ? 'bg-black border-red-500/50 text-white shadow-[0_0_30px_rgba(239,68,68,0.15)]' :
+            toast.type === 'success' ? 'bg-black border-white/40 text-white shadow-[0_0_30px_rgba(255,255,255,0.05)]' :
+            'bg-black border-white/10 text-white'
           ]"
         >
           <div
             class="text-xl shrink-0"
             :class="[
               toast.type === 'error' ? 'i-ph-warning-circle-bold text-red-500' :
-              toast.type === 'success' ? 'i-ph-check-circle-bold text-emerald-500' :
+              toast.type === 'success' ? 'i-ph-check-circle-bold text-white' :
               'i-ph-info-bold text-white/50'
             ]"
           ></div>

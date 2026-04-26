@@ -48,7 +48,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-10 sm:gap-x-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-12">
       <VideoCard
         v-for="(video, idx) in videos"
         :key="video.id"
@@ -58,21 +58,31 @@ onMounted(() => {
 
       <!-- Skeletons -->
       <template v-if="loading">
-        <VideoSkeleton v-for="n in 6" :key="n" />
+        <VideoSkeleton v-for="n in 5" :key="n" />
       </template>
     </div>
 
     <!-- Scroll Sentinel -->
-    <div ref="loadMoreTrigger" class="h-20 flex items-center justify-center mt-10">
-      <div v-if="loading && videos.length > 0" class="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
-      <p v-if="!hasMore && videos.length > 0" class="text-white/40 text-sm font-medium">
-        {{ $t('home.no_videos') }}
-      </p>
+    <div ref="loadMoreTrigger" class="h-40 flex flex-col items-center justify-center mt-12 gap-4">
+      <div v-if="loading && videos.length > 0" class="flex flex-col items-center gap-4">
+        <div class="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
+        <p class="text-[10px] font-bold text-void-500 uppercase tracking-widest animate-pulse">Syncing Void...</p>
+      </div>
+      <div v-if="!hasMore && videos.length > 0" class="flex flex-col items-center gap-6 opacity-60">
+        <div class="w-12 h-px bg-gradient-to-r from-transparent via-void-700 to-transparent"></div>
+        <p class="text-void-500 text-xs font-semibold uppercase tracking-widest">
+          {{ $t('home.no_videos') }}
+        </p>
+      </div>
     </div>
 
-    <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-      <div class="i-ph-video-camera-slash text-6xl text-white/10 mb-6"></div>
-      <h2 class="text-2xl font-medium text-white/40">{{ $t('home.no_videos') }}</h2>
+    <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 text-center animate-fade-in">
+      <div class="relative mb-8">
+        <div class="i-ph-video-camera-slash text-7xl text-void-800"></div>
+        <div class="absolute -top-4 -right-4 w-12 h-12 bg-white/5 rounded-full blur-xl"></div>
+      </div>
+      <h2 class="text-3xl font-brand tracking-tighter text-white mb-2">{{ $t('home.no_videos') }}</h2>
+      <p class="text-void-500 text-sm max-w-xs mx-auto">The void is currently silent. Be the first to break the silence.</p>
     </div>
   </div>
 </template>
