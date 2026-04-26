@@ -69,7 +69,7 @@ useSeoMeta({
             <tr v-for="video in videos" :key="video.id" class="hover:bg-white/[0.02] transition-all duration-300 group">
               <td class="px-8 py-6">
                 <div class="flex items-center gap-5">
-                  <div class="relative group-hover:scale-105 transition-transform duration-500">
+                  <div class="relative transition-transform duration-500">
                     <img :src="video.thumbnail_url" class="w-24 aspect-video rounded-xl bg-white/5 object-cover border border-white/5" />
                     <div class="absolute inset-0 bg-void/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                       <div class="i-ph-eye-bold text-white text-xl"></div>

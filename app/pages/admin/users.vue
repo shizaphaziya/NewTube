@@ -139,6 +139,8 @@ const updateUserRole = async (userId, newRole) => {
 </template>
 
 <style scoped>
+/* noinspection CssUnusedSymbol -- Vue <Transition name="fade"> transition classes */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
+/* noinspection CssUnusedSymbol */
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

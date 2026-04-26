@@ -59,7 +59,7 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
             <div class="i-ph-arrows-clockwise-duotone"></div>
             {{ t('subscriptions.resync') }}
           </button>
-          <button class="px-8 py-3.5 rounded-xl btn-primary text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-primary-500/20 active:scale-95 transition-all flex items-center gap-3">
+          <button class="px-8 py-3.5 rounded-xl btn-primary text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-primary-500/20 transition-all flex items-center gap-3">
             <div class="i-ph-gear-duotone"></div>
             {{ t('subscriptions.manage') }}
           </button>
@@ -77,8 +77,8 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
                     class="flex flex-col items-center gap-4 group shrink-0 no-underline">
             <div class="relative">
               <div class="absolute -inset-1.5 bg-gradient-to-tr from-primary-600 to-amber-500 rounded-2xl opacity-0 group-hover:opacity-100 blur-lg transition-all duration-500"></div>
-              <img :src="sub.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sub.creator_id}`" 
-                   class="w-20 h-20 rounded-2xl border-2 border-white/10 object-cover bg-void-900 relative z-10 transition-transform group-hover:scale-105" />
+               <img :src="sub.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sub.creator_id}`" 
+                   class="w-20 h-20 rounded-2xl border-2 border-white/10 object-cover bg-void-900 relative z-10 transition-colors" />
               <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-primary-500 rounded-md border-2 border-void z-20"></div>
             </div>
             <span class="text-[10px] font-black text-white/40 group-hover:text-white transition-colors uppercase tracking-widest max-w-[80px] truncate">{{ sub.profiles?.display_name }}</span>
@@ -88,14 +88,14 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
 
       <!-- Auth Gate -->
       <div v-if="!user" v-motion-slide-visible-bottom class="flex flex-col items-center justify-center py-32 text-center glass-card border-white/5 rounded-[3rem] shadow-2xl">
-          <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl animate-glow">
+          <div class="w-24 h-24 rounded-3xl bg-void-900 border border-white/10 flex items-center justify-center mb-8 shadow-2xl">
             <div class="i-ph-lock-duotone text-5xl text-primary-500"></div>
           </div>
           <h2 class="text-3xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t('subscriptions.id_required') }}</h2>
           <p class="text-white/30 text-[11px] font-black uppercase tracking-widest leading-loose max-w-md mb-10">
             {{ t('subscriptions.id_required_subtitle') }}
           </p>
-          <NuxtLink to="/auth/login" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 active:scale-95 transition-all">
+          <NuxtLink to="/auth/login" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 transition-all">
             {{ t('auth.authorize_identity') }}
           </NuxtLink>
       </div>
@@ -114,7 +114,7 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
           <p class="text-white/30 text-[11px] font-black uppercase tracking-widest leading-loose max-w-md mb-10">
             {{ t('subscriptions.no_active_subtitle') }}
           </p>
-          <NuxtLink to="/" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 active:scale-95 transition-all">
+          <NuxtLink to="/" class="btn-primary px-12 py-4 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] shadow-primary-500/20 transition-all">
             {{ t('subscriptions.explore') }}
           </NuxtLink>
       </div>
@@ -144,12 +144,4 @@ const { data: subscribedVideos, pending } = await useAsyncData('subscriptions-vi
   scrollbar-width: none;
 }
 
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.1); }
-  to { box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.4); }
-}
 </style>

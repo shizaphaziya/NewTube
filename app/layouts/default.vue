@@ -15,9 +15,9 @@ const handleSearch = () => {
     
     <!-- Background Depth -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary-900/10 blur-[120px] animate-glow"></div>
-      <div class="absolute top-[20%] -right-[5%] w-[30%] h-[30%] rounded-full bg-indigo-900/10 blur-[100px] animate-glow" style="animation-delay: -1s"></div>
-      <div class="absolute -bottom-[10%] left-[20%] w-[25%] h-[25%] rounded-full bg-primary-800/10 blur-[80px] animate-glow" style="animation-delay: -2s"></div>
+      <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary-900/10 blur-[120px] animate-ambient" style="animation-delay: 0s"></div>
+      <div class="absolute top-[20%] -right-[5%] w-[30%] h-[30%] rounded-full bg-indigo-900/10 blur-[100px] animate-ambient" style="animation-delay: -7s; animation-direction: alternate-reverse"></div>
+      <div class="absolute -bottom-[10%] left-[20%] w-[25%] h-[25%] rounded-full bg-primary-800/10 blur-[80px] animate-ambient" style="animation-delay: -13s"></div>
     </div>
 
     <!-- Sidebar -->
@@ -35,7 +35,7 @@ const handleSearch = () => {
 
           <!-- Mobile Logo -->
           <NuxtLink to="/" class="md:hidden flex items-center shrink-0 pr-4 mr-2 border-r border-white/10 group/logo">
-            <div class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center shadow-lg group-hover/logo:scale-110 transition-transform">
+            <div class="w-9 h-9 rounded-lg bg-primary-600 flex items-center justify-center shadow-lg transition-transform">
               <div class="i-ph-play-fill text-white text-base translate-x-px"></div>
             </div>
           </NuxtLink>
@@ -43,7 +43,7 @@ const handleSearch = () => {
           <!-- Search -->
           <div class="flex-1 max-w-2xl mx-auto md:ml-0">
             <form @submit.prevent="handleSearch" class="relative flex items-center group w-full">
-              <div class="absolute left-4 i-ph-magnifying-glass text-void-500 text-xl pointer-events-none transition-all group-focus-within:(text-primary-500 scale-110) group-hover:text-void-300"></div>
+              <div class="absolute left-4 i-ph-magnifying-glass text-void-500 text-xl pointer-events-none transition-all group-focus-within:text-primary-500 group-hover:text-void-300"></div>
               <input 
                 v-model="searchQuery"
                 type="text" 
@@ -92,7 +92,7 @@ const handleSearch = () => {
           <div class="i-ph-lightning-duotone text-2xl text-white/40 group-hover:text-primary-500 transition-colors"></div>
           <span class="text-[9px] font-black uppercase tracking-widest text-white/20 group-hover:text-white">{{ $t('nav.shorts') }}</span>
         </NuxtLink>
-        <NuxtLink to="/studio" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 active:scale-90 transition-all" active-class="text-primary-500">
+        <NuxtLink to="/studio" class="flex flex-col items-center justify-center w-14 h-full text-void-400 hover:text-primary-500 transition-all" active-class="text-primary-500">
           <div class="i-ph-plus-circle-fill text-3xl text-primary-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
         </NuxtLink>
         <NuxtLink to="/subscriptions" class="group flex flex-col items-center gap-1.5 py-4 rounded-2xl hover:bg-white/5 transition-all">

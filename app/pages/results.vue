@@ -94,8 +94,8 @@ useSeoMeta({
         >
           <NuxtLink :to="`/watch/${video.id}`" class="flex flex-col md:flex-row gap-8 no-underline">
             <!-- Thumbnail -->
-            <div class="relative w-full md:w-[400px] shrink-0 aspect-video rounded-3xl overflow-hidden border border-white/5 shadow-2xl transition-all duration-700 group-hover:(border-primary-500/50 scale-[1.02] shadow-primary-500/10)">
-              <img :src="video.thumbnail_url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <div class="relative w-full md:w-[400px] shrink-0 aspect-video rounded-3xl overflow-hidden border border-white/5 shadow-2xl transition-all duration-700 group-hover:(border-primary-500/50 shadow-primary-500/10)">
+              <img :src="video.thumbnail_url" class="w-full h-full object-cover transition-transform duration-1000" />
               <div class="absolute inset-0 bg-void/20 group-hover:bg-transparent transition-all"></div>
               
               <!-- Badge -->

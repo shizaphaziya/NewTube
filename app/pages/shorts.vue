@@ -69,7 +69,7 @@ useSeoMeta({
   <div class="h-screen w-full bg-void relative flex justify-center overflow-hidden selection:(bg-primary-500/30 text-white)">
     <!-- Cinematic Atmosphere -->
     <div class="fixed inset-0 pointer-events-none z-0">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary-500/5 blur-[150px] rounded-full animate-pulse-slow"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary-500/5 blur-[150px] rounded-full animate-ambient"></div>
     </div>
 
     <!-- Centered Feed -->
@@ -82,8 +82,8 @@ useSeoMeta({
         <div class="space-y-6 text-center">
           <div class="w-16 h-16 mx-auto relative">
             <div class="absolute inset-0 bg-primary-500/20 blur-xl animate-pulse"></div>
-            <div class="relative w-full h-full rounded-2xl border border-primary-500/30 flex items-center justify-center animate-glow">
-              <div class="i-ph-broadcast text-3xl text-primary-500 animate-spin-slow"></div>
+            <div class="relative w-full h-full rounded-2xl border border-primary-500/30 flex items-center justify-center">
+              <div class="i-ph-broadcast text-3xl text-primary-500 animate-spin"></div>
             </div>
           </div>
           <p class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] animate-pulse">{{ t('shorts.loading') }}</p>
@@ -138,7 +138,7 @@ useSeoMeta({
                 </NuxtLink>
                 <button 
                   @click="toggleSubscribe()"
-                  class="ml-4 px-6 py-2.5 rounded-lg bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-primary-500 hover:text-white transition-all active:scale-95"
+                  class="ml-4 px-6 py-2.5 rounded-lg bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-primary-500 hover:text-white transition-all"
                 >
                   {{ isSubscribed ? t('watch.membership_active') : t('watch.join_collective') }}
                 </button>
@@ -147,21 +147,21 @@ useSeoMeta({
               <!-- Action Buttons -->
               <div class="absolute bottom-8 right-4 flex flex-col items-center gap-6 z-40">
                 <div class="flex flex-col items-center gap-2 group/action cursor-pointer" @click="toggleLike">
-                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-primary-500/20 group-hover/action:border-primary-500/50 transition-all active:scale-90">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-primary-500/20 group-hover/action:border-primary-500/50 transition-all">
                     <div :class="[isLiked ? 'i-ph-heart-fill text-primary-500' : 'i-ph-heart text-white']" class="text-2xl"></div>
                   </div>
                   <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.like') }}</span>
                 </div>
 
                 <div class="flex flex-col items-center gap-2 group/action cursor-pointer" @click="handleComment">
-                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all active:scale-90">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all">
                     <div class="i-ph-chat-circle text-white text-2xl"></div>
                   </div>
                   <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.comment') }}</span>
                 </div>
 
                 <div class="flex flex-col items-center gap-2 group/action cursor-pointer">
-                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all active:scale-90">
+                  <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all">
                     <div class="i-ph-share-fat text-white text-2xl"></div>
                   </div>
                   <span class="text-[9px] font-black text-white uppercase tracking-tighter">{{ t('shorts.share') }}</span>
@@ -196,39 +196,13 @@ useSeoMeta({
 }
 
 @keyframes progress {
-  from { width: 0%; }
+  from { width: 0; }
   to { width: 100%; }
 }
 
+/* Used dynamically via JS on active short progress bars */
 .animate-progress {
   animation: progress var(--v-duration, 15s) linear forwards;
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.1; transform: scale(1) translate(-50%, -50%); }
-  50% { opacity: 0.3; transform: scale(1.1) translate(-50%, -45%); }
-}
-
-.animate-spin-slow {
-  animation: spin 4s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); }
-  to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
 }
 
 /* Vertical feed styles */

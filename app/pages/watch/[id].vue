@@ -104,17 +104,14 @@ useSeoMeta({
   <div class="min-h-screen pb-24 relative selection:(bg-primary-500/30 text-white) bg-void overflow-x-hidden">
     <!-- Cinematic Dynamic Aura -->
     <div class="fixed top-0 inset-x-0 h-[1000px] pointer-events-none overflow-hidden z-0 mask-linear-b opacity-30">
-      <div class="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary-600/10 blur-[180px] animate-pulse-slow"></div>
-      <div class="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[180px] animate-pulse-slow" style="animation-delay: -3s"></div>
+      <div class="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary-600/10 blur-[180px] animate-ambient"></div>
+      <div class="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[180px] animate-ambient" style="animation-delay: -3s"></div>
       <img v-if="video?.thumbnail_url" :src="video.thumbnail_url" class="w-full h-full object-cover blur-[150px] scale-150 opacity-20 mix-blend-screen" />
     </div>
 
     <!-- Video Player Area -->
     <div
-      v-motion
-      :initial="{ opacity: 0, scale: 0.98, y: 40 }"
-      :enter="{ opacity: 1, scale: 1, y: 0, transition: { duration: 1200, ease: 'easeOut' } }"
-      class="w-full relative z-10"
+      class="w-full relative z-10 transition-all duration-1000 opacity-100"
       :class="isCinemaMode ? 'pt-0' : 'pt-4 md:pt-8 pb-8'"
     >
       <div :class="isCinemaMode ? 'w-full h-screen' : 'max-w-[1600px] mx-auto px-4 md:px-10'">
@@ -124,7 +121,7 @@ useSeoMeta({
         >
           <div class="absolute inset-0 bg-void-950 flex items-center justify-center" v-if="!video?.video_url">
             <div class="space-y-4 text-center">
-              <div class="i-ph-broadcast text-5xl text-primary-500 animate-pulse"></div>
+              <div class="i-ph-broadcast text-5xl text-primary-500"></div>
               <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">{{ t('common.loading') }}</p>
             </div>
           </div>
@@ -140,7 +137,7 @@ useSeoMeta({
           <!-- Cinema Mode Toggle -->
           <button 
             @click="isCinemaMode = !isCinemaMode"
-            class="absolute top-8 right-8 w-14 h-14 rounded-2xl bg-black/40 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/60 hover:(text-white bg-primary-600 border-primary-500 scale-110 shadow-[0_0_30px_rgba(239,68,68,0.4)]) transition-all duration-500 opacity-0 group-hover:opacity-100 z-20"
+            class="absolute top-8 right-8 w-14 h-14 rounded-2xl bg-black/40 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/60 hover:(text-white bg-primary-600 border-primary-500 shadow-[0_0_30px_rgba(239,68,68,0.4)]) transition-all duration-500 opacity-0 group-hover:opacity-100 z-20"
           >
             <div :class="isCinemaMode ? 'i-ph-corners-in' : 'i-ph-corners-out'" class="text-2xl"></div>
           </button>
@@ -154,7 +151,7 @@ useSeoMeta({
         <!-- Main Column -->
         <div class="space-y-12">
           <!-- Title & Engagement -->
-          <div v-motion-slide-visible-bottom class="space-y-8">
+          <div class="space-y-8">
             <h1 class="text-4xl md:text-5xl font-900 text-white leading-tight uppercase tracking-tighter italic">
               {{ video?.title || t('watch.loading_video') }}
             </h1>
@@ -168,7 +165,7 @@ useSeoMeta({
                    <div class="absolute -inset-1.5 bg-gradient-to-tr from-primary-600 to-amber-500 rounded-2xl opacity-0 group-hover/avatar:opacity-40 blur-lg transition-opacity"></div>
                    <img 
                      :src="video?.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video?.user_id}`" 
-                     class="w-16 h-16 rounded-2xl border-2 border-white/10 object-cover bg-void-900 relative z-10 transition-all group-hover/avatar:(scale-105 border-white/30)"
+                     class="w-16 h-16 rounded-2xl border-2 border-white/10 object-cover bg-void-900 relative z-10 transition-all group-hover/avatar:border-white/30"
                    />
                  </NuxtLink>
                  <div class="space-y-1">
@@ -192,7 +189,7 @@ useSeoMeta({
                    <button @click="toggleLike" 
                            class="flex items-center gap-3 px-8 h-full rounded-xl transition-all duration-500 group/like"
                            :class="isLiked ? 'bg-primary-500 text-white' : 'hover:bg-white/5 text-white/60 hover:text-white'">
-                     <div :class="[isLiked ? 'i-ph-heart-fill' : 'i-ph-heart-duotone', 'text-2xl transition-transform group-hover/like:scale-125']"></div>
+                     <div :class="[isLiked ? 'i-ph-heart-fill' : 'i-ph-heart-duotone', 'text-2xl']"></div>
                      <span class="text-xs font-black uppercase tracking-widest">{{ likesCount.toLocaleString() }}</span>
                    </button>
                    <div class="w-px h-8 bg-white/5 mx-1"></div>
@@ -212,7 +209,7 @@ useSeoMeta({
           </div>
 
           <!-- Description Box -->
-          <div v-motion-slide-visible-bottom class="p-10 glass-card border-white/5 rounded-[3rem] shadow-2xl relative group overflow-hidden">
+          <div class="p-10 glass-card border-white/5 rounded-[3rem] shadow-2xl relative group overflow-hidden">
              <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
              <div class="flex items-center gap-4 mb-8">
                <div class="h-1 w-10 bg-primary-500 rounded-full"></div>
@@ -272,7 +269,7 @@ useSeoMeta({
                   </button>
                   <button @click="submitComment" 
                           :disabled="!newComment.trim() || isPosting"
-                          class="btn-primary rounded-xl px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] disabled:opacity-30 active:scale-95 transition-all">
+                          class="btn-primary rounded-xl px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] disabled:opacity-30 transition-all">
                     {{ isPosting ? t('watch.posting_btn') : t('watch.post') }}
                   </button>
                 </div>
@@ -328,8 +325,8 @@ useSeoMeta({
                 :to="`/watch/${v.id}`"
                 class="flex gap-5 group cursor-pointer no-underline"
               >
-                <div class="w-48 aspect-video rounded-2xl overflow-hidden bg-void-900 border border-white/10 shrink-0 relative shadow-xl transition-all duration-500 group-hover:(border-primary-500/50 scale-[1.02] shadow-primary-500/10)">
-                  <img :src="v.thumbnail_url" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div class="w-48 aspect-video rounded-2xl overflow-hidden bg-void-900 border border-white/10 shrink-0 relative shadow-xl transition-all duration-500 group-hover:(border-primary-500/50 shadow-primary-500/10)">
+                  <img :src="v.thumbnail_url" class="w-full h-full object-cover transition-transform duration-1000" />
                   <div class="absolute inset-0 bg-void/30 group-hover:bg-transparent transition-all"></div>
                 </div>
                 <div class="flex-1 min-w-0 py-1 space-y-2">
@@ -350,10 +347,10 @@ useSeoMeta({
 
            <!-- Sidebar Promo/Ad Aesthetic -->
            <div class="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary-600 to-indigo-700 text-white space-y-6 shadow-2xl relative overflow-hidden group">
-             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000"></div>
+             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-transform duration-1000"></div>
              <h4 class="text-2xl font-black uppercase tracking-tighter italic leading-none" v-html="t('watch.upgrade_premium')"></h4>
              <p class="text-white/80 text-xs font-bold uppercase tracking-widest leading-relaxed">{{ t('watch.upgrade_hint') }}</p>
-             <button class="w-full py-4 rounded-xl bg-white text-void font-black text-[11px] uppercase tracking-[0.3em] hover:scale-105 transition-transform shadow-xl">
+             <button class="w-full py-4 rounded-xl bg-white text-void font-black text-[11px] uppercase tracking-[0.3em] transition-opacity hover:opacity-90 shadow-xl">
                {{ t('watch.upgrade_now') }}
              </button>
            </div>
@@ -369,19 +366,13 @@ useSeoMeta({
   -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
-.animate-pulse-slow {
-  animation: pulse-slow 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
 
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.1) rotate(5deg); }
-}
-
+/* noinspection CssInvalidPseudoSelector -- vendor-specific WebKit media control selectors */
 video::-webkit-media-controls-panel {
   background-image: linear-gradient(transparent, rgba(0,0,0,0.9)) !important;
 }
 
+/* noinspection CssInvalidPseudoSelector -- vendor-specific WebKit media control selectors */
 video::-webkit-media-controls-play-button {
   filter: hue-rotate(320deg) saturate(150%);
 }

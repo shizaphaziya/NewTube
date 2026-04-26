@@ -22,14 +22,14 @@ useSeoMeta({
     <!-- Category Filter -->
     <div 
       v-motion
-      :initial="{ opacity: 0, y: 10 }"
-      :enter="{ opacity: 1, y: 0, transition: { duration: 600 } }"
+      :initial="{ opacity: 0, y: -8 }"
+      :enter="{ opacity: 1, y: 0, transition: { duration: 500 } }"
       class="flex items-center gap-4 mb-12 overflow-x-auto pb-4 scrollbar-none px-4 sticky top-24 z-30 py-4 bg-void-950/80 backdrop-blur-3xl border-b border-white/5"
     >
       <button 
         v-for="cat in categories"
         :key="cat.key"
-        class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 whitespace-nowrap border"
+        class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-400 whitespace-nowrap border"
         :class="cat.key === 'all' 
           ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' 
           : 'bg-white/5 text-white/40 border-white/5 hover:(border-white/20 text-white bg-white/10)'"
@@ -42,8 +42,8 @@ useSeoMeta({
     <section class="pb-32 px-4">
       <div
         v-motion
-        :initial="{ opacity: 0, x: -20 }"
-        :enter="{ opacity: 1, x: 0, transition: { duration: 800, delay: 600 } }"
+        :initial="{ opacity: 0, x: -16 }"
+        :enter="{ opacity: 1, x: 0, transition: { duration: 700, delay: 400 } }"
         class="flex items-center justify-between mb-12 px-2"
       >
         <div class="flex items-center gap-6">
@@ -53,9 +53,10 @@ useSeoMeta({
           </h2>
         </div>
         
-        <div class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.3em] hover:text-primary-500 transition-all cursor-pointer group">
+        <div class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.3em] hover:text-primary-500 transition-colors cursor-pointer group">
           <span>{{ $t('home.view_all') }}</span>
-          <div class="i-ph-arrow-right text-xl group-hover:translate-x-2 transition-transform"></div>
+          <!-- arrow shift is a directional affordance, not micro-jitter — kept but toned to 1 (4px) -->
+          <div class="i-ph-arrow-right text-xl group-hover:translate-x-1 transition-transform duration-300"></div>
         </div>
       </div>
       
@@ -65,15 +66,6 @@ useSeoMeta({
 </template>
 
 <style scoped>
-.animate-pulse-slow {
-  animation: pulse-slow 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.1); }
-}
-
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

@@ -70,31 +70,51 @@ img {
 /* ============================================================
    Page Transitions
    ============================================================ */
+/* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-enter-active {
-  animation: nt-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: nt-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+/* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-active {
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.35s ease, filter 0.35s ease;
 }
+/* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-to {
   opacity: 0;
-  transform: scale(0.96);
+  filter: blur(4px);
 }
 
 @keyframes nt-fade-up {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.96);
+    transform: translateY(16px);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+    filter: blur(0px);
   }
 }
+
+/* Ambient float for background blobs — slow, non-oscillating, barely noticeable */
+/* noinspection CssUnusedSymbol -- Used in layout and watch page background decorations */
+.animate-ambient {
+  animation: ambient-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(2%, 1.5%) scale(1.03); }
+  66%  { transform: translate(-1%, 2%) scale(0.98); }
+  100% { transform: translate(1.5%, -1%) scale(1.02); }
+}
+
 
 /* ============================================================
    Glass Surfaces
    ============================================================ */
+/* noinspection CssUnusedSymbol -- Used in AppHeader and NavBar components via dynamic class binding */
 .glass-surface {
   background: rgba(10, 10, 10, 0.5);
   backdrop-filter: blur(24px) saturate(200%);
@@ -110,6 +130,7 @@ img {
   100% { transform: translateX(100%); }
 }
 
+/* noinspection CssUnusedSymbol -- Skeleton loader utility, used via dynamic class bindings */
 .skeleton {
   position: relative;
   overflow: hidden;
@@ -117,6 +138,7 @@ img {
   border-radius: 0.5rem;
 }
 
+/* noinspection CssUnusedSymbol -- Skeleton pseudo-element shimmer effect */
 .skeleton::after {
   content: "";
   position: absolute;
@@ -132,20 +154,25 @@ img {
 /* ============================================================
    Utilities
    ============================================================ */
+/* noinspection CssUnusedSymbol -- Text utility classes used in templates */
 .text-muted {
   color: #a1a1aa; /* zinc-400 */
 }
+/* noinspection CssUnusedSymbol */
 .text-faint {
   color: #52525b; /* zinc-600 */
 }
+/* noinspection CssUnusedSymbol */
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
 /* Glow effects */
+/* noinspection CssUnusedSymbol -- Glow effect utility classes */
 .glow-on-hover {
   position: relative;
 }
+/* noinspection CssUnusedSymbol */
 .glow-on-hover::before {
   content: '';
   position: absolute;
@@ -161,6 +188,7 @@ img {
 }
 
 /* Vercel-like animated subtle border */
+/* noinspection CssUnusedSymbol -- Animated border utility, used in premium UI components */
 .animated-border {
   position: relative;
   background: #000;

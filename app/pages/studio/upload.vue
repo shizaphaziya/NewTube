@@ -143,8 +143,8 @@ const uploadVideo = async () => {
   <div class="px-4 md:px-8 py-12 relative max-w-4xl mx-auto min-h-screen">
     <!-- Cinematic Aura -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary-500/5 blur-[120px] rounded-full animate-pulse-slow"></div>
-      <div class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary-500/3 blur-[100px] rounded-full"></div>
+      <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary-500/5 blur-[120px] rounded-full animate-ambient" style="animation-delay: 0s"></div>
+      <div class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary-500/3 blur-[100px] rounded-full animate-ambient" style="animation-delay: -5s; animation-direction: alternate-reverse"></div>
     </div>
 
     <div class="relative z-10 space-y-10">
@@ -171,7 +171,7 @@ const uploadVideo = async () => {
         leave-to-class="transform scale-95 opacity-0"
       >
         <div v-if="uploadSuccess" class="glass-card border-primary-500/20 p-12 flex flex-col items-center text-center space-y-6 shadow-[0_0_50px_-12px_rgba(239,68,68,0.15)]">
-          <div class="w-20 h-20 rounded-3xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-500 animate-glow">
+          <div class="w-20 h-20 rounded-3xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-500">
             <div class="i-ph-check-circle-duotone text-5xl"></div>
           </div>
           <div class="space-y-2">
@@ -204,7 +204,7 @@ const uploadVideo = async () => {
                     required
                   />
                   
-                  <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4 pointer-events-none transition-transform duration-500 group-hover:scale-105">
+                  <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4 pointer-events-none transition-colors duration-500">
                     <div class="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-white/20 group-hover:text-primary-500 group-hover:bg-primary-500/10 group-hover:border-primary-500/20 transition-all duration-500 shadow-2xl">
                       <div class="i-ph-upload-simple-duotone text-4xl"></div>
                     </div>
@@ -293,7 +293,7 @@ const uploadVideo = async () => {
                   <button 
                     type="submit" 
                     :disabled="isUploading || !form.videoFile || !form.title"
-                    class="btn-primary w-full md:w-auto shrink-0 rounded-2xl px-12 py-5 font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:scale-100"
+                    class="btn-primary w-full md:w-auto shrink-0 rounded-2xl px-12 py-5 font-black uppercase tracking-[0.2em] text-xs shadow-2xl transition-all disabled:opacity-50 disabled:grayscale"
                   >
                     <div class="flex items-center justify-center gap-3">
                       <div v-if="isUploading" class="i-ph-circle-notch animate-spin text-lg"></div>
@@ -326,14 +326,6 @@ const uploadVideo = async () => {
 </template>
 
 <style scoped>
-.animate-pulse-slow {
-  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
-}
 
 .glass-button {
   background: rgba(255, 255, 255, 0.03);

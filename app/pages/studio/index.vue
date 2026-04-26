@@ -129,8 +129,8 @@ const deleteVideo = async (id) => {
   <div class="px-4 md:px-8 lg:px-12 py-12 relative max-w-screen-xl mx-auto min-h-screen">
     <!-- Cinematic Aura -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div class="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] bg-primary-500/5 blur-[120px] rounded-full animate-pulse-slow"></div>
-      <div class="absolute bottom-[20%] -right-[5%] w-[30%] h-[30%] bg-primary-500/3 blur-[100px] rounded-full"></div>
+      <div class="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] bg-primary-500/5 blur-[120px] rounded-full animate-ambient" style="animation-delay: 0s"></div>
+      <div class="absolute bottom-[20%] -right-[5%] w-[30%] h-[30%] bg-primary-500/3 blur-[100px] rounded-full animate-ambient" style="animation-delay: -5s; animation-direction: alternate-reverse"></div>
     </div>
 
     <!-- Guest Overlay -->
@@ -144,7 +144,7 @@ const deleteVideo = async (id) => {
     >
       <div v-if="!user" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="glass-card border-primary-500/20 p-10 md:p-12 max-w-md w-full space-y-8 text-center shadow-[0_0_50px_-12px_rgba(239,68,68,0.2)] relative z-10">
-          <div class="w-16 h-16 mx-auto rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center animate-glow">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
             <div class="i-ph-lock-key-duotone text-3xl text-primary-500"></div>
           </div>
           <div class="space-y-3">
@@ -179,7 +179,7 @@ const deleteVideo = async (id) => {
           </p>
         </div>
 
-        <NuxtLink to="/studio/upload" class="btn-primary flex items-center gap-3 rounded-xl px-8 py-4 font-black uppercase tracking-widest text-xs shadow-xl hover:scale-105 active:scale-95 transition-all">
+        <NuxtLink to="/studio/upload" class="btn-primary flex items-center gap-3 rounded-xl px-8 py-4 font-black uppercase tracking-widest text-xs shadow-xl transition-all">
           <div class="i-ph-plus-circle-duotone text-lg"></div>
           {{ $t('studio.upload') }}
         </NuxtLink>
@@ -258,7 +258,7 @@ const deleteVideo = async (id) => {
                    <img
                     v-if="video.thumbnail_url"
                     :src="video.thumbnail_url"
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    class="w-full h-full object-cover transition-colors duration-700"
                   />
                    <div v-else class="w-full h-full flex items-center justify-center">
                      <div class="i-ph-film-strip-duotone text-3xl text-white/10"></div>
@@ -281,7 +281,7 @@ const deleteVideo = async (id) => {
               <!-- Desktop Meta Columns -->
               <div class="hidden sm:flex items-center justify-end">
                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-500/10 text-primary-500 text-[10px] font-black uppercase tracking-widest border border-primary-500/20">
-                  <div class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-glow"></div>
+                  <div class="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
                   {{ $t('studio.visibility_public') }}
                 </span>
               </div>
@@ -404,7 +404,7 @@ const deleteVideo = async (id) => {
             <button @click="closeEditModal" class="px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 transition-all">
               {{ $t('studio.cancel') }}
             </button>
-            <button @click="saveVideo" :disabled="isSaving || !editForm.title" class="btn-primary rounded-xl px-10 py-4 text-[10px] font-black uppercase tracking-widest shadow-2xl disabled:opacity-50 hover:scale-105 active:scale-95 transition-all">
+            <button @click="saveVideo" :disabled="isSaving || !editForm.title" class="btn-primary rounded-xl px-10 py-4 text-[10px] font-black uppercase tracking-widest shadow-2xl disabled:opacity-50 transition-all">
               <div class="flex items-center gap-2">
                 <div v-if="isSaving" class="i-ph-circle-notch animate-spin"></div>
                 <span>{{ isSaving ? $t('studio.saving') : $t('studio.apply_changes') }}</span>
@@ -419,24 +419,6 @@ const deleteVideo = async (id) => {
 
 
 <style scoped>
-.animate-pulse-slow {
-  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); }
-  to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -454,9 +436,11 @@ const deleteVideo = async (id) => {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* noinspection CssUnusedSymbol -- Vue <Transition name="fade"> transition classes */
 .fade-enter-active, .fade-leave-active {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* noinspection CssUnusedSymbol */
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
   transform: scale(0.95);

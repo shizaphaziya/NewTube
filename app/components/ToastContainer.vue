@@ -40,14 +40,17 @@ const { toasts, removeToast } = useToast()
 </template>
 
 <style scoped>
+/* noinspection CssUnusedSymbol -- Vue <TransitionGroup name="toast"> transition classes */
 .toast-enter-active,
 .toast-leave-active {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* noinspection CssUnusedSymbol */
 .toast-enter-from {
   opacity: 0;
   transform: translateY(20px) scale(0.95);
 }
+/* noinspection CssUnusedSymbol */
 .toast-leave-to {
   opacity: 0;
   transform: translateY(10px) scale(0.95);

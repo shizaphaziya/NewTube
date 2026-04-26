@@ -155,7 +155,7 @@ watchEffect(() => {
                   <div class="flex items-center justify-end gap-2 text-void-silver">
                     <button 
                       @click="toggleBlock(video)"
-                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300"
                       :title="video.status === 'blocked' ? $t('admin.publish') : $t('admin.block')"
                       :class="video.status === 'blocked' ? 'text-emerald-400 hover:bg-emerald-400/10' : 'text-red-500 hover:bg-red-500/10'"
                     >
@@ -163,13 +163,13 @@ watchEffect(() => {
                     </button>
                     <button 
                       @click="deleteVideo(video.id)"
-                      class="w-8 h-8 rounded-lg bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+                      class="w-8 h-8 rounded-lg bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 flex items-center justify-center transition-all duration-300"
                     >
                       <div class="i-ph-trash-bold"></div>
                     </button>
                     <NuxtLink 
                       :to="`/watch/${video.id}`"
-                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white flex items-center justify-center transition-all duration-300"
                     >
                       <div class="i-ph-arrow-square-out-bold"></div>
                     </NuxtLink>
