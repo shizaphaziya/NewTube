@@ -90,7 +90,7 @@ CREATE POLICY "Users can insert their own videos" ON public.videos
 CREATE POLICY "Users can update their own videos (except status)" ON public.videos
   FOR UPDATE USING (auth.uid() = user_id)
   WITH CHECK (
-    (status = (SELECT status FROM public.videos WHERE id = id)) OR
+    (status = (SELECT v.status FROM public.videos v WHERE v.id = videos.id)) OR
     (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
   );
 CREATE POLICY "Admins can do everything with videos" ON public.videos
