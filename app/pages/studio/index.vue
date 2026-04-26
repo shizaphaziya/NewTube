@@ -38,10 +38,16 @@ if (asyncError.value) {
 
 const stats = computed(() => {
   if (!videos.value) return { views: 0, videos: 0, engagement: 0 }
+  let views = 0
+  let engagement = 0
+  for (const v of videos.value) {
+    views += v.view_count || 0
+    engagement += (v.likes?.[0]?.count || 0) + (v.comments?.[0]?.count || 0)
+  }
   return {
-    views: videos.value.reduce((acc, v) => acc + (v.view_count || 0), 0),
+    views,
     videos: videos.value.length,
-    engagement: videos.value.reduce((acc, v) => acc + (v.likes?.[0]?.count || 0) + (v.comments?.[0]?.count || 0), 0)
+    engagement
   }
 })
 
