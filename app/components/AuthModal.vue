@@ -15,8 +15,8 @@ const validationError = ref('')
 
 // Zod Schema
 const authSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters')
+  email: z.string().email(t('auth.invalid_email')),
+  password: z.string().min(6, t('auth.password_min'))
 })
 
 // Handles form submission for both Sign In and Sign Up using Supabase Auth
@@ -43,7 +43,7 @@ const handleAuth = async () => {
         }
       })
       if (error) throw error
-      success(t('auth.check_email') || 'Check your email for confirmation')
+      success(t('auth.check_email'))
       appStore.closeAuthModal()
     } else {
       const { error } = await client.auth.signInWithPassword({
@@ -51,7 +51,7 @@ const handleAuth = async () => {
         password: password.value
       })
       if (error) throw error
-      success('Successfully logged in')
+      success(t('auth.login_success'))
       appStore.closeAuthModal()
       // Refresh current page context if needed, but session state handles most
     }
@@ -65,89 +65,119 @@ const handleAuth = async () => {
 
 <template>
   <Teleport to="body">
-    <Transition name="fade">
+    <Transition name="modal-backdrop">
       <div
         v-if="appStore.isAuthModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-void-950/80 backdrop-blur-2xl"
         @click.self="appStore.closeAuthModal"
       >
-        <div
-          class="bg-[#0f0f0f] border border-white/10 rounded-[2rem] w-full max-w-sm p-10 relative shadow-xl overflow-hidden"
-          v-motion
-          :initial="{ opacity: 0, scale: 0.95, y: 10 }"
-          :enter="{ opacity: 1, scale: 1, y: 0, transition: { duration: 400, ease: 'easeOut' } }"
-        >
-          <!-- Background glow -->
-          <div class="absolute -top-40 -left-40 w-80 h-80 bg-white/[0.03] rounded-full blur-[60px] pointer-events-none"></div>
-
-          <button
-            @click="appStore.closeAuthModal"
-            class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all z-10"
+        <Transition name="modal-card" appear>
+          <div
+            v-if="appStore.isAuthModalOpen"
+            class="glass-card w-full max-w-[400px] p-8 relative overflow-hidden"
           >
-            <div class="i-ph-x-bold text-sm"></div>
-          </button>
-
-          <div class="text-center mb-8 relative z-10">
-            <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-              <div class="i-ph-play-fill text-black text-2xl translate-x-0.5"></div>
-            </div>
-            <h2 class="text-xl font-bold tracking-tight text-white mb-1">
-              {{ isRegister ? (t('auth.join') || 'Join NewTube') : (t('auth.welcome') || 'Welcome Back') }}
-            </h2>
-            <p class="text-[11px] font-medium text-white/40 uppercase tracking-widest">
-              {{ t('auth.required_action') || 'Authentication Required' }}
-            </p>
-          </div>
-
-          <form @submit.prevent="handleAuth" class="space-y-5 relative z-10">
-            <div v-if="validationError" class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center">
-              {{ validationError }}
-            </div>
-
-            <div class="space-y-4">
-              <div class="relative group">
-                <div class="absolute left-4 top-1/2 -translate-y-1/2 i-ph-envelope-simple-bold text-white/20 group-focus-within:text-white/60 transition-colors"></div>
-                <input
-                  v-model="email"
-                  type="email"
-                  required
-                  :placeholder="t('auth.email') || 'Email address'"
-                  class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
-                />
-              </div>
-              <div class="relative group">
-                <div class="absolute left-4 top-1/2 -translate-y-1/2 i-ph-lock-key-bold text-white/20 group-focus-within:text-white/60 transition-colors"></div>
-                <input
-                  v-model="password"
-                  type="password"
-                  required
-                  :placeholder="t('auth.password') || 'Password'"
-                  class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.08] transition-all placeholder:text-white/20"
-                />
-              </div>
-            </div>
-
             <button
-              type="submit"
-              :disabled="loading"
-              class="w-full py-3.5 rounded-xl bg-white text-black font-bold text-sm hover:bg-zinc-200 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              @click="appStore.closeAuthModal"
+              class="absolute top-4 right-4 btn-icon !w-8 !h-8"
             >
-              <span v-if="!loading">{{ isRegister ? (t('auth.create_account') || 'Create Account') : (t('auth.sign_in') || 'Sign In') }}</span>
-              <div v-else class="i-ph-circle-notch-bold animate-spin text-lg"></div>
+              <div class="i-ph-x text-sm"></div>
             </button>
-          </form>
 
-          <div class="mt-6 text-center relative z-10">
-            <button
-              @click="isRegister = !isRegister"
-              class="text-[11px] font-medium text-white/40 hover:text-white transition-colors"
-            >
-              {{ isRegister ? (t('auth.already_have_account') || 'Already have an account? Sign In') : (t('auth.no_account') || 'No account? Create one') }}
-            </button>
+            <div class="text-center mb-8">
+              <div class="w-12 h-12 rounded-sm bg-white flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                <div class="i-ph-play-fill text-black text-xl translate-x-px"></div>
+              </div>
+              <h2 class="text-2xl font-sans font-bold tracking-tight text-white mb-2">
+                {{ isRegister ? t('auth.join') : t('auth.welcome') }}
+              </h2>
+              <p class="text-[10px] font-mono font-medium text-void-500 uppercase tracking-widest">
+                {{ t('auth.required_action') }}
+              </p>
+            </div>
+
+            <form @submit.prevent="handleAuth" class="space-y-4">
+              <div v-if="validationError" class="p-2 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] text-center">
+                {{ validationError }}
+              </div>
+
+              <div class="space-y-3">
+                <div class="relative group">
+                  <div class="absolute left-4 top-1/2 -translate-y-1/2 i-ph-envelope-simple text-void-500 group-focus-within:text-white transition-colors"></div>
+                  <input
+                    v-model="email"
+                    type="email"
+                    required
+                    :placeholder="t('auth.email')"
+                    class="glass-input w-full pl-11 h-11"
+                  />
+                </div>
+                <div class="relative group">
+                  <div class="absolute left-4 top-1/2 -translate-y-1/2 i-ph-lock-key text-void-500 group-focus-within:text-white transition-colors"></div>
+                  <input
+                    v-model="password"
+                    type="password"
+                    required
+                    :placeholder="t('auth.password')"
+                    class="glass-input w-full pl-11 h-11"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                :disabled="loading"
+                class="btn-primary w-full h-11 mt-2"
+              >
+                <span v-if="!loading">{{ isRegister ? t('auth.create_account') : t('auth.sign_in') }}</span>
+                <div v-else class="i-ph-circle-notch animate-spin text-lg"></div>
+              </button>
+            </form>
+
+            <div class="mt-6 text-center">
+              <button
+                @click="isRegister = !isRegister"
+                class="text-[11px] font-medium text-void-500 hover:text-white transition-colors"
+              >
+                {{ isRegister ? t('auth.already_have_account') : t('auth.no_account') }}
+              </button>
+            </div>
           </div>
-        </div>
+        </Transition>
       </div>
     </Transition>
   </Teleport>
 </template>
 
+<style scoped>
+/* Backdrop */
+/* noinspection CssUnusedSymbol */
+.modal-backdrop-enter-active,
+.modal-backdrop-leave-active {
+  transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+}
+/* noinspection CssUnusedSymbol */
+.modal-backdrop-enter-from,
+.modal-backdrop-leave-to {
+  opacity: 0;
+}
+
+/* Card — clip-path iris open from center */
+/* noinspection CssUnusedSymbol */
+.modal-card-enter-active {
+  animation: modal-iris-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+/* noinspection CssUnusedSymbol */
+.modal-card-leave-active {
+  animation: modal-iris-out 0.3s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes modal-iris-in {
+  0%   { opacity: 0; transform: scale(0.92) translateY(12px); filter: blur(8px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0px); }
+}
+
+@keyframes modal-iris-out {
+  0%   { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0px); }
+  100% { opacity: 0; transform: scale(0.94) translateY(8px);  filter: blur(4px); }
+}
+</style>

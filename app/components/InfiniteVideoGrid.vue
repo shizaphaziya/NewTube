@@ -48,31 +48,55 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-10 sm:gap-x-6">
-      <VideoCard
+    <TransitionGroup
+      tag="div"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-12"
+      enter-active-class="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+      enter-from-class="opacity-0 translate-y-10 scale-[0.97]"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
+      leave-active-class="transition-all duration-300 ease-in absolute"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0 scale-[0.95]"
+      move-class="transition-all duration-500"
+    >
+      <div
         v-for="(video, idx) in videos"
         :key="video.id"
-        :video="video"
-        :index="idx"
-      />
+        :style="{ transitionDelay: `${(idx % pageSize) * 55}ms` }"
+      >
+        <VideoCard :video="video" :index="idx" />
+      </div>
+    </TransitionGroup>
 
-      <!-- Skeletons -->
-      <template v-if="loading">
-        <VideoSkeleton v-for="n in 6" :key="n" />
-      </template>
+    <!-- Skeletons while loading first page -->
+    <div
+      v-if="loading && videos.length === 0"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-12"
+    >
+      <VideoSkeleton v-for="n in pageSize" :key="n" />
     </div>
 
     <!-- Scroll Sentinel -->
-    <div ref="loadMoreTrigger" class="h-20 flex items-center justify-center mt-10">
-      <div v-if="loading && videos.length > 0" class="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
-      <p v-if="!hasMore && videos.length > 0" class="text-white/40 text-sm font-medium">
-        {{ $t('home.no_videos') }}
-      </p>
+    <div ref="loadMoreTrigger" class="h-40 flex flex-col items-center justify-center mt-12 gap-4">
+      <div v-if="loading && videos.length > 0" class="flex flex-col items-center gap-4">
+        <div class="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
+        <p class="text-[10px] font-bold text-void-500 uppercase tracking-widest">{{ $t('home.syncing') }}</p>
+      </div>
+      <div v-if="!hasMore && videos.length > 0" class="flex flex-col items-center gap-6 opacity-40">
+        <div class="w-16 h-px bg-gradient-to-r from-transparent via-void-600 to-transparent"></div>
+        <p class="text-void-500 text-[10px] font-black uppercase tracking-widest">
+          {{ $t('home.no_videos') }}
+        </p>
+      </div>
     </div>
 
     <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-      <div class="i-ph-video-camera-slash text-6xl text-white/10 mb-6"></div>
-      <h2 class="text-2xl font-medium text-white/40">{{ $t('home.no_videos') }}</h2>
+      <div class="relative mb-8">
+        <div class="i-ph-video-camera-slash text-7xl text-void-800"></div>
+        <div class="absolute -top-4 -right-4 w-12 h-12 bg-white/5 rounded-full blur-xl"></div>
+      </div>
+      <h2 class="text-3xl font-brand tracking-tighter text-white mb-2">{{ $t('home.no_videos') }}</h2>
+      <p class="text-void-500 text-sm max-w-xs mx-auto">{{ $t('home.no_videos_subtitle') }}</p>
     </div>
   </div>
 </template>

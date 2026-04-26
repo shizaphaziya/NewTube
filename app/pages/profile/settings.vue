@@ -54,7 +54,7 @@ const deleteAccount = async () => {
 }
 
 useSeoMeta({
-  title: () => `${t('profile.settings')} - NewTube`
+  title: () => `${t('profile.settings')} - ${t('seo.title')}`
 })
 </script>
 
@@ -63,7 +63,7 @@ useSeoMeta({
     <div class="space-y-8">
       <div>
         <h1 class="text-2xl font-bold text-white mb-1">{{ t('profile.settings') }}</h1>
-        <p class="text-white/60 text-sm">Manage your account settings and preferences.</p>
+        <p class="text-white/60 text-sm">{{ t('profile.settings_subtitle') }}</p>
       </div>
 
       <div class="bg-[#18181b] border border-white/5 rounded-2xl p-6 md:p-8 space-y-8 shadow-sm">
@@ -83,7 +83,7 @@ useSeoMeta({
                 v-model="form.avatar_url"
                 type="url"
                 class="glass-input w-full"
-                placeholder="https://example.com/avatar.jpg"
+                :placeholder="t('profile.avatar_url_placeholder')"
               />
             </div>
             <p class="text-xs text-white/40">{{ t('profile.avatar_note') }}</p>
@@ -100,12 +100,12 @@ useSeoMeta({
               v-model="form.display_name"
               type="text"
               class="glass-input w-full"
-              placeholder="Your display name"
+              :placeholder="t('profile.display_name_placeholder')"
             />
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-sm font-medium text-white/90">Email Address</label>
+            <label class="text-sm font-medium text-white/90">{{ t('profile.email_address') }}</label>
             <input
               :value="user?.email"
               type="email"
@@ -119,7 +119,7 @@ useSeoMeta({
         <div class="pt-4 flex justify-end">
           <button @click="saveProfile" :disabled="isSaving" class="btn-primary">
             <div v-if="isSaving" class="i-ph-spinner animate-spin"></div>
-            {{ isSaving ? 'Saving...' : t('profile.save_changes') }}
+            {{ isSaving ? t('profile.saving') : t('profile.save_changes') }}
           </button>
         </div>
       </div>

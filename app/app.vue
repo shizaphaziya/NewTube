@@ -9,55 +9,65 @@
 </template>
 
 <style>
-body {
-  @apply bg-void text-white;
-}
+/* ============================================================
+   View Transition API — Cinematic Macro
+   ============================================================ */
 
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+/* Root transition: clip-path reveal from center + blur */
+::view-transition-old(root) {
+  animation: nt-page-out 0.45s cubic-bezier(0.4, 0, 1, 1) both;
 }
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-/* View Transition API — navigation */
-::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.2s;
+  animation: nt-page-in 0.65s cubic-bezier(0, 0, 0.2, 1) both;
 }
 
-::view-transition-old(video-thumb-*),
-::view-transition-new(video-thumb-*) {
-  mix-blend-mode: normal;
+@keyframes nt-page-out {
+  0%   { opacity: 1; filter: blur(0px); transform: scale(1); clip-path: inset(0% 0% 0% 0% round 0px); }
+  100% { opacity: 0; filter: blur(6px); transform: scale(0.97); clip-path: inset(2% 2% 2% 2% round 16px); }
+}
+
+@keyframes nt-page-in {
+  0%   { opacity: 0; filter: blur(10px); transform: scale(1.03); clip-path: inset(4% 4% 4% 4% round 32px); }
+  100% { opacity: 1; filter: blur(0px);  transform: scale(1);    clip-path: inset(0% 0% 0% 0% round 0px); }
+}
+
+/* Shared element: video thumbnail — morphing card-to-hero */
+::view-transition-group(video-thumb) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(video-thumb),
+::view-transition-new(video-thumb) {
   height: 100%;
   overflow: clip;
   object-fit: cover;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Shared element: video title */
+::view-transition-group(video-title) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+::view-transition-old(video-title) {
+  animation: nt-title-out 0.3s ease both;
 }
-::-webkit-scrollbar-thumb {
-  background: #3f3f46;
-  border-radius: 4px;
+::view-transition-new(video-title) {
+  animation: nt-title-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+
+@keyframes nt-title-out {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes nt-title-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-none {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

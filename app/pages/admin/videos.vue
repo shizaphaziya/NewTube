@@ -8,7 +8,7 @@ type VideoWithProfile = Database['public']['Tables']['videos']['Row'] & {
 }
 
 const supabase = useSupabaseClient<Database>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { confirm: showConfirm } = useConfirm()
 const { profile } = useProfile()
 
@@ -62,37 +62,37 @@ watchEffect(() => {
     <div v-if="!isAdmin" class="glass-card p-20 text-center max-w-2xl mx-auto space-y-8">
       <div class="i-ph-shield-warning-bold text-6xl text-red-500 mx-auto opacity-50"></div>
       <div class="space-y-2">
-        <h1 class="text-3xl font-brand font-black text-white">{{ t('admin.access_denied') }}</h1>
-        <p class="text-white/30 text-sm uppercase tracking-widest font-bold">{{ t('admin.clearance_required') }}</p>
+        <h1 class="text-3xl font-brand font-black text-white">{{ $t('admin.access_denied') }}</h1>
+        <p class="text-white/30 text-sm uppercase tracking-widest font-bold">{{ $t('admin.clearance_required') }}</p>
       </div>
-      <NuxtLink to="/" class="btn-primary inline-flex">{{ t('admin.return_surface') }}</NuxtLink>
+      <NuxtLink to="/" class="btn-primary inline-flex">{{ $t('admin.back_to_home') }}</NuxtLink>
     </div>
 
     <div v-else class="space-y-16">
       <!-- Header -->
       <div class="space-y-2">
         <h1 class="text-5xl font-brand font-black tracking-tighter text-white uppercase italic">
-          {{ t('admin.high_command') }}
+          {{ $t('admin.title') }}
         </h1>
         <p class="text-[10px] font-black text-white/20 uppercase tracking-[0.5em]">
-          {{ t('admin.video_moderation_terminal') }}
+          {{ $t('admin.video_moderation_terminal') }}
         </p>
       </div>
 
       <!-- Stats -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-white/20 uppercase tracking-widest">{{ t('admin.total_assets') }}</div>
+          <div class="text-[8px] font-black text-white/20 uppercase tracking-widest">{{ $t('admin.total_assets') }}</div>
           <div class="text-3xl font-brand font-black text-white tabular-nums">{{ videos?.length || 0 }}</div>
         </div>
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">{{ t('admin.active') }}</div>
+          <div class="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">{{ $t('admin.active') }}</div>
           <div class="text-3xl font-brand font-black text-emerald-400 tabular-nums">
             {{ videos?.filter(v => v.status === 'published').length || 0 }}
           </div>
         </div>
         <div class="glass-card p-6 border-white/5 space-y-1">
-          <div class="text-[8px] font-black text-red-500/40 uppercase tracking-widest">{{ t('admin.blocked') }}</div>
+          <div class="text-[8px] font-black text-red-500/40 uppercase tracking-widest">{{ $t('admin.blocked') }}</div>
           <div class="text-3xl font-brand font-black text-red-500 tabular-nums">
             {{ videos?.filter(v => v.status === 'blocked').length || 0 }}
           </div>
@@ -105,11 +105,11 @@ watchEffect(() => {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-white/5 bg-white/[0.02]">
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.video_author') }}</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('watch.views') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ $t('admin.video_author') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ $t('watch.views') }}</th>
                 <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">18+</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ t('admin.status') }}</th>
-                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest text-right">{{ t('admin.actions') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest">{{ $t('admin.status') }}</th>
+                <th class="px-6 py-4 text-[9px] font-black text-white/30 uppercase tracking-widest text-right">{{ $t('admin.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/[0.03]">
@@ -123,19 +123,19 @@ watchEffect(() => {
                     </div>
                     <div class="space-y-1">
                       <div class="text-xs font-bold text-white group-hover:text-white transition-colors">{{ video.title }}</div>
-                      <div class="text-[9px] text-white/30 uppercase tracking-wider font-medium">{{ video.profiles?.display_name || t('admin.anonymous') }}</div>
+                      <div class="text-[9px] text-white/30 uppercase tracking-wider font-medium">{{ video.profiles?.display_name || $t('admin.anonymous') }}</div>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-6">
-                  <div class="text-[10px] font-black text-white/40 tabular-nums uppercase tracking-widest">{{ (video.view_count || 0).toLocaleString() }} {{ t('admin.imps') }}</div>
+                  <div class="text-[10px] font-black text-white/40 tabular-nums uppercase tracking-widest">{{ (video.view_count || 0).toLocaleString(locale) }} {{ $t('admin.imps') }}</div>
                 </td>
                 <td class="px-6 py-6">
                   <button
                     @click.prevent="toggle18Plus(video)"
                     class="w-12 h-6 rounded-full transition-colors relative shrink-0 block"
                     :class="video.is_18_plus ? 'bg-red-500' : 'bg-white/20'"
-                    title="Toggle 18+ Age Restriction"
+                    :title="$t('admin.toggle_18_plus')"
                   >
                     <div
                       class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform duration-200"
@@ -148,28 +148,28 @@ watchEffect(() => {
                     class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border transition-all duration-300"
                     :class="video.status === 'blocked' ? 'border-red-500/20 text-red-500 bg-red-500/5' : 'border-emerald-500/20 text-emerald-400 bg-emerald-400/5'"
                   >
-                    {{ t('studio.status_' + video.status) }}
+                    {{ $t('studio.status_' + video.status) }}
                   </span>
                 </td>
                 <td class="px-6 py-6 text-right">
                   <div class="flex items-center justify-end gap-2 text-void-silver">
                     <button 
                       @click="toggleBlock(video)"
-                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
-                      :title="video.status === 'blocked' ? t('admin.publish') : t('admin.block')"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300"
+                      :title="video.status === 'blocked' ? $t('admin.publish') : $t('admin.block')"
                       :class="video.status === 'blocked' ? 'text-emerald-400 hover:bg-emerald-400/10' : 'text-red-500 hover:bg-red-500/10'"
                     >
                       <div :class="video.status === 'blocked' ? 'i-ph-lock-open-bold' : 'i-ph-lock-bold'"></div>
                     </button>
                     <button 
                       @click="deleteVideo(video.id)"
-                      class="w-8 h-8 rounded-lg bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+                      class="w-8 h-8 rounded-lg bg-red-500/5 border border-red-500/10 text-red-500/60 hover:text-red-500 flex items-center justify-center transition-all duration-300"
                     >
                       <div class="i-ph-trash-bold"></div>
                     </button>
                     <NuxtLink 
                       :to="`/watch/${video.id}`"
-                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95"
+                      class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white flex items-center justify-center transition-all duration-300"
                     >
                       <div class="i-ph-arrow-square-out-bold"></div>
                     </NuxtLink>

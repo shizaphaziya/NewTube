@@ -9,7 +9,7 @@ const { isAdmin } = useProfile()
 
 useSeoMeta({
   title: () => `${t('admin.users_management')} - NewTube`,
-  description: () => t('admin.high_command')
+  description: () => t('admin.title')
 })
 
 const { data: users, refresh } = await useAsyncData('admin-users', async () => {
@@ -52,7 +52,7 @@ const updateUserRole = async (userId, newRole) => {
             <h2 class="text-2xl font-brand font-black tracking-tighter text-white">{{ t('admin.access_denied') }}</h2>
             <p class="text-white/30 text-sm leading-relaxed">{{ t('admin.clearance_required') }}</p>
           </div>
-          <NuxtLink to="/" class="btn-primary inline-flex">{{ t('admin.return_surface') }}</NuxtLink>
+          <NuxtLink to="/" class="btn-primary inline-flex">{{ t('admin.back_to_home') }}</NuxtLink>
         </div>
         <div class="absolute inset-0 bg-void/90 backdrop-blur-3xl"></div>
       </div>
@@ -63,11 +63,11 @@ const updateUserRole = async (userId, newRole) => {
       <div class="space-y-2">
         <div class="flex items-center gap-3 mb-4">
           <div class="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/10 text-[8px] font-black text-white/40 tracking-[0.3em] uppercase">
-            {{ t('admin.high_command') }}
+            {{ $t('admin.title') }}
           </div>
         </div>
         <h1 class="text-5xl font-brand font-black tracking-tighter text-white uppercase italic">
-          {{ t('admin.users_management') }}
+          {{ $t('admin.users_management') }}
         </h1>
       </div>
 
@@ -76,10 +76,10 @@ const updateUserRole = async (userId, newRole) => {
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-white/[0.02] border-b border-white/[0.05]">
-              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('admin.video_author') }}</th>
-              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('admin.role') }}</th>
-              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ t('admin.status') }}</th>
-              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em] text-right">{{ t('admin.actions') }}</th>
+              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ $t('admin.video_author') }}</th>
+              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ $t('admin.role') }}</th>
+              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em]">{{ $t('admin.status') }}</th>
+              <th class="px-8 py-6 text-[9px] font-black text-white/20 uppercase tracking-[0.4em] text-right">{{ $t('admin.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/[0.04]">
@@ -93,7 +93,7 @@ const updateUserRole = async (userId, newRole) => {
                     </div>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-black text-white tracking-tight truncate">{{ profile.display_name || profile.full_name || t('admin.anonymous') }}</p>
+                    <p class="text-sm font-black text-white tracking-tight truncate">{{ profile.display_name || profile.full_name || $t('admin.anonymous') }}</p>
                     <p class="text-[10px] text-white/20 font-bold uppercase tracking-widest truncate">{{ profile.id }}</p>
                   </div>
                 </div>
@@ -105,13 +105,13 @@ const updateUserRole = async (userId, newRole) => {
                     :class="profile.role === 'admin' ? 'bg-white' : 'bg-white/20'"
                   ></div>
                   <span class="text-[10px] font-black uppercase tracking-widest" :class="profile.role === 'admin' ? 'text-white' : 'text-white/30'">
-                    {{ profile.role || 'user' }}
+                    {{ profile.role ? $t('nav.status_' + profile.role) : $t('nav.status_user') }}
                   </span>
                 </div>
               </td>
               <td class="px-8 py-6">
                 <span class="px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 text-[8px] font-black text-white/40 uppercase tracking-widest">
-                  {{ profile.status || t('admin.active') }}
+                  {{ profile.status || $t('admin.active') }}
                 </span>
               </td>
               <td class="px-8 py-6 text-right">
@@ -120,14 +120,14 @@ const updateUserRole = async (userId, newRole) => {
                   @click="updateUserRole(profile.id, 'admin')"
                   class="text-[9px] font-black text-white/30 hover:text-white uppercase tracking-widest transition-colors"
                 >
-                  {{ t('admin.promote') }}
+                  {{ $t('admin.promote') }}
                 </button>
                 <button 
                   v-else
                   @click="updateUserRole(profile.id, 'user')"
                   class="text-[9px] font-black text-red-500/30 hover:text-red-500 uppercase tracking-widest transition-colors"
                 >
-                  {{ t('admin.demote') }}
+                  {{ $t('admin.demote') }}
                 </button>
               </td>
             </tr>
@@ -139,6 +139,8 @@ const updateUserRole = async (userId, newRole) => {
 </template>
 
 <style scoped>
+/* noinspection CssUnusedSymbol -- Vue <Transition name="fade"> transition classes */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
+/* noinspection CssUnusedSymbol */
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
