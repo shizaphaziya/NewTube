@@ -71,6 +71,9 @@ const uploadVideo = async () => {
   isUploading.value = true
   uploadSuccess.value = false
 
+  // Auto-title logic
+  const finalTitle = form.value.title.trim() || new Date().toLocaleString()
+
   try {
     const videoExt = form.value.videoFile.name.split('.').pop()
     const videoFileName = `${Math.random()}.${videoExt}`
@@ -115,7 +118,7 @@ const uploadVideo = async () => {
     const { error: dbError } = await supabase.from('videos').insert({
 
       user_id: user.value.id,
-      title: form.value.title,
+      title: finalTitle,
       description: form.value.description,
       video_url: videoUrl,
       thumbnail_url: thumbnailUrl,
