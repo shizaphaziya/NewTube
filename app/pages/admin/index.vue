@@ -29,15 +29,6 @@ const updateStatus = async (videoId, status) => {
   }
 }
 
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'published': return 'text-green-400 bg-green-400/10'
-    case 'hidden': return 'text-yellow-400 bg-yellow-400/10'
-    case 'blocked': return 'text-red-400 bg-red-400/10'
-    default: return 'text-white/40 bg-white/5'
-  }
-}
-
 useSeoMeta({
   title: () => `${t('admin.title')} - ${t('seo.title')}`
 })
