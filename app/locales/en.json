@@ -204,6 +204,7 @@
     "login_success": "Signed in successfully.",
     "required_action": "Sign in required",
     "invalid_email": "Invalid email address.",
+    "invalid_video_format": "Invalid video format. Allowed formats are: MP4, MOV, WebM.",
     "password_min": "Password must be at least 8 characters."
   },
   "profile": {

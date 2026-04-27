@@ -83,6 +83,12 @@ const uploadVideo = async () => {
 
   try {
     const videoExt = form.value.videoFile.name.split('.').pop()
+    const allowedExtensions = ['mp4', 'mov', 'webm']
+
+    if (!videoExt || !allowedExtensions.includes(videoExt.toLowerCase())) {
+        throw new Error(t('auth.invalid_video_format'))
+    }
+
     const videoFileName = `${Math.random()}.${videoExt}`
     const videoPath = `${user.value.id}/${videoFileName}`
 
