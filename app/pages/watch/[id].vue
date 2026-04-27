@@ -348,7 +348,7 @@ useSeoMeta({
            <!-- Sidebar Promo/Ad Aesthetic -->
            <div class="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary-600 to-indigo-700 text-white space-y-6 shadow-2xl relative overflow-hidden group">
              <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-transform duration-1000"></div>
-             <h4 class="text-2xl font-black uppercase tracking-tighter italic leading-none" v-html="t('watch.upgrade_premium')"></h4>
+             <h4 class="text-2xl font-black uppercase tracking-tighter italic leading-none">{{ t('watch.upgrade_premium') }}</h4>
              <p class="text-white/80 text-xs font-bold uppercase tracking-widest leading-relaxed">{{ t('watch.upgrade_hint') }}</p>
              <button class="w-full py-4 rounded-xl bg-white text-void font-black text-[11px] uppercase tracking-[0.3em] transition-opacity hover:opacity-90 shadow-xl">
                {{ t('watch.upgrade_now') }}
