@@ -18,6 +18,10 @@ const isPosting = ref(false)
 const relatedVideos = ref<any[]>([])
 const isCinemaMode = ref(false)
 const isLiked = ref(false)
+const commentsPage = ref(0)
+const hasMoreComments = ref(true)
+const commentsCount = ref(0)
+const isLoadingComments = ref(false)
 
 // Fetch video data
 const fetchVideoData = async () => {
@@ -44,15 +48,49 @@ const fetchRelated = async () => {
   if (data) relatedVideos.value = data
 }
 
+// Fetch comments total count
+const fetchCommentsCount = async () => {
+  const { count } = await supabase
+    .from('comments')
+    .select('*', { count: 'exact', head: true })
+    .eq('video_id', videoId)
+
+  if (count !== null) commentsCount.value = count
+}
+
 // Fetch comments
-const fetchComments = async () => {
+const fetchComments = async (loadMore = false) => {
+  if (isLoadingComments.value || (!hasMoreComments.value && loadMore)) return
+  isLoadingComments.value = true
+
+  const limit = 20
+  const from = loadMore ? commentsPage.value * limit : 0
+  const to = from + limit - 1
+
   const { data } = await supabase
     .from('comments')
     .select('*, profiles:profiles!comments_user_id_fkey(*)')
     .eq('video_id', videoId)
     .order('created_at', { ascending: false })
+    .range(from, to)
   
-  if (data) comments.value = data
+  if (data) {
+    if (loadMore) {
+      comments.value = [...comments.value, ...data]
+    } else {
+      comments.value = data
+      fetchCommentsCount()
+    }
+
+    if (data.length < limit) {
+      hasMoreComments.value = false
+    } else {
+      hasMoreComments.value = true
+      if (loadMore) commentsPage.value++
+      else commentsPage.value = 1
+    }
+  }
+  isLoadingComments.value = false
 }
 
 const submitComment = async () => {
@@ -68,6 +106,7 @@ const submitComment = async () => {
   
   if (!error) {
     newComment.value = ''
+    commentsPage.value = 0
     fetchComments()
   }
   isPosting.value = false
@@ -232,7 +271,7 @@ useSeoMeta({
           <div class="space-y-12">
             <div class="flex items-center justify-between border-b border-white/5 pb-8">
               <h3 class="text-3xl font-900 text-white uppercase tracking-tighter italic">
-                {{ comments.length }} {{ t('watch.comments') }}
+                {{ commentsCount }} {{ t('watch.comments') }}
               </h3>
               <div class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.2em]">
                 <div class="i-ph-sort-ascending-duotone text-xl"></div>
@@ -307,6 +346,12 @@ useSeoMeta({
                   </div>
                 </div>
               </TransitionGroup>
+            </div>
+
+            <div v-if="hasMoreComments && comments.length > 0" class="flex justify-center pt-8">
+              <button @click="fetchComments(true)" :disabled="isLoadingComments" class="btn-primary rounded-xl px-8 py-3 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl disabled:opacity-30 transition-all">
+                {{ isLoadingComments ? t('common.loading') : t('watch.load_more_comments') || 'Load More' }}
+              </button>
             </div>
           </div>
         </div>
