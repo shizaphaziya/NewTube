@@ -95,39 +95,49 @@ const uploadVideo = async () => {
     const videoFileName = `${Math.random()}.${videoExt}`
     const videoPath = `${user.value.id}/${videoFileName}`
 
-    progress.value = { status: t('studio.uploading_storage'), percent: 20 }
+    progress.value = { status: t('studio.uploading_storage'), percent: 40 }
 
-    const { error: uploadError } = await supabase.storage
-      .from('videos')
-      .upload(videoPath, form.value.videoFile)
+    const videoUploadTask = async () => {
+      const { error: uploadError } = await supabase.storage
+        .from('videos')
+        .upload(videoPath, form.value.videoFile)
 
-    if (uploadError) throw uploadError
+      if (uploadError) throw uploadError
 
-    const { data: { publicUrl: videoUrl } } = supabase.storage
-      .from('videos')
-      .getPublicUrl(videoPath)
+      const { data: { publicUrl } } = supabase.storage
+        .from('videos')
+        .getPublicUrl(videoPath)
 
-    let thumbnailUrl = null
-    if (form.value.thumbnailFile || form.value.thumbnailBlob) {
-      progress.value = { status: t('studio.uploading_thumbnail'), percent: 60 }
+      return publicUrl
+    }
 
+    const thumbnailUploadTask = async () => {
       const fileToUpload = form.value.thumbnailFile || form.value.thumbnailBlob
       const thumbExt = form.value.thumbnailFile ? form.value.thumbnailFile.name.split('.').pop() : 'jpg'
       const thumbFileName = `${Math.random()}.${thumbExt}`
       const thumbPath = `${user.value.id}/${thumbFileName}`
 
-      await supabase.storage
+      const { error: thumbError } = await supabase.storage
         .from('thumbnails')
         .upload(thumbPath, fileToUpload, {
             contentType: form.value.thumbnailFile ? form.value.thumbnailFile.type : 'image/jpeg'
         })
 
-      const { data: { publicUrl: tUrl } } = supabase.storage
+      if (thumbError) throw thumbError
+
+      const { data: { publicUrl } } = supabase.storage
         .from('thumbnails')
         .getPublicUrl(thumbPath)
       
-      thumbnailUrl = tUrl
+      return publicUrl
     }
+
+    const tasks = [videoUploadTask()]
+    if (form.value.thumbnailFile || form.value.thumbnailBlob) {
+      tasks.push(thumbnailUploadTask())
+    }
+
+    const [videoUrl, thumbnailUrl = null] = await Promise.all(tasks)
 
     progress.value = { status: t('studio.finalizing'), percent: 90 }
 
