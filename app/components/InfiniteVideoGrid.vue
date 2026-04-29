@@ -79,12 +79,12 @@ onMounted(() => {
     <!-- Scroll Sentinel -->
     <div ref="loadMoreTrigger" class="h-40 flex flex-col items-center justify-center mt-12 gap-4">
       <div v-if="loading && videos.length > 0" class="flex flex-col items-center gap-4">
-        <div class="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin"></div>
-        <p class="text-[10px] font-bold text-void-500 uppercase tracking-widest">{{ $t('home.syncing') }}</p>
+        <div class="w-8 h-8 rounded-full border-2 border-theme-border border-t-primary-500 animate-spin"></div>
+        <p class="text-[11px] font-700 text-theme-text-faint uppercase tracking-widest">{{ $t('home.syncing') }}</p>
       </div>
       <div v-if="!hasMore && videos.length > 0" class="flex flex-col items-center gap-6 opacity-40">
-        <div class="w-16 h-px bg-gradient-to-r from-transparent via-void-600 to-transparent"></div>
-        <p class="text-void-500 text-[10px] font-black uppercase tracking-widest">
+        <div class="w-16 h-px bg-gradient-to-r from-transparent via-theme-border-strong to-transparent"></div>
+        <p class="text-theme-text-faint text-[10px] font-800 uppercase tracking-widest">
           {{ $t('home.no_videos') }}
         </p>
       </div>
@@ -92,11 +92,11 @@ onMounted(() => {
 
     <div v-if="!loading && videos.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
       <div class="relative mb-8">
-        <div class="i-ph-video-camera-slash text-7xl text-void-800"></div>
-        <div class="absolute -top-4 -right-4 w-12 h-12 bg-white/5 rounded-full blur-xl"></div>
+        <div class="i-ph-video-camera-slash text-7xl text-theme-border-strong"></div>
+        <div class="absolute -top-4 -right-4 w-12 h-12 bg-primary-500/5 rounded-full blur-xl"></div>
       </div>
-      <h2 class="text-3xl font-brand tracking-tighter text-white mb-2">{{ $t('home.no_videos') }}</h2>
-      <p class="text-void-500 text-sm max-w-xs mx-auto">{{ $t('home.no_videos_subtitle') }}</p>
+      <h2 class="text-3xl font-brand tracking-tighter text-theme-text mb-2">{{ $t('home.no_videos') }}</h2>
+      <p class="text-theme-text-muted text-sm max-w-xs mx-auto">{{ $t('home.no_videos_subtitle') }}</p>
     </div>
   </div>
 </template>

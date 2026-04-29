@@ -7,7 +7,7 @@ const navItems = [
   { icon: 'i-ph-tiktok-logo',    activeIcon: 'i-ph-tiktok-logo-fill',    labelKey: 'nav.shorts',           link: '/shorts' },
   { icon: 'i-ph-fire',           activeIcon: 'i-ph-fire-fill',           labelKey: 'home.trending',        link: '/?feed=trending' },
   { icon: 'i-ph-users-three',    activeIcon: 'i-ph-users-three-fill',    labelKey: 'home.subscriptions',   link: '/subscriptions' },
-  { icon: 'i-ph-lightning',      activeIcon: 'i-ph-lightning-fill',      labelKey: 'home.latest',          link: '/?feed=latest' },
+  { icon: 'i-ph-clock-counter-clockwise', activeIcon: 'i-ph-clock-counter-clockwise-fill', labelKey: 'nav.history', link: '/history' },
 ]
 
 const studioItems = [
@@ -27,36 +27,28 @@ const isActive = (path: string) => {
 
 <template>
   <aside
-    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-8
-           bg-void-950/80 backdrop-blur-2xl border-r border-white/5
-           w-[88px] hover:w-[260px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group/sidebar overflow-hidden select-none shadow-2xl"
+    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-6
+           glass-surface border-r border-theme-glass-border
+           w-[88px] hover:w-[260px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group/sidebar overflow-hidden select-none"
   >
-    <!-- Brand Logo -->
-    <NuxtLink to="/" class="flex items-center gap-4 px-7 mb-12 no-underline shrink-0 group/logo">
-      <div class="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center shadow-[0_0_20px_rgba(239,68,68,0.4)]">
-        <div class="i-ph-play-fill text-white text-xl translate-x-px"></div>
-      </div>
-      <span class="text-xl font-900 tracking-tighter text-white opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-        NEW<span class="text-primary-500">TUBE</span>
-      </span>
-    </NuxtLink>
-
+    <!-- Background Glow for Active State (will be shown via nav-link-active) -->
+    <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-primary-500/10 to-transparent opacity-0 group-hover/sidebar:opacity-100 transition-opacity pointer-events-none"></div>
     <!-- Main Navigation -->
-    <nav class="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-none pb-4">
+    <nav class="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-none pb-4 pt-4">
       <template v-for="item in navItems" :key="item.link">
         <NuxtLink
           :to="item.link"
           class="nav-link group/item"
           :class="{ 'nav-link-active': isActive(item.link) }"
         >
-          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-400"></div>
-          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[15px]">
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"></div>
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]">
             {{ $t(item.labelKey) }}
           </span>
         </NuxtLink>
       </template>
 
-      <div class="h-px bg-white/5 my-6 mx-3"></div>
+      <div class="h-px bg-theme-border my-6 mx-3"></div>
 
       <template v-for="item in studioItems" :key="item.link">
         <NuxtLink
@@ -64,8 +56,8 @@ const isActive = (path: string) => {
           class="nav-link group/item"
           :class="{ 'nav-link-active': isActive(item.link) }"
         >
-          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-400"></div>
-          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[15px]">
+          <div :class="[isActive(item.link) ? item.activeIcon : item.icon]" class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"></div>
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]">
             {{ $t(item.labelKey) }}
           </span>
         </NuxtLink>
@@ -73,28 +65,40 @@ const isActive = (path: string) => {
 
       <!-- Admin -->
       <template v-if="isAdmin">
-        <div class="h-px bg-white/5 my-6 mx-3"></div>
+        <div class="h-px bg-theme-border my-6 mx-3"></div>
         <NuxtLink to="/admin" class="nav-link group/item" :class="{ 'nav-link-active': isActive('/admin') }">
           <div class="i-ph-shield-checkered text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-400"></div>
-          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[15px]">
+          <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]">
             {{ $t('admin.panel') }}
           </span>
         </NuxtLink>
       </template>
     </nav>
 
-    <!-- Bottom Actions -->
-    <div class="px-4 mt-auto">
+    <!-- Bottom Actions & Footer -->
+    <div class="px-4 mt-auto space-y-4">
       <NuxtLink
         to="/profile/settings"
         class="nav-link group/item"
         :class="{ 'nav-link-active': isActive('/profile/settings') }"
       >
-        <div class="i-ph-gear-six text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-400"></div>
-        <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[15px]">
+        <div class="i-ph-gear-six text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"></div>
+        <span class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]">
           {{ $t('nav.settings') }}
         </span>
       </NuxtLink>
+
+      <!-- Sidebar Footer Links -->
+      <div class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-500 px-3 pb-4">
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-600 text-theme-text-faint">
+          <NuxtLink to="/about" class="hover:text-primary-500 transition-colors">{{ $t('footer.about') }}</NuxtLink>
+          <NuxtLink to="/terms" class="hover:text-primary-500 transition-colors">{{ $t('footer.terms') }}</NuxtLink>
+          <NuxtLink to="/privacy" class="hover:text-primary-500 transition-colors">{{ $t('footer.privacy') }}</NuxtLink>
+        </div>
+        <p class="mt-4 text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em]">
+          {{ $t('footer.copyright') }}
+        </p>
+      </div>
     </div>
 
   </aside>

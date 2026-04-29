@@ -26,7 +26,7 @@ const props = defineProps<{
   >
     <!-- Thumbnail Container -->
     <div
-      class="relative aspect-video rounded-[1.5rem] bg-void-900 overflow-hidden border border-white/5
+      class="relative aspect-video rounded-[1.5rem] bg-theme-surface-raised overflow-hidden border border-theme-border
              transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
              group-hover:(border-primary-500/40 shadow-[0_32px_64px_-16px_rgba(239,68,68,0.22)])"
       :style="`view-transition-name: video-thumb-${video.id}`"
@@ -50,8 +50,8 @@ const props = defineProps<{
       ></video>
 
       <!-- Ultimate Placeholder -->
-      <div v-else class="w-full h-full flex items-center justify-center bg-void-900">
-        <div class="i-ph-broadcast text-void-800 text-5xl"></div>
+      <div v-else class="w-full h-full flex items-center justify-center bg-theme-surface-raised">
+        <div class="i-ph-broadcast text-theme-text-faint text-5xl"></div>
       </div>
 
       <!-- Premium Overlay Gradient — subtle, reveals on hover -->
@@ -81,25 +81,25 @@ const props = defineProps<{
         <div class="absolute -inset-1 bg-gradient-to-tr from-primary-600 to-indigo-500 rounded-xl opacity-0 group-hover:opacity-40 blur-md transition-opacity duration-500"></div>
         <img
           :src="video.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`"
-          class="w-11 h-11 rounded-xl object-cover bg-void-900 border-2 border-white/5 relative z-10 transition-colors duration-500 group-hover:border-white/15"
+          class="w-11 h-11 rounded-xl object-cover bg-theme-surface border-2 border-theme-border relative z-10 transition-colors duration-500 group-hover:border-theme-border-strong"
         />
       </div>
 
-      <div class="space-y-1.5 flex-1 min-w-0">
+      <div class="space-y-1 flex-1 min-w-0">
         <h3
-          class="text-[16px] font-900 text-white leading-tight uppercase tracking-tighter italic line-clamp-2
-                 transition-colors duration-300 group-hover:text-primary-400"
+          class="text-[15px] font-700 text-theme-text leading-[1.4] line-clamp-2 tracking-[-0.01em]
+                 transition-colors duration-300 group-hover:text-primary-500"
           :style="`view-transition-name: video-title-${video.id}`"
         >
           {{ video.title }}
         </h3>
         
-        <div class="flex flex-col text-[10px] font-black uppercase tracking-widest text-white/40">
-          <div class="flex items-center gap-1.5 group-hover:text-white/70 transition-colors duration-400">
-            {{ video.profiles?.display_name }}
-            <div class="i-ph-seal-check-fill text-primary-500 text-[13px]"></div>
+        <div class="flex flex-col text-[12px] font-500 text-theme-text-muted/90">
+          <div class="flex items-center gap-1.5 group-hover:text-theme-text transition-colors duration-400">
+            <span class="truncate">{{ video.profiles?.display_name }}</span>
+            <div class="i-ph-seal-check-fill text-primary-500 text-[13px] shrink-0"></div>
           </div>
-          <div class="flex items-center gap-3 mt-0.5 opacity-60">
+          <div class="flex items-center gap-3 mt-0.5 opacity-70 tabular">
             <ClientOnly>
               <span>{{ useTimeAgo(video.created_at || '').value }}</span>
               <template #fallback><span>...</span></template>

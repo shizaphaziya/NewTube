@@ -14,7 +14,11 @@
     "you": "You",
     "settings": "Settings",
     "status_pro": "Pro",
-    "status_user": "User"
+    "status_user": "User",
+    "trending": "Trending",
+    "history": "History",
+    "theme_light": "Light Mode",
+    "theme_dark": "Dark Mode"
   },
   "home": {
     "quick_actions": "Quick Access",
@@ -25,7 +29,10 @@
     "no_videos": "No videos found",
     "no_videos_subtitle": "Upload your first video to get started.",
     "view_all": "View all",
-    "syncing": "Loading..."
+    "syncing": "Loading...",
+    "sort_newest": "Newest",
+    "sort_popular": "Popularity",
+    "sort_alphabetical": "Alphabetical"
   },
   "watch": {
     "likes": "likes",
@@ -292,5 +299,16 @@
     "art": "Art",
     "nature": "Nature",
     "shorts": "Shorts"
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "copyright": "© 2026 NewTube"
+  },
+  "admin": {
+    "panel": "Admin Panel",
+    "title": "Admin Dashboard"
   }
 }
+

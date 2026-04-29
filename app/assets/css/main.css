@@ -1,5 +1,37 @@
-/* ============================================================
-   ============================================================ */
+/* --- Theme Variables --- */
+:root {
+  /* Neutral scale (Void) - Light Theme (High Contrast & Premium Feel) */
+  --nt-bg: #fdfdfe; /* Pure Pearl - even cleaner */
+  --nt-surface: #ffffff;
+  --nt-surface-raised: #f1f5f9;
+  --nt-text: #020617; /* Deepest Slate for maximum contrast */
+  --nt-text-muted: #334155; /* Slate 700 - darker for legibility */
+  --nt-text-faint: #64748b; /* Slate 500 - much darker than before */
+  --nt-border: rgba(15, 23, 42, 0.06);
+  --nt-border-strong: rgba(15, 23, 42, 0.12);
+  --nt-glass-bg: rgba(255, 255, 255, 0.85); /* More opaque for readability */
+  --nt-glass-border: rgba(15, 23, 42, 0.08);
+  --nt-selection: rgba(239, 68, 68, 0.12);
+  
+  /* Brand colors */
+  --nt-primary: #ef4444;
+  --nt-primary-hover: #dc2626;
+}
+
+.dark {
+  /* Neutral scale (Void) - Dark Theme */
+  --nt-bg: #030712; /* Deeper Obsidian */
+  --nt-surface: #0f172a;
+  --nt-surface-raised: #1e293b;
+  --nt-text: #f8fafc;
+  --nt-text-muted: #94a3b8;
+  --nt-text-faint: #475569;
+  --nt-border: rgba(255, 255, 255, 0.04);
+  --nt-border-strong: rgba(255, 255, 255, 0.08);
+  --nt-glass-bg: rgba(15, 23, 42, 0.65);
+  --nt-glass-border: rgba(255, 255, 255, 0.08);
+  --nt-selection: rgba(239, 68, 68, 0.25);
+}
 
 /* --- Reset & Base --- */
 *, *::before, *::after {
@@ -14,15 +46,17 @@ html {
   text-rendering: optimizeLegibility;
   font-feature-settings: "cv02","cv03","cv04","cv11";
   scroll-behavior: smooth;
-  background-color: #000000;
+  background-color: var(--nt-bg);
+  transition: background-color 0.5s ease;
 }
 
 body {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--nt-bg);
+  color: var(--nt-text);
   min-height: 100vh;
-  /* Add subtle grain texture for premium feel */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  transition: background-color 0.5s ease, color 0.5s ease;
+  /* Reduced noise opacity for better text clarity in light mode */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
 }
 
 /* --- Global link reset --- */
@@ -41,24 +75,43 @@ a {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--nt-border-strong);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--nt-text-faint);
 }
 
 /* --- Selection --- */
 ::selection {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+  background: var(--nt-selection);
+  color: inherit;
 }
 
 /* --- Focus rings --- */
 :focus-visible {
-  outline: 2px solid rgba(255,255,255,0.5);
+  outline: 2px solid var(--nt-primary);
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* --- Shadows --- */
+:root {
+  --nt-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --nt-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --nt-shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --nt-shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --nt-shadow-xl: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
+  --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.15);
+}
+
+.dark {
+  --nt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --nt-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --nt-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --nt-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  --nt-shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
 }
 
 /* --- Smooth image rendering --- */
@@ -116,10 +169,18 @@ img {
    ============================================================ */
 /* noinspection CssUnusedSymbol -- Used in AppHeader and NavBar components via dynamic class binding */
 .glass-surface {
-  background: rgba(10, 10, 10, 0.5);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--nt-glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel {
+  background: var(--nt-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--nt-glass-border);
+  box-shadow: var(--nt-shadow-lg), inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
 }
 
 /* ============================================================
@@ -134,7 +195,7 @@ img {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: #0a0a0a;
+  background: var(--nt-border);
   border-radius: 0.5rem;
 }
 
@@ -156,11 +217,11 @@ img {
    ============================================================ */
 /* noinspection CssUnusedSymbol -- Text utility classes used in templates */
 .text-muted {
-  color: #a1a1aa; /* zinc-400 */
+  color: var(--nt-text-muted);
 }
 /* noinspection CssUnusedSymbol */
 .text-faint {
-  color: #52525b; /* zinc-600 */
+  color: var(--nt-text-faint);
 }
 /* noinspection CssUnusedSymbol */
 .tabular {
@@ -191,7 +252,7 @@ img {
 /* noinspection CssUnusedSymbol -- Animated border utility, used in premium UI components */
 .animated-border {
   position: relative;
-  background: #000;
+  background: var(--nt-bg);
   background-clip: padding-box;
   border: solid 1px transparent;
 }
@@ -202,7 +263,7 @@ img {
   z-index: -1;
   margin: -1px;
   border-radius: inherit;
-  background: linear-gradient(90deg, #333, #111, #333);
+  background: linear-gradient(90deg, var(--nt-border-strong), var(--nt-text-faint), var(--nt-border-strong));
   background-size: 200% 100%;
   animation: border-dance 4s linear infinite;
   opacity: 0.5;
