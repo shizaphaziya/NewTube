@@ -1,8 +1,0 @@
-⚡ Optimize fetchComments with pagination
-
-💡 **What:** Added cursor-based pagination (using offset/limit) to the fetchComments method in app/pages/watch/[id].vue. Also added a 'Load More' button to explicitly fetch subsequent pages.
-🎯 **Why:** The previous implementation fetched all comments unconditionally, causing extreme payload sizes (1.2MB for 5k comments) and massive DOM relative rendering overhead when scaling to large amounts of comments.
-📊 **Measured Improvement:**
-- Simulated unpaginated (5000 comments): Payload Size ~1190.32 KB, DOM relative cost ~235667
-- Simulated paginated (20 comments): Payload Size ~4.72 KB, DOM relative cost ~57
-- Payload size improved by ~99.6%.
