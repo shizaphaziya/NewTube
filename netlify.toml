@@ -1,5 +1,5 @@
 [build]
-  command = "bun install && bun run generate"
+  command = "npm install --legacy-peer-deps && bun run generate"
   publish = ".output/public"
 
 [build.environment]
