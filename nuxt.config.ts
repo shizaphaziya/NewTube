@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2026-04-27',
+  compatibilityDate: '2024-04-03',
 
   future: {
     compatibilityVersion: 4,
@@ -64,5 +64,5 @@ export default defineNuxtConfig({
     viewTransition: true
   },
 
-  devtools: { enabled: true }
+  devtools: { enabled: false }
 })

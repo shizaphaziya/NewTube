@@ -1,13 +1,13 @@
-import { describe, it, expect, mock, beforeEach } from 'bun:test'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const navigateToMock = mock()
+const navigateToMock = vi.fn()
 // @ts-ignore
 globalThis.navigateTo = navigateToMock
 // @ts-ignore
 globalThis.defineNuxtRouteMiddleware = (fn) => fn
 
-const fetchProfileMock = mock()
-const useProfileMock = mock()
+const fetchProfileMock = vi.fn()
+const useProfileMock = vi.fn()
 // @ts-ignore
 globalThis.useProfile = useProfileMock
 

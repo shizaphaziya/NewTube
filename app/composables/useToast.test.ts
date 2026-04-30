@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach } from "bun:test";
+import { expect, test, describe, beforeEach } from "vitest";
 import { useToast } from "./useToast";
 
 describe("useToast", () => {

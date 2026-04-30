@@ -56,7 +56,7 @@ useSeoMeta({
               : 'text-theme-text-muted hover:(bg-theme-border/40 text-theme-text)'"
           >
             <div class="flex items-center gap-3">
-              <div :class="opt.icon" class="text-xl transition-transform group-hover/item:scale-110" :class="selectedSort === opt.key ? 'text-white' : 'text-primary-500'"></div>
+              <div :class="[opt.icon, selectedSort === opt.key ? 'text-white' : 'text-primary-500']" class="text-xl transition-transform group-hover/item:scale-110"></div>
               <span class="translate-y-px tracking-tight">{{ opt.label }}</span>
             </div>
             
