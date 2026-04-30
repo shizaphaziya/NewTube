@@ -23,7 +23,7 @@
   "home": {
     "quick_actions": "Quick Access",
     "trending": "Trending",
-    "latest": "New Videos",
+    "latest": "Latest",
     "subscriptions": "Subscriptions",
     "library": "Library",
     "no_videos": "No videos found",
@@ -31,7 +31,7 @@
     "view_all": "View all",
     "syncing": "Loading...",
     "sort_newest": "Newest",
-    "sort_popular": "Popularity",
+    "sort_popular": "Popular",
     "sort_alphabetical": "Alphabetical"
   },
   "watch": {
@@ -161,35 +161,8 @@
     "failed_update": "Update failed"
   },
   "admin": {
-    "moderation": "Moderation",
-    "status": "Status",
-    "actions": "Actions",
-    "publish": "Publish",
-    "hide": "Hide",
-    "block": "Block",
-    "access_denied": "Access Denied",
-    "clearance_required": "You do not have permission to view this page.",
-    "back_to_home": "Back Home",
-    "title": "Admin Panel",
     "panel": "Admin Panel",
-    "node": "Node",
-    "signal": "Signal",
-    "imps": "Views",
-    "no_signals": "No content yet",
-    "video_moderation_terminal": "Content Moderation",
-    "total_assets": "Total Videos",
-    "active": "Active",
-    "blocked": "Blocked",
-    "video_author": "Video / Author",
-    "anonymous": "Anonymous",
-    "views": "Views",
-    "users_management": "Users",
-    "role": "Role",
-    "role_admin": "Admin",
-    "role_user": "User",
-    "promote": "Promote",
-    "demote": "Demote",
-    "toggle_18_plus": "18+"
+    "title": "Admin Dashboard"
   },
   "auth": {
     "welcome_back": "Welcome Back",
@@ -305,10 +278,5 @@
     "terms": "Terms",
     "privacy": "Privacy",
     "copyright": "© 2026 NewTube"
-  },
-  "admin": {
-    "panel": "Admin Panel",
-    "title": "Admin Dashboard"
   }
 }
-

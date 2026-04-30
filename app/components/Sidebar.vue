@@ -88,17 +88,6 @@ const isActive = (path: string) => {
         </span>
       </NuxtLink>
 
-      <!-- Sidebar Footer Links -->
-      <div class="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-500 px-3 pb-4">
-        <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-600 text-theme-text-faint">
-          <NuxtLink to="/about" class="hover:text-primary-500 transition-colors">{{ $t('footer.about') }}</NuxtLink>
-          <NuxtLink to="/terms" class="hover:text-primary-500 transition-colors">{{ $t('footer.terms') }}</NuxtLink>
-          <NuxtLink to="/privacy" class="hover:text-primary-500 transition-colors">{{ $t('footer.privacy') }}</NuxtLink>
-        </div>
-        <p class="mt-4 text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em]">
-          {{ $t('footer.copyright') }}
-        </p>
-      </div>
     </div>
 
   </aside>

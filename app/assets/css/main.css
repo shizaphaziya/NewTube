@@ -9,8 +9,8 @@
   --nt-text-faint: #64748b; /* Slate 500 - much darker than before */
   --nt-border: rgba(15, 23, 42, 0.06);
   --nt-border-strong: rgba(15, 23, 42, 0.12);
-  --nt-glass-bg: rgba(255, 255, 255, 0.85); /* More opaque for readability */
-  --nt-glass-border: rgba(15, 23, 42, 0.08);
+  --nt-glass-bg: rgba(255, 255, 255, 0.65);
+  --nt-glass-border: rgba(15, 23, 42, 0.1);
   --nt-selection: rgba(239, 68, 68, 0.12);
   
   /* Brand colors */
@@ -172,7 +172,7 @@ img {
   background: var(--nt-glass-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--nt-shadow-sm);
 }
 
 .glass-panel {
@@ -180,7 +180,7 @@ img {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--nt-glass-border);
-  box-shadow: var(--nt-shadow-lg), inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+  box-shadow: var(--nt-shadow-lg);
 }
 
 /* ============================================================

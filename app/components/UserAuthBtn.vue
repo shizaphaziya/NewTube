@@ -38,7 +38,7 @@ const logout = async () => {
     </div>
 
     <!-- User Dropdown Menu -->
-    <div class="absolute top-full right-0 mt-3 w-72 glass-panel rounded-[24px] p-2 opacity-0 invisible -translate-y-2 scale-95 group-hover/user:(opacity-100 visible translate-y-0 scale-100) transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-50 overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.3)]">
+    <div class="absolute top-[calc(100%+0.5rem)] right-0 w-72 glass-panel rounded-[24px] p-2 opacity-0 invisible pointer-events-none -translate-y-2 scale-95 group-hover/user:(opacity-100 visible pointer-events-auto translate-y-0 scale-100) transition-all duration-300 z-[100] shadow-2xl">
       <!-- Profile Header in Dropdown -->
       <div class="px-5 py-6 mb-2 rounded-[20px] bg-theme-surface-raised/40 border border-theme-border/20 relative overflow-hidden group/header shadow-inner">
         <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent opacity-40"></div>

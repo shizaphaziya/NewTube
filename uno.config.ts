@@ -10,14 +10,14 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    ['btn-primary', 'relative px-5 py-2.5 rounded-lg bg-primary-600 text-white font-bold transition-all duration-300 hover:(bg-primary-500 shadow-[0_0_25px_rgba(239,68,68,0.4)] -translate-y-0.5) active:(scale-95 translate-y-0) disabled:(opacity-50 cursor-not-allowed) text-sm no-underline flex items-center justify-center gap-2 overflow-hidden'],
-    ['btn-secondary', 'relative px-5 py-2.5 rounded-lg bg-theme-border/10 border border-theme-border text-theme-text transition-all duration-300 hover:(bg-theme-border/20 border-theme-border-strong shadow-lg) active:scale-95 text-sm no-underline flex items-center justify-center gap-2'],
+    ['btn-primary', 'relative px-5 py-2.5 rounded-lg bg-primary-600 border-none text-white font-bold transition-all duration-300 hover:(bg-primary-500 shadow-[0_4px_14px_rgba(239,68,68,0.3)] -translate-y-0.5) active:(scale-95 translate-y-0) disabled:(opacity-50 cursor-not-allowed) text-sm no-underline flex items-center justify-center gap-2 overflow-hidden'],
+    ['btn-secondary', 'relative px-5 py-2.5 rounded-lg bg-theme-surface-raised border border-theme-border/50 text-theme-text transition-all duration-300 hover:(bg-theme-border/20 shadow-md) active:scale-95 text-sm no-underline flex items-center justify-center gap-2'],
     ['btn-icon', 'w-10 h-10 rounded-lg flex items-center justify-center text-theme-text-muted hover:(text-theme-text bg-theme-border shadow-lg) transition-all duration-300 active:scale-90'],
     ['glass-card', 'bg-theme-glass-bg backdrop-blur-xl border border-theme-glass-border rounded-xl transition-all duration-500 hover:(border-primary-500/30 bg-theme-surface shadow-2xl shadow-primary-900/5 dark:shadow-primary-900/20)'],
     ['glass-panel', 'bg-theme-glass-bg backdrop-blur-3xl border border-theme-glass-border shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]'],
     ['glass-surface', 'bg-theme-glass-bg backdrop-blur-2xl border-b border-theme-glass-border shadow-sm shadow-primary-900/5'],
     ['glass-header', 'bg-theme-glass-bg backdrop-blur-3xl border border-theme-glass-border shadow-xl shadow-primary-900/5'],
-    ['glass-input', 'bg-theme-bg border border-theme-border rounded-lg px-4 py-2.5 text-sm text-theme-text placeholder:(text-theme-text-faint) transition-all duration-300 focus:(outline-none border-primary-500/50 bg-theme-surface shadow-[0_0_20px_rgba(239,68,68,0.1)])'],
+    ['glass-input', 'bg-theme-surface border border-theme-border/50 rounded-lg px-4 py-2.5 text-sm text-theme-text placeholder:(text-theme-text-faint) transition-all duration-300 focus:(outline-none border-primary-500/50 bg-theme-surface shadow-[0_0_15px_rgba(239,68,68,0.1)])'],
     ['layout-container', 'max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-12'],
     ['nav-link', 'text-theme-text-muted hover:(text-theme-text bg-theme-border) transition-all duration-300 text-[14px] font-medium no-underline flex items-center gap-3 px-3 py-3 rounded-xl relative'],
     ['nav-link-active', 'text-primary-500 dark:text-white bg-primary-500/10 shadow-[inset_0_0_20px_rgba(239,68,68,0.05)] after:(content-[""] absolute left-0 top-1/4 bottom-1/4 w-1 bg-primary-500 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.6)])'],

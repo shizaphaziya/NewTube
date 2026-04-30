@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const { isAdmin } = useProfile()
+const route = useRoute()
 const searchQuery = ref('')
 
 const isDark = useDark()
@@ -31,7 +32,7 @@ const handleSearch = () => {
 
       <!-- Top Bar -->
       <div class="sticky top-0 z-40 px-4 py-4 md:px-10">
-        <header class="h-16 flex items-center gap-6 px-6 md:px-8 rounded-2xl glass-surface pointer-events-auto transition-all duration-500 hover:(border-theme-border-strong shadow-2xl) relative overflow-hidden group">
+        <header class="h-16 flex items-center gap-6 px-6 md:px-8 rounded-2xl glass-surface pointer-events-auto transition-all duration-500 hover:(border-theme-border-strong shadow-2xl) relative group">
           
           <!-- Animated Accent Line (Top) -->
           <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
@@ -48,6 +49,10 @@ const handleSearch = () => {
               New<span class="text-primary-500">Tube</span>
             </span>
           </NuxtLink>
+
+          <div class="hidden lg:flex items-center gap-3 shrink-0 mr-4 border-l border-theme-border/50 pl-4 h-6">
+            <h1 class="text-lg font-700 text-theme-text-muted capitalize tracking-tight">{{ route.name === 'index' ? $t('nav.home') : String(route.name).replace(/-/g, ' ') }}</h1>
+          </div>
 
           <!-- Search -->
           <div class="flex-1 max-w-2xl mx-auto md:ml-0">
@@ -99,6 +104,21 @@ const handleSearch = () => {
       <main class="flex-1 w-full max-w-[1920px] mx-auto px-4 md:px-10 py-6">
         <slot />
       </main>
+
+      <!-- Global Footer -->
+      <footer class="mt-auto py-8 px-4 md:px-10 border-t border-theme-border/50 bg-theme-surface/30">
+        <div class="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-6 text-[12px] font-600 text-theme-text-faint">
+            <NuxtLink to="/about" class="hover:text-primary-500 transition-colors">{{ $t('footer.about') }}</NuxtLink>
+            <NuxtLink to="/terms" class="hover:text-primary-500 transition-colors">{{ $t('footer.terms') }}</NuxtLink>
+            <NuxtLink to="/privacy" class="hover:text-primary-500 transition-colors">{{ $t('footer.privacy') }}</NuxtLink>
+          </div>
+          <p class="text-[11px] font-800 text-theme-text-muted uppercase tracking-[0.1em]">
+            {{ $t('footer.copyright') }}
+          </p>
+        </div>
+      </footer>
+
 
       <MiniPlayer />
       <ConfirmModal />
