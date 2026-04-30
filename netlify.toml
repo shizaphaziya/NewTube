@@ -1,9 +1,9 @@
 [build]
-  command = "bun install "npm install --legacy-peer-deps && bun run generate""npm install --legacy-peer-deps && bun run generate" bun run generate"
-  publish = ".output/public"
+  command = "bun install && bun run build"
+  publish = "dist"
 
 [build.environment]
-  BUN_VERSION = "latest"
+  BUN_VERSION = "1.0.3"
 
 [[headers]]
   for = "/*"
