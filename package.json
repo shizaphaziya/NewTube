@@ -13,14 +13,14 @@
   "dependencies": {
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@pinia/nuxt": "^0.11.3",
-    "nuxt": "^4.4.2",
+    "nuxt": "^4.4.4",
     "pinia": "^3.0.4",
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.4",
-    "zod": "^4.3.6"
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6",
+    "zod": "^4.4.1"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "1.2.103",
+    "@iconify-json/lucide": "^1.2.105",
     "@iconify-json/ph": "1.2.2",
     "@nuxtjs/i18n": "10.3.0",
     "@nuxtjs/supabase": "2.0.6",
@@ -29,7 +29,7 @@
     "@unocss/preset-icons": "66.6.8",
     "@unocss/preset-uno": "66.6.8",
     "@vitejs/plugin-vue": "^6.0.6",
-    "@vue/test-utils": "^2.4.8",
+    "@vue/test-utils": "^2.4.9",
     "@vueuse/core": "14.2.1",
     "@vueuse/motion": "3.0.3",
     "@vueuse/nuxt": "14.2.1",
