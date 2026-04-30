@@ -3,7 +3,7 @@
   publish = ".output/public"
 
 [build.environment]
-  BUN_VERSION = "1.0.3"
+  BUN_VERSION = "latest"
 
 [[headers]]
   for = "/*"
