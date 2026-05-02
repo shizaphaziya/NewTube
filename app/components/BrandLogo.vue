@@ -2,17 +2,26 @@
 defineProps({
   minimal: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 </script>
 
 <template>
-  <div class="flex items-center gap-3 transition-all duration-300 group select-none">
+  <div
+    class="flex items-center gap-3 transition-all duration-300 group select-none"
+  >
     <!-- Sharp icon mark -->
-    <div class="relative w-8 h-8 flex-shrink-0 flex items-center justify-center">
-      <div class="absolute inset-0 bg-white rounded-sm transition-all duration-300"></div>
-      <div class="i-ph-play-fill text-black text-sm relative z-10 translate-x-px"></div>
+    <div
+      class="relative w-8 h-8 flex-shrink-0 flex items-center justify-center"
+    >
+      <div
+        class="absolute inset-0 bg-white rounded-sm transition-all duration-300"
+      ></div>
+      <Icon
+        name="ph:play-fill"
+        class="text-black text-sm relative z-10 translate-x-px"
+      />
     </div>
 
     <!-- Wordmark — hidden when `minimal` -->

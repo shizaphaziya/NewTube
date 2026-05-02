@@ -1,12 +1,12 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { profile, fetchProfile, isAdmin } = useProfile()
-  
+  const { profile, fetchProfile, isAdmin } = useProfile();
+
   // Ensure profile is loaded
   if (!profile.value) {
-    await fetchProfile()
+    await fetchProfile();
   }
 
   if (!isAdmin.value) {
-    return navigateTo('/')
+    return navigateTo("/");
   }
-})
+});
