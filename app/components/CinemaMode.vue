@@ -1,9 +1,9 @@
 <script setup>
 const props = defineProps({
-  active: Boolean
-})
+  active: Boolean,
+});
 
-const emit = defineEmits(['update:active'])
+const emit = defineEmits(["update:active"]);
 </script>
 
 <template>
@@ -16,8 +16,8 @@ const emit = defineEmits(['update:active'])
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div 
-        v-if="active" 
+      <div
+        v-if="active"
         class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[45] pointer-events-auto"
         @click="emit('update:active', false)"
       ></div>

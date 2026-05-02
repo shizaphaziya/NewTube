@@ -14,7 +14,9 @@
     "you": "Вы",
     "settings": "Настройки",
     "status_pro": "Pro",
-    "status_user": "Пользователь"
+    "status_user": "Пользователь",
+    "history": "История",
+    "trending": "В тренде"
   },
   "home": {
     "quick_actions": "Быстрый доступ",
@@ -25,7 +27,10 @@
     "no_videos": "Видео не найдены",
     "no_videos_subtitle": "Загрузите первое видео, чтобы начать.",
     "view_all": "Смотреть все",
-    "syncing": "Загрузка..."
+    "syncing": "Загрузка...",
+    "sort_newest": "Сначала новые",
+    "sort_popular": "Популярные",
+    "sort_alphabetical": "По алфавиту"
   },
   "watch": {
     "likes": "лайков",
@@ -292,5 +297,11 @@
     "art": "Искусство",
     "nature": "Природа",
     "shorts": "Shorts"
+  },
+  "footer": {
+    "about": "О сервисе",
+    "terms": "Условия",
+    "privacy": "Конфиденциальность",
+    "copyright": "© 2026 NewTube"
   }
 }
