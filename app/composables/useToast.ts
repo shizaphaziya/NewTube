@@ -1,53 +1,45 @@
-import { ref } from "vue";
-import { useTimeoutFn } from "@vueuse/core";
-
-export interface Toast {
-  id: string;
-  message: string;
-  type: "success" | "error" | "info";
-  duration?: number;
-}
-
-const toasts = ref<Toast[]>([]);
+import { useToast as useShadcnToast } from "~/components/ui/toast/use-toast";
 
 export const useToast = () => {
-  const addToast = (
-    message: string,
-    type: Toast["type"] = "info",
-    duration = 3000,
-  ) => {
-    // Limit to 3 toasts max
-    if (toasts.value.length >= 3) {
-      toasts.value.shift();
-    }
+  const { toast } = useShadcnToast();
 
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    toasts.value.push({ id, message, type, duration });
-
-    if (duration > 0) {
-      useTimeoutFn(() => {
-        removeToast(id);
-      }, duration);
-    }
+  const success = (message: string, duration = 3000) => {
+    toast({
+      title: "Success",
+      description: message,
+      variant: "default",
+      duration,
+    });
   };
 
-  const removeToast = (id: string) => {
-    toasts.value = toasts.value.filter((t) => t.id !== id);
+  const error = (message: string, duration = 5000) => {
+    toast({
+      title: "Error",
+      description: message,
+      variant: "destructive",
+      duration,
+    });
   };
 
-  const success = (msg: string, duration?: number) =>
-    addToast(msg, "success", duration);
-  const error = (msg: string, duration?: number) =>
-    addToast(msg, "error", duration);
-  const info = (msg: string, duration?: number) =>
-    addToast(msg, "info", duration);
+  const info = (message: string, duration = 3000) => {
+    toast({
+      title: "Info",
+      description: message,
+      duration,
+    });
+  };
 
   return {
-    toasts,
-    addToast,
-    removeToast,
     success,
     error,
     info,
+    // Add compatibility for other properties if needed
+    toasts: [], 
+    removeToast: () => {},
+    addToast: (message: string, type: any) => {
+      if (type === 'success') success(message);
+      else if (type === 'error') error(message);
+      else info(message);
+    }
   };
 };

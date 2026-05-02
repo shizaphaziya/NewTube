@@ -1,36 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
 /* --- Theme Variables --- */
 :root {
   /* Neutral scale (Void) - Light Theme (High Contrast & Premium Feel) */
-  --nt-bg: #fdfdfe; /* Pure Pearl - even cleaner */
+  --nt-bg: #f8fafc;
   --nt-surface: #ffffff;
   --nt-surface-raised: #f1f5f9;
-  --nt-text: #020617; /* Deepest Slate for maximum contrast */
-  --nt-text-muted: #334155; /* Slate 700 - darker for legibility */
-  --nt-text-faint: #64748b; /* Slate 500 - much darker than before */
-  --nt-border: rgba(15, 23, 42, 0.06);
-  --nt-border-strong: rgba(15, 23, 42, 0.12);
-  --nt-glass-bg: rgba(255, 255, 255, 0.65);
-  --nt-glass-border: rgba(15, 23, 42, 0.1);
-  --nt-selection: rgba(239, 68, 68, 0.12);
+  --nt-text: #0f172a;
+  --nt-text-muted: #475569;
+  --nt-text-faint: #94a3b8;
+  --nt-border: rgba(15, 23, 42, 0.05);
+  --nt-border-strong: rgba(15, 23, 42, 0.1);
+  --nt-glass-bg: rgba(255, 255, 255, 0.7);
+  --nt-glass-border: rgba(15, 23, 42, 0.08);
+  --nt-selection: rgba(239, 68, 68, 0.1);
+  
+  /* Transitions & Timing */
+  --nt-duration: 400ms;
+  --nt-easing: cubic-bezier(0.16, 1, 0.3, 1);
+  --nt-easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nt-easing-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   /* Brand colors */
   --nt-primary: #ef4444;
   --nt-primary-hover: #dc2626;
+
+  /* Shadcn compat - Refined for NewTube */
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 0 84.3% 60.2%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 0 84.3% 60.2%;
+  --radius: 0.75rem;
 }
 
 .dark {
   /* Neutral scale (Void) - Dark Theme */
-  --nt-bg: #030712; /* Deeper Obsidian */
+  --nt-bg: #020617;
   --nt-surface: #0f172a;
   --nt-surface-raised: #1e293b;
-  --nt-text: #f8fafc;
+  --nt-text: #f1f5f9;
   --nt-text-muted: #94a3b8;
   --nt-text-faint: #475569;
-  --nt-border: rgba(255, 255, 255, 0.04);
-  --nt-border-strong: rgba(255, 255, 255, 0.08);
-  --nt-glass-bg: rgba(15, 23, 42, 0.65);
+  --nt-border: rgba(255, 255, 255, 0.02);
+  --nt-border-strong: rgba(255, 255, 255, 0.04);
+  --nt-glass-bg: rgba(2, 6, 23, 0.7);
   --nt-glass-border: rgba(255, 255, 255, 0.08);
-  --nt-selection: rgba(239, 68, 68, 0.25);
+  --nt-selection: rgba(239, 68, 68, 0.2);
+
+  /* Shadcn compat - Deep Dark Slate */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 0 84.3% 60.2%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 0 84.3% 60.2%;
+}
+
+/* --- Lenis Smooth Scroll --- */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 /* --- Reset & Base --- */
@@ -49,53 +121,21 @@ html {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   scroll-behavior: smooth;
   background-color: var(--nt-bg);
-  transition: background-color 0.5s ease;
 }
 
 body {
   background-color: var(--nt-bg);
   color: var(--nt-text);
   min-height: 100vh;
-  transition:
-    background-color 0.5s ease,
-    color 0.5s ease;
-  /* Reduced noise opacity for better text clarity in light mode */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
-}
-
-/* --- Global link reset --- */
-a {
-  text-decoration: none !important;
-  color: inherit;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* --- Minimal Scrollbar styling --- */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--nt-border-strong);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--nt-text-faint);
-}
-
-/* --- Selection --- */
-::selection {
-  background: var(--nt-selection);
-  color: inherit;
+  font-family: 'Inter', sans-serif;
+  /* Subtle grain effect */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
 }
 
 /* --- Focus rings --- */
 :focus-visible {
-  outline: 2px solid var(--nt-primary);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--nt-bg), 0 0 0 4px rgba(239, 68, 68, 0.4);
   border-radius: 8px;
 }
 
@@ -103,27 +143,25 @@ a {
 :root {
   --nt-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
   --nt-shadow:
-    0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+    0 4px 6px -1px rgba(15, 23, 42, 0.03), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
   --nt-shadow-md:
-    0 10px 15px -3px rgba(15, 23, 42, 0.1),
-    0 4px 6px -4px rgba(15, 23, 42, 0.05);
+    0 10px 15px -3px rgba(15, 23, 42, 0.05),
+    0 4px 6px -4px rgba(15, 23, 42, 0.03);
   --nt-shadow-lg:
-    0 20px 25px -5px rgba(15, 23, 42, 0.1),
-    0 8px 10px -6px rgba(15, 23, 42, 0.05);
-  --nt-shadow-xl: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
-  --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.15);
+    0 20px 25px -5px rgba(15, 23, 42, 0.05),
+    0 8px 10px -6px rgba(15, 23, 42, 0.03);
+  --nt-shadow-xl: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
 }
 
 .dark {
-  --nt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --nt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   --nt-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
   --nt-shadow-md:
-    0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+    0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
   --nt-shadow-lg:
-    0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
-  --nt-shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-  --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+    0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --nt-shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* --- Smooth image rendering --- */
@@ -137,18 +175,20 @@ img {
    ============================================================ */
 /* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-enter-active {
-  animation: nt-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: nt-fade-up var(--nt-duration) var(--nt-easing) both;
 }
 /* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-active {
   transition:
-    opacity 0.35s ease,
-    filter 0.35s ease;
+    opacity calc(var(--nt-duration) / 1.5) var(--nt-easing),
+    filter calc(var(--nt-duration) / 1.5) var(--nt-easing),
+    transform calc(var(--nt-duration) / 1.5) var(--nt-easing);
 }
 /* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-to {
   opacity: 0;
-  filter: blur(4px);
+  filter: blur(8px);
+  transform: scale(0.98) translateY(-8px);
 }
 
 @keyframes nt-fade-up {
@@ -200,7 +240,7 @@ img {
   background: var(--nt-glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--nt-glass-border);
+  border: none;
   box-shadow: var(--nt-shadow-lg);
 }
 
@@ -310,5 +350,158 @@ img {
   }
   100% {
     background-position: -100% 0;
+  }
+}
+/* ============================================================
+   UI Components & Utilities
+   ============================================================ */
+
+.glass-card {
+  background: var(--nt-glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: var(--nt-shadow-xl);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--nt-border-strong);
+  border-radius: 0.75rem;
+  color: var(--nt-text);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.dark .glass-input {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.glass-input:focus {
+  background: var(--nt-surface);
+  border-color: var(--nt-primary);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+  outline: none;
+}
+
+.btn-primary {
+  background: var(--nt-primary);
+  color: white;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--nt-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nt-surface-raised);
+  border: 1px solid var(--nt-border);
+  color: var(--nt-text-muted);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-icon:hover {
+  border-color: var(--nt-primary);
+  color: var(--nt-primary);
+  background: var(--nt-surface);
+}
+
+/* ============================================================
+   Unified Interactive Utilities
+   ============================================================ */
+
+.press-effect {
+  transition: transform var(--nt-duration) var(--nt-easing-bounce);
+}
+
+.press-effect:active {
+  transform: scale(0.94);
+}
+
+.lift-effect {
+  transition: transform var(--nt-duration) var(--nt-easing);
+}
+
+.lift-effect:hover {
+  transform: translateY(-4px);
+}
+
+.glass-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nt-border-strong);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nt-text-faint);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ripple Effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  background-color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
   }
 }

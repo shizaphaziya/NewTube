@@ -177,7 +177,7 @@ useSeoMeta({
         "
       >
         <div
-          class="relative group mx-auto overflow-hidden shadow-[0_60px_150px_-30px_rgba(0,0,0,0.9)] border border-white/5 ring-1 ring-white/10 transition-all duration-700"
+          class="relative group mx-auto overflow-hidden shadow-[0_60px_150px_-30px_rgba(0,0,0,0.9)] border border-border/5 ring-1 ring-border/10 transition-all duration-700"
           :class="
             isCinemaMode
               ? 'w-full h-full rounded-none'
@@ -185,13 +185,13 @@ useSeoMeta({
           "
         >
           <div
-            class="absolute inset-0 bg-void-950 flex items-center justify-center"
+            class="absolute inset-0 bg-background flex items-center justify-center"
             v-if="!video?.video_url"
           >
             <div class="space-y-4 text-center">
-              <Icon name="ph:broadcast" class="text-5xl text-primary-500" />
+              <Icon name="ph:broadcast" class="text-5xl text-primary" />
               <p
-                class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20"
+                class="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground"
               >
                 {{ t("common.loading") }}
               </p>
@@ -207,15 +207,17 @@ useSeoMeta({
           ></video>
 
           <!-- Cinema Mode Toggle -->
-          <button
+          <Button
+            size="icon"
+            variant="secondary"
             @click="isCinemaMode = !isCinemaMode"
-            class="absolute top-8 right-8 w-14 h-14 rounded-2xl bg-black/40 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-primary-600 hover:border-primary-500 hover:shadow-[0_0_30px_rgba(239,68,68,0.4]) transition-all duration-500 opacity-0 group-hover:opacity-100 z-20"
+            class="absolute top-8 right-8 w-14 h-14 rounded-2xl bg-black/40 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-primary hover:border-primary hover:shadow-[0_0_30px_rgba(239,68,68,0.4)] transition-all duration-500 opacity-0 group-hover:opacity-100 z-20"
           >
             <Icon
               :name="isCinemaMode ? 'ph:corners-in' : 'ph:corners-out'"
               class="text-2xl"
             />
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -228,16 +230,16 @@ useSeoMeta({
           <!-- Title & Engagement -->
           <div class="space-y-8">
             <h1
-              class="text-4xl md:text-5xl font-900 text-white leading-tight uppercase tracking-tighter italic"
+              class="text-4xl md:text-5xl font-900 text-foreground leading-tight uppercase tracking-tighter italic"
             >
               {{ video?.title || t("watch.loading_video") }}
             </h1>
 
             <div
-              class="flex flex-col lg:flex-row lg:items-center justify-between gap-10 p-8 glass-card border-white/5 rounded-[2.5rem] relative overflow-hidden group"
+              class="flex flex-col lg:flex-row lg:items-center justify-between gap-10 p-8 glass-card border-border/5 rounded-[2.5rem] relative overflow-hidden group"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-r from-primary-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                class="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
               ></div>
 
               <!-- Creator Bar -->
@@ -247,41 +249,35 @@ useSeoMeta({
                   class="relative group/avatar"
                 >
                   <div
-                    class="absolute -inset-1.5 bg-gradient-to-tr from-primary-600 to-amber-500 rounded-2xl opacity-0 group-hover/avatar:opacity-40 blur-lg transition-opacity"
+                    class="absolute -inset-1.5 bg-gradient-to-tr from-primary to-amber-500 rounded-2xl opacity-0 group-hover/avatar:opacity-40 blur-lg transition-opacity"
                   ></div>
-                  <img
-                    :src="
-                      video?.profiles?.avatar_url ||
-                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${video?.user_id}`
-                    "
-                    class="w-16 h-16 rounded-2xl border-2 border-white/10 object-cover bg-void-900 relative z-10 transition-all group-hover/avatar:border-white/30"
-                  />
+                  <Avatar class="w-16 h-16 rounded-2xl border-2 border-border/10 object-cover bg-muted relative z-10 transition-all group-hover/avatar:border-border/30">
+                    <AvatarImage :src="video?.profiles?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${video?.user_id}`" />
+                    <AvatarFallback>{{ video?.profiles?.display_name?.[0].toUpperCase() }}</AvatarFallback>
+                  </Avatar>
                 </NuxtLink>
                 <div class="space-y-1">
                   <NuxtLink
                     :to="`/profile/${video?.user_id}`"
-                    class="text-xl font-900 text-white hover:text-primary-400 no-underline flex items-center gap-2 italic uppercase tracking-tight"
+                    class="text-xl font-900 text-foreground hover:text-primary no-underline flex items-center gap-2 italic uppercase tracking-tight"
                   >
                     {{ video?.profiles?.display_name }}
                     <Icon
                       name="ph:seal-check-fill"
-                      class="text-primary-500 text-lg"
+                      class="text-primary text-lg"
                     />
                   </NuxtLink>
                   <p
-                    class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]"
+                    class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]"
                   >
                     {{ t("watch.quality") }}
                   </p>
                 </div>
-                <button
+                <Button
                   @click="toggleSubscribe"
-                  class="ml-6 px-10 py-3.5 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden group/sub shadow-2xl"
-                  :class="
-                    isSubscribed
-                      ? 'glass-card border-white/10 text-white/40'
-                      : 'btn-primary text-white shadow-primary-500/20'
-                  "
+                  size="lg"
+                  class="ml-6 px-10 py-7 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden group/sub shadow-2xl h-auto"
+                  :variant="isSubscribed ? 'secondary' : 'default'"
                 >
                   <span class="relative z-10">{{
                     isSubscribed ? t("watch.subscribed") : t("watch.subscribe")
@@ -290,21 +286,22 @@ useSeoMeta({
                     v-if="!isSubscribed"
                     class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/sub:translate-x-full transition-transform duration-1000"
                   ></div>
-                </button>
+                </Button>
               </div>
 
               <!-- Actions -->
               <div class="flex items-center gap-4 relative z-10">
                 <div
-                  class="flex items-center glass-card border-white/10 rounded-2xl h-14 overflow-hidden p-1 shadow-xl"
+                  class="flex items-center bg-muted/40 backdrop-blur-xl border border-border/10 rounded-2xl h-14 overflow-hidden p-1 shadow-xl"
                 >
-                  <button
+                  <Button
+                    variant="ghost"
                     @click="toggleLike"
                     class="flex items-center gap-3 px-8 h-full rounded-xl transition-all duration-500 group/like"
                     :class="
                       isLiked
-                        ? 'bg-primary-500 text-white'
-                        : 'hover:bg-white/5 text-white/60 hover:text-white'
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'hover:bg-accent text-muted-foreground hover:text-foreground'
                     "
                   >
                     <Icon
@@ -315,46 +312,50 @@ useSeoMeta({
                       class="text-xs font-black uppercase tracking-widest"
                       >{{ likesCount.toLocaleString() }}</span
                     >
-                  </button>
-                  <div class="w-px h-8 bg-white/5 mx-1"></div>
-                  <button
-                    @click="() => (!user ? navigateTo('/auth/login') : null)"
-                    class="px-6 h-full rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all"
+                  </Button>
+                  <Separator orientation="vertical" class="h-8 mx-1 bg-border/20" />
+                  <Button
+                    variant="ghost"
+                    @click="() => (!user ? appStore.openAuthModal() : null)"
+                    class="px-6 h-full rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
                   >
                     <Icon name="ph:thumbs-down-duotone" class="text-2xl" />
-                  </button>
+                  </Button>
                 </div>
-                <button
-                  class="h-14 px-8 rounded-2xl glass-card border-white/10 hover:border-white/30 hover:bg-white/5 transition-all text-[11px] font-black uppercase tracking-widest text-white/60 hover:text-white flex items-center gap-3"
+                <Button
+                  variant="secondary"
+                  class="h-14 px-8 rounded-2xl border-border/10 hover:border-border/30 hover:bg-accent transition-all text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-3"
                 >
                   <Icon
                     name="ph:share-network-duotone"
-                    class="text-2xl text-primary-500"
+                    class="text-2xl text-primary"
                   />
                   {{ t("watch.share") }}
-                </button>
-                <button
-                  class="w-14 h-14 rounded-2xl glass-card border-white/10 flex items-center justify-center hover:bg-white/5 transition-all text-white/40 hover:text-white"
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  class="w-14 h-14 rounded-2xl border-border/10 flex items-center justify-center hover:bg-accent transition-all text-muted-foreground hover:text-foreground"
                 >
                   <Icon name="ph:dots-three-bold" class="text-3xl" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
 
           <!-- Description Box -->
-          <div
-            class="p-10 glass-card border-white/5 rounded-[3rem] shadow-2xl relative group overflow-hidden"
+          <Card
+            class="p-10 bg-muted/30 border-border/5 rounded-[3rem] shadow-2xl relative group overflow-hidden"
           >
             <div
-              class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+              class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
             ></div>
             <div class="flex items-center gap-4 mb-8">
-              <div class="h-1 w-10 bg-primary-500 rounded-full"></div>
+              <div class="h-1 w-10 bg-primary rounded-full"></div>
               <div
-                class="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-white/40"
+                class="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground"
               >
-                <span class="text-white"
+                <span class="text-foreground"
                   >{{ (video?.view_count || 0).toLocaleString() }}
                   {{ t("watch.views") }}</span
                 >
@@ -367,7 +368,7 @@ useSeoMeta({
               </div>
             </div>
             <p
-              class="text-white/60 text-lg font-medium leading-[2] whitespace-pre-wrap relative z-10 max-w-4xl"
+              class="text-muted-foreground text-lg font-medium leading-[2] whitespace-pre-wrap relative z-10 max-w-4xl"
             >
               {{ video?.description || t("watch.no_description") }}
             </p>
@@ -375,28 +376,29 @@ useSeoMeta({
               v-if="video?.tags?.length"
               class="flex flex-wrap gap-3 mt-10 relative z-10"
             >
-              <span
+              <Badge
                 v-for="tag in video.tags"
                 :key="tag"
-                class="px-4 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] font-black text-primary-500 hover:bg-primary-500 hover:text-white transition-all cursor-pointer uppercase tracking-widest"
+                variant="outline"
+                class="px-4 py-1.5 rounded-lg bg-muted/50 border border-border/5 text-[10px] font-black text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer uppercase tracking-widest"
               >
                 #{{ tag }}
-              </span>
+              </Badge>
             </div>
-          </div>
+          </Card>
 
           <!-- Comments Section -->
           <div class="space-y-12">
             <div
-              class="flex items-center justify-between border-b border-white/5 pb-8"
+              class="flex items-center justify-between border-b border-border/5 pb-8"
             >
               <h3
-                class="text-3xl font-900 text-white uppercase tracking-tighter italic"
+                class="text-3xl font-900 text-foreground uppercase tracking-tighter italic"
               >
                 {{ commentsCount }} {{ t("watch.comments") }}
               </h3>
               <div
-                class="flex items-center gap-3 text-[11px] font-black text-white/30 uppercase tracking-[0.2em]"
+                class="flex items-center gap-3 text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]"
               >
                 <Icon name="ph:sort-ascending-duotone" class="text-xl" />
                 {{ t("watch.sort_by") }}
@@ -406,53 +408,47 @@ useSeoMeta({
             <!-- Comment Input -->
             <div class="flex gap-8 group">
               <div class="relative shrink-0">
-                <img
-                  :src="
-                    user?.user_metadata?.avatar_url ||
-                    'https://api.dicebear.com/7.x/avataaars/svg?seed=viewer'
-                  "
-                  class="w-16 h-16 rounded-2xl object-cover border-2 border-white/10 shadow-2xl group-focus-within:border-primary-500/50 transition-all"
-                />
+                <Avatar class="w-16 h-16 rounded-2xl border-2 border-border/10 shadow-2xl group-focus-within:border-primary/50 transition-all">
+                  <AvatarImage :src="user?.user_metadata?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=viewer'" />
+                  <AvatarFallback>V</AvatarFallback>
+                </Avatar>
                 <div
-                  class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-lg border-2 border-void"
+                  class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-lg border-2 border-background"
                 ></div>
               </div>
               <div class="flex-1 space-y-4">
                 <div class="relative">
-                  <textarea
+                  <Textarea
                     v-model="newComment"
                     :placeholder="t('watch.add_comment_placeholder')"
-                    class="glass-input w-full min-h-[120px] rounded-[2rem] py-6 px-8 text-base font-medium focus:ring-primary-500/20 transition-all resize-none shadow-xl"
-                  ></textarea>
+                    class="w-full min-h-[120px] rounded-[2rem] py-6 px-8 text-base font-medium focus-visible:ring-primary/20 transition-all resize-none shadow-xl bg-background/50 border-border/40"
+                  />
                   <div
                     class="absolute bottom-6 right-8 flex items-center gap-4"
                   >
-                    <button
-                      class="text-white/20 hover:text-primary-500 transition-colors"
-                    >
+                    <Button variant="ghost" size="icon" class="text-muted-foreground hover:text-primary transition-colors">
                       <Icon name="ph:smiley-duotone" class="text-2xl" />
-                    </button>
-                    <button
-                      class="text-white/20 hover:text-primary-500 transition-colors"
-                    >
+                    </Button>
+                    <Button variant="ghost" size="icon" class="text-muted-foreground hover:text-primary transition-colors">
                       <Icon name="ph:paperclip-duotone" class="text-2xl" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 <div class="flex justify-end gap-6">
-                  <button
+                  <Button
+                    variant="ghost"
                     @click="newComment = ''"
-                    class="text-[11px] font-black text-white/20 hover:text-white uppercase tracking-[0.3em] transition-all"
+                    class="text-[11px] font-black text-muted-foreground hover:text-foreground uppercase tracking-[0.3em] transition-all"
                   >
                     {{ t("watch.cancel") }}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     @click="submitComment"
                     :disabled="!newComment.trim() || isPosting"
-                    class="btn-primary rounded-xl px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] disabled:opacity-30 transition-all"
+                    class="rounded-xl px-12 py-6 text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(239,68,68,0.25)] disabled:opacity-30 transition-all h-auto"
                   >
                     {{ isPosting ? t("watch.posting_btn") : t("watch.post") }}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -469,49 +465,49 @@ useSeoMeta({
                   :key="comment.id"
                   class="flex gap-8 group/comment"
                 >
-                  <img
-                    :src="
-                      comment.profiles?.avatar_url ||
-                      'https://api.dicebear.com/7.x/avataaars/svg?seed=' +
-                        comment.id
-                    "
-                    class="w-14 h-14 rounded-2xl object-cover border border-white/5 shadow-xl group-hover/comment:border-primary-500/30 transition-all"
-                  />
+                  <Avatar class="w-14 h-14 rounded-2xl border border-border/5 shadow-xl group-hover/comment:border-primary/30 transition-all">
+                    <AvatarImage :src="comment.profiles?.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.id" />
+                    <AvatarFallback>{{ comment.profiles?.display_name?.[0].toUpperCase() }}</AvatarFallback>
+                  </Avatar>
                   <div class="flex-1 space-y-3">
                     <div class="flex items-center gap-4">
                       <span
-                        class="text-base font-900 text-white uppercase tracking-tight italic"
+                        class="text-base font-900 text-foreground uppercase tracking-tight italic"
                         >{{ comment.profiles?.display_name }}</span
                       >
                       <span
-                        class="text-[10px] font-bold text-white/20 uppercase tracking-widest"
+                        class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest"
                         >{{
                           new Date(comment.created_at).toLocaleDateString()
                         }}</span
                       >
                     </div>
                     <p
-                      class="text-white/60 text-base leading-relaxed font-medium"
+                      class="text-muted-foreground text-base leading-relaxed font-medium"
                     >
                       {{ comment.content }}
                     </p>
                     <div class="flex items-center gap-8 pt-2">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         @click="toggleLike"
-                        class="flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-primary-500 transition-colors uppercase tracking-[0.2em]"
+                        class="flex items-center gap-2 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em] h-auto p-1"
                       >
                         <Icon name="ph:thumbs-up-duotone" class="text-xl" />
                         {{ t("watch.like") }}
-                      </button>
-                      <button
-                        class="flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-white transition-colors uppercase tracking-[0.2em]"
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        class="flex items-center gap-2 text-[10px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-[0.2em] h-auto p-1"
                       >
                         <Icon
                           name="ph:chat-circle-dots-duotone"
                           class="text-xl"
                         />
                         {{ t("watch.reply") }}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -522,27 +518,28 @@ useSeoMeta({
               v-if="hasMoreComments && comments.length > 0"
               class="flex justify-center pt-8"
             >
-              <button
+              <Button
                 @click="fetchComments(true)"
                 :disabled="isLoadingComments"
-                class="btn-primary rounded-xl px-8 py-3 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl disabled:opacity-30 transition-all"
+                size="lg"
+                class="rounded-xl px-8 py-6 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl disabled:opacity-30 transition-all h-auto"
               >
                 {{
                   isLoadingComments
                     ? t("common.loading")
                     : t("watch.load_more_comments") || "Load More"
                 }}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
 
         <!-- Sidebar Column -->
         <div class="space-y-10">
-          <div class="flex items-center gap-4 border-b border-white/5 pb-6">
-            <div class="h-1 w-8 bg-primary-500"></div>
+          <div class="flex items-center gap-4 border-b border-border/5 pb-6">
+            <div class="h-1 w-8 bg-primary"></div>
             <h3
-              class="text-xl font-900 text-white uppercase tracking-tighter italic"
+              class="text-xl font-900 text-foreground uppercase tracking-tighter italic"
             >
               {{ t("watch.up_next") }}
             </h3>
@@ -556,30 +553,30 @@ useSeoMeta({
               class="flex gap-5 group cursor-pointer no-underline"
             >
               <div
-                class="w-48 aspect-video rounded-2xl overflow-hidden bg-void-900 border border-white/10 shrink-0 relative shadow-xl transition-all duration-500 group-hover:border-primary-500/50 group-hover:shadow-primary-500/10"
+                class="w-48 aspect-video rounded-2xl overflow-hidden bg-muted border border-border/10 shrink-0 relative shadow-xl transition-all duration-500 group-hover:border-primary/50 group-hover:shadow-primary/10"
               >
                 <img
                   :src="v.thumbnail_url"
                   class="w-full h-full object-cover transition-transform duration-1000"
                 />
                 <div
-                  class="absolute inset-0 bg-void/30 group-hover:bg-transparent transition-all"
+                  class="absolute inset-0 bg-background/30 group-hover:bg-transparent transition-all"
                 ></div>
               </div>
               <div class="flex-1 min-w-0 py-1 space-y-2">
                 <h4
-                  class="text-sm font-900 text-white uppercase tracking-tighter leading-tight line-clamp-2 group-hover:text-primary-500 transition-colors italic"
+                  class="text-sm font-900 text-foreground uppercase tracking-tighter leading-tight line-clamp-2 group-hover:text-primary transition-colors italic"
                 >
                   {{ v.title }}
                 </h4>
                 <div class="space-y-1">
                   <p
-                    class="text-[10px] font-black text-white/40 uppercase tracking-widest truncate"
+                    class="text-[10px] font-black text-muted-foreground uppercase tracking-widest truncate"
                   >
                     {{ v.profiles?.display_name }}
                   </p>
                   <div
-                    class="flex items-center gap-3 text-[9px] font-bold text-white/20 uppercase tracking-widest"
+                    class="flex items-center gap-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest"
                   >
                     <span
                       >{{ (v.view_count || 0).toLocaleString() }}
@@ -597,7 +594,7 @@ useSeoMeta({
 
           <!-- Sidebar Promo/Ad Aesthetic -->
           <div
-            class="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary-600 to-indigo-700 text-white space-y-6 shadow-2xl relative overflow-hidden group"
+            class="p-8 rounded-[2.5rem] bg-gradient-to-br from-primary to-indigo-700 text-primary-foreground space-y-6 shadow-2xl relative overflow-hidden group"
           >
             <div
               class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-transform duration-1000"
@@ -608,15 +605,16 @@ useSeoMeta({
               {{ t("watch.upgrade_premium") }}
             </h4>
             <p
-              class="text-white/80 text-xs font-bold uppercase tracking-widest leading-relaxed"
+              class="text-primary-foreground/80 text-xs font-bold uppercase tracking-widest leading-relaxed"
             >
               {{ t("watch.upgrade_hint") }}
             </p>
-            <button
-              class="w-full py-4 rounded-xl bg-white text-void font-black text-[11px] uppercase tracking-[0.3em] transition-opacity hover:opacity-90 shadow-xl"
+            <Button
+              variant="secondary"
+              class="w-full py-7 rounded-xl bg-background text-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-opacity hover:opacity-90 shadow-xl h-auto"
             >
               {{ t("watch.upgrade_now") }}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

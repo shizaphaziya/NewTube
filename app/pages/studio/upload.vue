@@ -177,11 +177,11 @@ const uploadVideo = async () => {
     <!-- Cinematic Aura -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       <div
-        class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary-500/5 blur-[120px] rounded-full animate-ambient"
+        class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-ambient"
         style="animation-delay: 0s"
       ></div>
       <div
-        class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary-500/3 blur-[100px] rounded-full animate-ambient"
+        class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary/3 blur-[100px] rounded-full animate-ambient"
         style="animation-delay: -5s; animation-direction: alternate-reverse"
       ></div>
     </div>
@@ -189,14 +189,14 @@ const uploadVideo = async () => {
     <div class="relative z-10 space-y-10">
       <div class="text-center md:text-left">
         <h1
-          class="text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tighter italic"
+          class="text-4xl md:text-5xl font-black text-foreground mb-2 uppercase tracking-tighter italic"
         >
           {{ t("studio.upload") }}
         </h1>
         <div class="flex items-center justify-center md:justify-start gap-3">
-          <div class="h-px w-8 bg-primary-500/40"></div>
+          <div class="h-px w-8 bg-primary/40"></div>
           <p
-            class="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]"
+            class="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em]"
           >
             {{ t("studio.uploading_content_hint") }}
           </p>
@@ -212,38 +212,43 @@ const uploadVideo = async () => {
         leave-from-class="transform scale-100 opacity-100"
         leave-to-class="transform scale-95 opacity-0"
       >
-        <div
+        <Card
           v-if="uploadSuccess"
-          class="glass-card border-primary-500/20 p-12 flex flex-col items-center text-center space-y-6 shadow-[0_0_50px_-12px_rgba(239,68,68,0.15)]"
+          class="glass-card border-primary/20 p-12 flex flex-col items-center text-center space-y-6 shadow-[0_0_50px_-12px_rgba(239,68,68,0.15)] bg-background/80 backdrop-blur-3xl"
         >
           <div
-            class="w-20 h-20 rounded-3xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-500"
+            class="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary"
           >
             <Icon name="ph:check-circle-duotone" class="text-5xl" />
           </div>
           <div class="space-y-2">
-            <h3 class="text-2xl font-black text-white uppercase tracking-tight">
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight">
               {{ t("studio.success") }}
             </h3>
-            <p class="text-white/40 text-sm font-medium">
+            <p class="text-muted-foreground text-sm font-medium">
               {{ t("studio.success_subtitle") }}
             </p>
           </div>
           <div class="pt-4 flex gap-4">
-            <button
+            <Button
               @click="uploadSuccess = false"
-              class="btn-primary rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs"
+              size="lg"
+              class="rounded-xl px-10 py-7 font-bold uppercase tracking-widest text-xs h-auto"
             >
               {{ t("studio.upload_another") }}
-            </button>
-            <NuxtLink
-              to="/studio"
-              class="glass-button rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs"
+            </Button>
+            <Button
+              as-child
+              variant="secondary"
+              size="lg"
+              class="rounded-xl px-10 py-7 font-bold uppercase tracking-widest text-xs h-auto bg-muted/50 border-border/10"
             >
-              {{ t("studio.go_dashboard") }}
-            </NuxtLink>
+              <NuxtLink to="/studio">
+                {{ t("studio.go_dashboard") }}
+              </NuxtLink>
+            </Button>
           </div>
-        </div>
+        </Card>
 
         <form v-else @submit.prevent="uploadVideo" class="space-y-8">
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -252,11 +257,11 @@ const uploadVideo = async () => {
               <!-- Video Dropzone -->
               <div class="space-y-3">
                 <label
-                  class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2"
+                  class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
                   >{{ t("studio.video_file") }}</label
                 >
                 <div
-                  class="group relative aspect-[9/16] lg:aspect-square rounded-[2rem] overflow-hidden border-2 border-dashed border-white/5 hover:border-primary-500/40 transition-all duration-500 bg-white/[0.02]"
+                  class="group relative aspect-[9/16] lg:aspect-square rounded-[2.5rem] overflow-hidden border-2 border-dashed border-border/10 hover:border-primary/40 transition-all duration-500 bg-muted/20"
                 >
                   <input
                     type="file"
@@ -270,19 +275,19 @@ const uploadVideo = async () => {
                     class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4 pointer-events-none transition-colors duration-500"
                   >
                     <div
-                      class="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-white/20 group-hover:text-primary-500 group-hover:bg-primary-500/10 group-hover:border-primary-500/20 transition-all duration-500 shadow-2xl"
+                      class="w-20 h-20 rounded-[2rem] bg-muted/50 border border-border/10 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-500 shadow-2xl"
                     >
                       <Icon name="ph:upload-simple-duotone" class="text-4xl" />
                     </div>
 
                     <div v-if="form.videoFile" class="space-y-1">
                       <div
-                        class="text-white font-black uppercase tracking-tight text-sm line-clamp-1 px-4"
+                        class="text-foreground font-black uppercase tracking-tight text-sm line-clamp-1 px-4"
                       >
                         {{ form.videoFile.name }}
                       </div>
                       <div
-                        class="text-primary-500 text-[10px] font-bold uppercase tracking-widest"
+                        class="text-primary text-[10px] font-bold uppercase tracking-widest"
                       >
                         {{ (form.videoFile.size / 1024 / 1024).toFixed(1) }}
                         {{ t("studio.mb_ready") }}
@@ -290,12 +295,12 @@ const uploadVideo = async () => {
                     </div>
                     <div v-else class="space-y-2">
                       <div
-                        class="text-white/60 text-xs font-bold uppercase tracking-widest"
+                        class="text-muted-foreground text-xs font-bold uppercase tracking-widest"
                       >
                         {{ t("studio.drop_source") }}
                       </div>
                       <div
-                        class="text-white/20 text-[9px] uppercase tracking-tighter"
+                        class="text-muted-foreground/30 text-[9px] uppercase tracking-tighter"
                       >
                         {{ t("studio.video_formats") }}
                       </div>
@@ -304,19 +309,19 @@ const uploadVideo = async () => {
 
                   <!-- Hover Glow -->
                   <div
-                    class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/[0.02] transition-colors duration-500"
+                    class="absolute inset-0 bg-primary/0 group-hover:bg-primary/[0.02] transition-colors duration-500"
                   ></div>
                 </div>
               </div>
 
               <!-- Thumbnail Dropzone -->
-              <div :delay="100" class="space-y-3">
+              <div class="space-y-3">
                 <label
-                  class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2"
+                  class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
                   >{{ t("studio.cover_artwork") }}</label
                 >
                 <div
-                  class="group relative rounded-3xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300 bg-white/[0.02] p-4 flex items-center gap-4"
+                  class="group relative rounded-3xl overflow-hidden border border-border/10 hover:border-border/30 transition-all duration-300 bg-muted/20 p-4 flex items-center gap-4"
                 >
                   <input
                     type="file"
@@ -325,16 +330,16 @@ const uploadVideo = async () => {
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   <div
-                    class="w-24 aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-white/10 relative group-hover:border-white/20"
+                    class="w-24 aspect-video bg-background rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-border/10 relative group-hover:border-border/20"
                   >
                     <Icon
                       name="ph:image-duotone"
-                      class="text-2xl text-white/10"
+                      class="text-2xl text-muted-foreground/20"
                       v-if="!form.thumbnailFile"
                     />
                     <div
                       v-else
-                      class="text-[8px] text-primary-500 font-black uppercase tracking-widest"
+                      class="text-[8px] text-primary font-black uppercase tracking-widest"
                     >
                       {{ t("studio.selected") }}
                     </div>
@@ -345,17 +350,17 @@ const uploadVideo = async () => {
                   <div class="flex-1 min-w-0">
                     <div
                       v-if="form.thumbnailFile"
-                      class="text-white text-xs font-bold truncate uppercase tracking-tight"
+                      class="text-foreground text-xs font-bold truncate uppercase tracking-tight"
                     >
                       {{ form.thumbnailFile.name }}
                     </div>
                     <div
                       v-else
-                      class="text-white/40 text-xs font-bold uppercase tracking-widest"
+                      class="text-muted-foreground text-xs font-bold uppercase tracking-widest"
                     >
                       {{ t("studio.select_image") }}
                     </div>
-                    <p class="text-[9px] text-white/20 uppercase mt-1">
+                    <p class="text-[9px] text-muted-foreground/30 uppercase mt-1">
                       {{ t("studio.recommended_ratio") }}
                     </p>
                   </div>
@@ -365,70 +370,64 @@ const uploadVideo = async () => {
 
             <!-- Right Column: Metadata -->
             <div class="lg:col-span-3 space-y-8">
-              <div class="glass-card p-8 space-y-8 shadow-2xl">
+              <Card class="glass-card p-8 space-y-8 shadow-2xl bg-muted/10">
                 <!-- Metadata Fields -->
                 <div class="space-y-6">
                   <div class="space-y-3">
                     <label
-                      class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2"
+                      class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
                       >{{ t("studio.title") }}</label
                     >
-                    <input
+                    <Input
                       v-model="form.title"
                       type="text"
                       required
-                      class="glass-input w-full rounded-2xl py-4 px-6 text-sm font-medium placeholder:text-white/10"
+                      class="w-full rounded-2xl py-6 px-6 text-sm font-medium bg-background/50 border-border/40 focus-visible:ring-primary/20 h-auto"
                       :placeholder="t('studio.entry_name_placeholder')"
                     />
                   </div>
                   <div class="space-y-3">
                     <label
-                      class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2"
+                      class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
                       >{{ t("studio.description") }}</label
                     >
-                    <textarea
+                    <Textarea
                       v-model="form.description"
-                      class="glass-input w-full min-h-[200px] resize-none rounded-[2rem] py-5 px-6 text-sm font-medium placeholder:text-white/10"
+                      class="w-full min-h-[200px] resize-none rounded-[2rem] py-5 px-6 text-sm font-medium bg-background/50 border-border/40 focus-visible:ring-primary/20"
                       :placeholder="t('studio.description_placeholder')"
-                    ></textarea>
+                    />
                   </div>
                 </div>
 
                 <!-- Footer Actions -->
                 <div
-                  class="pt-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5"
+                  class="pt-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-border/5"
                 >
                   <div class="flex-1 w-full md:pr-8">
-                    <div v-if="isUploading" class="space-y-3">
+                    <div v-if="isUploading" class="space-y-4">
                       <div class="flex justify-between items-end">
                         <span
-                          class="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] animate-pulse"
+                          class="text-[10px] font-black text-primary uppercase tracking-[0.2em] animate-pulse"
                           >{{ progress.status }}</span
                         >
-                        <span class="text-lg font-black text-white tabular-nums"
+                        <span class="text-lg font-black text-foreground tabular-nums"
                           >{{ progress.percent }}%</span
                         >
                       </div>
-                      <div
-                        class="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5"
-                      >
-                        <div
-                          class="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
-                          :style="{ width: `${progress.percent}%` }"
-                        ></div>
-                      </div>
+                      <Progress :model-value="progress.percent" class="h-2 bg-muted border border-border/5" />
                     </div>
-                    <div v-else class="flex items-center gap-2 text-white/20">
+                    <div v-else class="flex items-center gap-2 text-muted-foreground/30">
                       <Icon name="ph:info" class="text-sm" />
                       <p class="text-[9px] font-bold uppercase tracking-widest">
                         {{ t("studio.safety_protocols") }}
                       </p>
                     </div>
                   </div>
-                  <button
+                  <Button
                     type="submit"
+                    size="lg"
                     :disabled="isUploading || !form.videoFile || !form.title"
-                    class="btn-primary w-full md:w-auto shrink-0 rounded-2xl px-12 py-5 font-black uppercase tracking-[0.2em] text-xs shadow-2xl transition-all disabled:opacity-50 disabled:grayscale"
+                    class="w-full md:w-auto shrink-0 rounded-2xl px-12 py-7 font-black uppercase tracking-[0.2em] text-xs shadow-2xl transition-all disabled:opacity-50 disabled:grayscale h-auto"
                   >
                     <div class="flex items-center justify-center gap-3">
                       <Icon
@@ -442,33 +441,32 @@ const uploadVideo = async () => {
                           : t("studio.publish")
                       }}</span>
                     </div>
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </Card>
 
               <!-- Content Guidelines Card -->
-              <div
-                :delay="200"
-                class="glass-card p-6 border-white/5 opacity-60 hover:opacity-100 transition-opacity"
+              <Card
+                class="glass-card p-6 border-border/5 opacity-60 hover:opacity-100 transition-opacity bg-muted/20"
               >
                 <div class="flex gap-4">
                   <div
-                    class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 shrink-0"
+                    class="w-10 h-10 rounded-xl bg-muted border border-border/10 flex items-center justify-center text-muted-foreground shrink-0"
                   >
                     <Icon name="ph:warning-diamond" class="text-xl" />
                   </div>
                   <div class="space-y-1">
                     <h4
-                      class="text-[10px] font-black text-white uppercase tracking-widest"
+                      class="text-[10px] font-black text-foreground uppercase tracking-widest"
                     >
                       {{ t("studio.safety_protocols") }}
                     </h4>
-                    <p class="text-[11px] text-white/40 leading-relaxed">
+                    <p class="text-[11px] text-muted-foreground leading-relaxed">
                       {{ t("studio.safety_protocols_hint") }}
                     </p>
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </form>

@@ -1,52 +1,38 @@
 <script setup lang="ts">
+import { useAppStore } from "~/store/app";
+const appStore = useAppStore();
 const route = useRoute();
-const { isAdmin } = useProfile();
 
 const navItems = [
   {
-    icon: "i-ph-house",
-    activeIcon: "i-ph-house-fill",
+    icon: "ph:house-duotone",
+    activeIcon: "ph:house-fill",
     labelKey: "nav.home",
     link: "/",
   },
   {
-    icon: "i-ph-tiktok-logo",
-    activeIcon: "i-ph-tiktok-logo-fill",
+    icon: "ph:lightning-duotone",
+    activeIcon: "ph:lightning-fill",
     labelKey: "nav.shorts",
     link: "/shorts",
   },
   {
-    icon: "i-ph-fire",
-    activeIcon: "i-ph-fire-fill",
+    icon: "ph:fire-duotone",
+    activeIcon: "ph:fire-fill",
     labelKey: "home.trending",
     link: "/?feed=trending",
   },
   {
-    icon: "i-ph-users-three",
-    activeIcon: "i-ph-users-three-fill",
-    labelKey: "home.subscriptions",
+    icon: "ph:stack-duotone",
+    activeIcon: "ph:stack-fill",
+    labelKey: "nav.subscriptions",
     link: "/subscriptions",
   },
   {
-    icon: "i-ph-clock-counter-clockwise",
-    activeIcon: "i-ph-clock-counter-clockwise-fill",
+    icon: "ph:clock-counter-clockwise-duotone",
+    activeIcon: "ph:clock-counter-clockwise-fill",
     labelKey: "nav.history",
-    link: "/history",
-  },
-];
-
-const studioItems = [
-  {
-    icon: "i-ph-video-camera",
-    activeIcon: "i-ph-video-camera-fill",
-    labelKey: "nav.studio",
-    link: "/studio",
-  },
-  {
-    icon: "i-ph-upload-simple",
-    activeIcon: "i-ph-upload-simple-fill",
-    labelKey: "nav.upload",
-    link: "/studio/upload",
+    link: "/?feed=history",
   },
 ];
 
@@ -62,90 +48,77 @@ const isActive = (path: string) => {
 
 <template>
   <aside
-    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-6 glass-surface border-r border-theme-glass-border w-[88px] hover:w-[260px] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group/sidebar overflow-hidden select-none"
+    class="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col py-8 glass-surface border-r border-border/50 transition-all duration-700 ease-nt-out group/sidebar overflow-hidden select-none"
+    :class="appStore.isSidebarOpen ? 'w-[240px]' : 'w-[88px] hover:w-[240px]'"
   >
-    <!-- Background Glow for Active State (will be shown via nav-link-active) -->
-    <div
-      class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-primary-500/10 to-transparent opacity-0 group-hover/sidebar:opacity-100 transition-opacity pointer-events-none"
-    ></div>
-    <!-- Main Navigation -->
-    <nav class="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-none pb-4 pt-4">
-      <template v-for="item in navItems" :key="item.link">
-        <NuxtLink
-          :to="item.link"
-          class="nav-link group/item"
-          :class="{ 'nav-link-active': isActive(item.link) }"
+    <!-- Nav Items -->
+    <ScrollArea class="flex-1">
+      <nav class="flex flex-col gap-2 px-4">
+        <Button
+          v-for="(item, idx) in navItems"
+          :key="item.link"
+          variant="ghost"
+          as-child
+          class="flex items-center justify-start gap-4 px-4 py-6 rounded-2xl transition-all duration-500 relative group/item no-underline overflow-hidden press-effect h-auto"
+          :class="
+            isActive(item.link)
+              ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary shadow-sm shadow-primary/5'
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          "
         >
-          <div
-            :class="[isActive(item.link) ? item.activeIcon : item.icon]"
-            class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"
-          ></div>
-          <span
-            class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]"
-          >
-            {{ $t(item.labelKey) }}
-          </span>
-        </NuxtLink>
-      </template>
+          <NuxtLink :to="item.link">
+            <!-- Active Indicator Line -->
+            <div
+              v-if="isActive(item.link)"
+              class="absolute left-0 top-3 bottom-3 w-1 bg-primary rounded-full shadow-[0_0_8px_rgba(239,68,68,0.5)]"
+            ></div>
 
-      <div class="h-px bg-theme-border my-6 mx-3"></div>
+            <Icon
+              :name="isActive(item.link) ? item.activeIcon : item.icon"
+              class="text-2xl shrink-0 transition-transform duration-500 group-hover/item:scale-110 relative z-10"
+              :class="isActive(item.link) ? 'text-primary' : 'text-primary/80'"
+            />
 
-      <template v-for="item in studioItems" :key="item.link">
-        <NuxtLink
-          :to="item.link"
-          class="nav-link group/item"
-          :class="{ 'nav-link-active': isActive(item.link) }"
-        >
-          <div
-            :class="[isActive(item.link) ? item.activeIcon : item.icon]"
-            class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"
-          ></div>
-          <span
-            class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]"
-          >
-            {{ $t(item.labelKey) }}
-          </span>
-        </NuxtLink>
-      </template>
+            <span
+              class="transition-all duration-500 whitespace-nowrap font-800 text-[13px] tracking-tight relative z-10"
+              :class="[
+                appStore.isSidebarOpen 
+                  ? 'opacity-100 translate-x-0' 
+                  : 'opacity-0 -translate-x-4 group-hover/sidebar:opacity-100 group-hover/sidebar:translate-x-0'
+              ]"
+              :style="{ transitionDelay: `${idx * 30}ms` }"
+            >
+              {{ $t(item.labelKey) }}
+            </span>
+          </NuxtLink>
+        </Button>
+      </nav>
+    </ScrollArea>
 
-      <!-- Admin -->
-      <template v-if="isAdmin">
-        <div class="h-px bg-theme-border my-6 mx-3"></div>
-        <NuxtLink
-          to="/admin"
-          class="nav-link group/item"
-          :class="{ 'nav-link-active': isActive('/admin') }"
-        >
+    <div class="mt-auto px-4 flex flex-col gap-2">
+      <!-- Settings Link -->
+      <Button
+        variant="ghost"
+        as-child
+        class="flex items-center justify-start gap-4 px-4 py-6 rounded-2xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-500 no-underline overflow-hidden press-effect h-auto"
+      >
+        <NuxtLink to="/profile/settings">
           <Icon
-            name="ph:shield-checkered"
-            class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-400"
+            name="ph:gear-duotone"
+            class="text-2xl shrink-0 text-primary/60"
           />
           <span
-            class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]"
+            class="transition-all duration-500 whitespace-nowrap font-800 text-[13px] tracking-tight"
+            :class="[
+              appStore.isSidebarOpen 
+                ? 'opacity-100 translate-x-0' 
+                : 'opacity-0 -translate-x-4 group-hover/sidebar:opacity-100 group-hover/sidebar:translate-x-0'
+            ]"
           >
-            {{ $t("admin.panel") }}
+            {{ $t("nav.settings") }}
           </span>
         </NuxtLink>
-      </template>
-    </nav>
-
-    <!-- Bottom Actions & Footer -->
-    <div class="px-4 mt-auto space-y-4">
-      <NuxtLink
-        to="/profile/settings"
-        class="nav-link group/item"
-        :class="{ 'nav-link-active': isActive('/profile/settings') }"
-      >
-        <Icon
-          name="ph:gear-six"
-          class="text-2xl shrink-0 transition-colors duration-300 group-hover/item:text-primary-500"
-        />
-        <span
-          class="opacity-0 group-hover/sidebar:opacity-100 transition-all duration-300 whitespace-nowrap font-600 text-[14px]"
-        >
-          {{ $t("nav.settings") }}
-        </span>
-      </NuxtLink>
+      </Button>
     </div>
   </aside>
 </template>

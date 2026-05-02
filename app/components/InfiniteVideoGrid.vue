@@ -1,4 +1,6 @@
 <script setup>
+import { gsap } from "gsap";
+
 const supabase = useSupabaseClient();
 const videos = ref([]);
 const page = ref(0);
@@ -7,6 +9,7 @@ const loading = ref(false);
 const hasMore = ref(true);
 
 const loadMoreTrigger = ref(null);
+const gridContainer = ref(null);
 
 const fetchVideos = async () => {
   if (loading.value || !hasMore.value) return;
@@ -29,8 +32,40 @@ const fetchVideos = async () => {
     console.error(error);
   } else {
     if (data.length < pageSize) hasMore.value = false;
-    videos.value.push(...data);
+    
+    const newVideos = data;
+    const startIndex = videos.value.length;
+    videos.value.push(...newVideos);
     page.value++;
+
+    // Animate new items
+    nextTick(() => {
+      const items = gridContainer.value?.querySelectorAll(".video-item");
+      if (items) {
+        const itemsToAnimate = Array.from(items).slice(startIndex);
+        gsap.fromTo(
+          itemsToAnimate,
+          {
+            opacity: 0,
+            y: 30,
+            scale: 0.95,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            stagger: 0.05,
+            ease: "expo.out",
+            onComplete: (self) => {
+              // Remove the opacity-0 class to prevent disappearing after clearProps
+              gsap.set(itemsToAnimate, { clearProps: "all" });
+              itemsToAnimate.forEach(el => el.classList.remove('opacity-0'));
+            }
+          }
+        );
+      }
+    });
   }
   loading.value = false;
 };
@@ -50,25 +85,18 @@ onMounted(() => {
 
 <template>
   <div>
-    <TransitionGroup
-      tag="div"
+    <div
+      ref="gridContainer"
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-12"
-      enter-active-class="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-      enter-from-class="opacity-0 translate-y-10 scale-[0.97]"
-      enter-to-class="opacity-100 translate-y-0 scale-100"
-      leave-active-class="transition-all duration-300 ease-in absolute"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0 scale-[0.95]"
-      move-class="transition-all duration-500"
     >
       <div
         v-for="(video, idx) in videos"
         :key="video.id"
-        :style="{ transitionDelay: `${(idx % pageSize) * 55}ms` }"
+        class="video-item opacity-0"
       >
         <VideoCard :video="video" :index="idx" />
       </div>
-    </TransitionGroup>
+    </div>
 
     <!-- Skeletons while loading first page -->
     <div
@@ -117,7 +145,7 @@ onMounted(() => {
     >
       <div class="relative mb-8">
         <Icon
-          name="ph:video-camera-slash"
+          name="ph:video-camera-slash-duotone"
           class="text-7xl text-theme-border-strong"
         />
         <div

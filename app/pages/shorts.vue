@@ -2,18 +2,21 @@
 import { useAppStore } from "~/store/app";
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
+const { t } = useI18n();
+const appStore = useAppStore();
 
 const videos = ref<any[]>([]);
 const activeIndex = ref(0);
 const loading = ref(true);
+const isPlaying = ref(true);
+
+const videoRefs = ref<HTMLVideoElement[]>([]);
 
 const fetchShorts = async () => {
   loading.value = true;
   const { data, error } = await supabase
     .from("videos")
-    .select(
-      "*, profiles:profiles!videos_user_id_fkey(display_name, avatar_url)",
-    )
+    .select("*, profiles:profiles!videos_user_id_fkey(display_name, avatar_url)")
     .eq("status", "published")
     .eq("is_short", true)
     .order("created_at", { ascending: false })
@@ -25,21 +28,79 @@ const fetchShorts = async () => {
   loading.value = false;
 };
 
-onMounted(() => {
-  fetchShorts();
-});
+const togglePlay = () => {
+  const currentVideo = videoRefs.value[activeIndex.value];
+  if (!currentVideo) return;
+  
+  if (currentVideo.paused) {
+    currentVideo.play();
+    isPlaying.value = true;
+  } else {
+    currentVideo.pause();
+    isPlaying.value = false;
+  }
+};
+
+const scrollToVideo = (index: number) => {
+  if (index < 0 || index >= videos.value.length) return;
+  const container = document.getElementById("shorts-container");
+  if (container) {
+    container.scrollTo({
+      top: index * window.innerHeight,
+      behavior: "smooth"
+    });
+    activeIndex.value = index;
+  }
+};
 
 const onScroll = (e: any) => {
   const container = e.target;
   const index = Math.round(container.scrollTop / window.innerHeight);
   if (activeIndex.value !== index) {
     activeIndex.value = index;
+    isPlaying.value = true;
+    // Play the current video, pause others
+    videoRefs.value.forEach((v, i) => {
+      if (i === index) v.play();
+      else v.pause();
+    });
   }
 };
 
-const appStore = useAppStore();
+// Keyboard navigation
+onMounted(() => {
+  fetchShorts();
+  
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      scrollToVideo(activeIndex.value + 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      scrollToVideo(activeIndex.value - 1);
+    } else if (e.key === " ") {
+      e.preventDefault();
+      togglePlay();
+    }
+  };
 
-// Interaction states for current video
+  const handleWheel = (e: WheelEvent) => {
+    if (Math.abs(e.deltaY) > 50) {
+      e.preventDefault();
+      if (e.deltaY > 0) scrollToVideo(activeIndex.value + 1);
+      else scrollToVideo(activeIndex.value - 1);
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("wheel", handleWheel, { passive: false });
+  onUnmounted(() => {
+    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("wheel", handleWheel);
+  });
+});
+
+// Interaction states
 const isLiked = ref(false);
 const isSubscribed = ref(false);
 
@@ -53,14 +114,6 @@ const toggleSubscribe = () => {
   isSubscribed.value = !isSubscribed.value;
 };
 
-const handleComment = () => {
-  if (!user.value) return appStore.openAuthModal();
-  // Just open modal for now if they click the comment button in shorts
-  // (In a full app, this would open a comment drawer)
-};
-
-const { t } = useI18n();
-
 useSeoMeta({
   title: () => `${t("shorts.title")} - ${t("seo.title")}`,
   description: () => t("shorts.subtitle"),
@@ -68,213 +121,93 @@ useSeoMeta({
 </script>
 
 <template>
-  <div
-    class="h-screen w-full bg-void relative flex justify-center overflow-hidden selection:bg-primary-500/30 selection:text-white"
-  >
-    <!-- Cinematic Atmosphere -->
-    <div class="fixed inset-0 pointer-events-none z-0">
-      <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary-500/5 blur-[150px] rounded-full animate-ambient"
-      ></div>
-    </div>
-
+  <div class="h-screen w-full bg-void relative flex justify-center overflow-hidden selection:bg-primary-500/30 selection:text-white">
     <!-- Centered Feed -->
     <div
+      id="shorts-container"
       class="w-full max-w-[500px] h-full overflow-y-scroll snap-y snap-mandatory scrollbar-none relative z-10"
       @scroll="onScroll"
     >
       <!-- Loading State -->
-      <div
-        v-if="loading && videos.length === 0"
-        class="h-full flex items-center justify-center"
-      >
-        <div class="space-y-6 text-center">
-          <div class="w-16 h-16 mx-auto relative">
-            <div
-              class="absolute inset-0 bg-primary-500/20 blur-xl animate-pulse"
-            ></div>
-            <div
-              class="relative w-full h-full rounded-2xl border border-primary-500/30 flex items-center justify-center"
-            >
-              <Icon
-                name="ph:broadcast"
-                class="text-3xl text-primary-500 animate-spin"
-              />
-            </div>
-          </div>
-          <p
-            class="text-[10px] font-black text-primary-500 uppercase tracking-[0.4em] animate-pulse"
-          >
-            {{ t("shorts.loading") }}
-          </p>
-        </div>
+      <div v-if="loading && videos.length === 0" class="h-full flex items-center justify-center">
+        <Icon name="ph:circle-notch" class="text-4xl text-primary-500 animate-spin" />
       </div>
 
       <!-- Empty State -->
-      <div
-        v-else-if="!loading && videos.length === 0"
-        class="h-full flex flex-col items-center justify-center px-10 text-center"
-      >
-        <div
-          class="w-24 h-24 rounded-3xl bg-void-900 border border-white/5 flex items-center justify-center mb-8 shadow-2xl"
-        >
-          <Icon name="ph:video-camera-slash" class="text-5xl text-white/10" />
-        </div>
-        <h2
-          class="text-2xl font-900 text-white uppercase tracking-tighter italic mb-4"
-        >
-          {{ t("shorts.no_shorts") }}
-        </h2>
-        <p
-          class="text-white/40 text-[11px] font-black uppercase tracking-widest leading-loose"
-        >
-          {{ t("shorts.no_shorts_subtitle") }}
-        </p>
+      <div v-else-if="!loading && videos.length === 0" class="h-full flex flex-col items-center justify-center px-10 text-center">
+        <h2 class="text-2xl font-900 text-white uppercase tracking-tighter italic mb-4">{{ t("shorts.no_shorts") }}</h2>
       </div>
 
       <!-- Shorts -->
       <div
         v-for="(video, index) in videos"
         :key="video.id"
-        class="h-screen w-full snap-start snap-always relative flex items-center justify-center p-0 md:p-6 lg:p-10"
+        class="h-screen w-full snap-start snap-always relative flex items-center justify-center"
       >
-        <div
-          class="relative w-full h-full max-w-[450px] aspect-[9/16] bg-black shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] border border-white/10 rounded-none md:rounded-[2.5rem] overflow-hidden group"
+        <div 
+          class="relative w-full h-full max-w-[450px] aspect-[9/16] bg-black shadow-2xl border-none overflow-hidden group cursor-pointer"
+          @click="togglePlay"
         >
           <!-- Video Element -->
           <video
+            ref="videoRefs"
             :src="video.video_url"
             class="w-full h-full object-cover"
             loop
-            :autoplay="index === activeIndex"
-            :muted="index !== activeIndex"
-            :poster="video.thumbnail_url"
+            :autoplay="index === 0"
+            :muted="false"
             playsinline
           ></video>
 
-          <!-- Glass Overlays -->
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 pointer-events-none"
-          ></div>
-
-          <!-- Bottom Metadata -->
-          <div
-            class="absolute bottom-0 left-0 right-0 p-8 pt-20 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-auto"
+          <!-- Play/Pause Indicator Overlay -->
+          <div 
+            class="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300"
+            :class="!isPlaying ? 'opacity-100' : 'opacity-0'"
           >
-            <div class="space-y-6">
-              <div class="flex items-center gap-4">
-                <NuxtLink
-                  :to="`/profile/${video.user_id}`"
-                  class="group no-underline flex items-center gap-4"
-                >
-                  <div class="relative">
-                    <div
-                      class="absolute -inset-1 bg-white/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity"
-                    ></div>
-                    <img
-                      :src="
-                        video.profiles?.avatar_url ||
-                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${video.user_id}`
-                      "
-                      class="w-12 h-12 rounded-xl border-2 border-white/20 relative z-10"
-                    />
-                  </div>
-                  <div class="flex flex-col">
-                    <span
-                      class="text-sm font-900 text-white uppercase tracking-tighter italic"
-                      >{{ video.profiles?.display_name }}</span
-                    >
-                    <span
-                      class="text-[9px] font-black text-white/40 uppercase tracking-widest"
-                      >{{ t("watch.verified_user") }}</span
-                    >
-                  </div>
-                </NuxtLink>
-                <button
-                  @click="toggleSubscribe()"
-                  class="ml-4 px-6 py-2.5 rounded-lg bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-primary-500 hover:text-white transition-all"
-                >
-                  {{
-                    isSubscribed
-                      ? t("watch.membership_active")
-                      : t("watch.join_collective")
-                  }}
-                </button>
-              </div>
-
-              <!-- Action Buttons -->
-              <div
-                class="absolute bottom-8 right-4 flex flex-col items-center gap-6 z-40"
-              >
-                <div
-                  class="flex flex-col items-center gap-2 group/action cursor-pointer"
-                  @click="toggleLike"
-                >
-                  <div
-                    class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-primary-500/20 group-hover/action:border-primary-500/50 transition-all"
-                  >
-                    <Icon
-                      :name="isLiked ? 'ph:heart-fill' : 'ph:heart'"
-                      class="text-2xl"
-                      :class="isLiked ? 'text-primary-500' : 'text-white'"
-                    />
-                  </div>
-                  <span
-                    class="text-[9px] font-black text-white uppercase tracking-tighter"
-                    >{{ t("shorts.like") }}</span
-                  >
-                </div>
-
-                <div
-                  class="flex flex-col items-center gap-2 group/action cursor-pointer"
-                  @click="handleComment"
-                >
-                  <div
-                    class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all"
-                  >
-                    <Icon name="ph:chat-circle" class="text-white text-2xl" />
-                  </div>
-                  <span
-                    class="text-[9px] font-black text-white uppercase tracking-tighter"
-                    >{{ t("shorts.comment") }}</span
-                  >
-                </div>
-
-                <div
-                  class="flex flex-col items-center gap-2 group/action cursor-pointer"
-                >
-                  <div
-                    class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/action:bg-white/20 transition-all"
-                  >
-                    <Icon name="ph:share-fat" class="text-white text-2xl" />
-                  </div>
-                  <span
-                    class="text-[9px] font-black text-white uppercase tracking-tighter"
-                    >{{ t("shorts.share") }}</span
-                  >
-                </div>
-              </div>
-
-              <!-- Title & Sound -->
-              <div class="max-w-[70%]">
-                <p
-                  class="text-sm font-medium text-white line-clamp-2 leading-relaxed mb-4"
-                >
-                  {{ video.title }}
-                </p>
-                <div class="flex items-center gap-2 text-white/60">
-                  <Icon name="ph:music-notes" class="text-xs" />
-                  <div
-                    class="text-[10px] font-black uppercase tracking-widest overflow-hidden whitespace-nowrap relative"
-                  >
-                    <span class="inline-block animate-marquee"
-                      >{{ t("shorts.original_sound") }} -
-                      {{ video.profiles?.display_name }}</span
-                    >
-                  </div>
-                </div>
-              </div>
+            <div class="w-20 h-20 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center scale-110">
+              <Icon name="ph:play-fill" class="text-white text-4xl" />
             </div>
+          </div>
+
+          <!-- Bottom Metadata Overlay -->
+          <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none">
+            <div class="flex items-center gap-3 mb-4 pointer-events-auto">
+              <img :src="video.profiles?.avatar_url" class="w-10 h-10 rounded-full border border-white/20" />
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-white">{{ video.profiles?.display_name }}</span>
+                <span class="text-[10px] text-white/60">@{{ video.profiles?.display_name?.toLowerCase().replace(' ', '') }}</span>
+              </div>
+              <button 
+                @click.stop="toggleSubscribe"
+                class="ml-auto px-4 py-1.5 rounded-full text-[11px] font-bold transition-all"
+                :class="isSubscribed ? 'bg-white/10 text-white border border-white/20' : 'bg-primary-500 text-white'"
+              >
+                {{ isSubscribed ? 'Subscribed' : 'Subscribe' }}
+              </button>
+            </div>
+            <p class="text-[13px] text-white line-clamp-2 leading-snug">{{ video.title }}</p>
+          </div>
+
+          <!-- Sidebar Actions -->
+          <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-40">
+            <button @click.stop="toggleLike" class="flex flex-col items-center gap-1 group/btn">
+              <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/btn:bg-white/10 transition-all">
+                <Icon :name="isLiked ? 'ph:heart-fill' : 'ph:heart'" class="text-2xl" :class="isLiked ? 'text-primary-500' : 'text-white'" />
+              </div>
+              <span class="text-[10px] font-bold text-white">{{ t("shorts.like") }}</span>
+            </button>
+            <button @click.stop class="flex flex-col items-center gap-1 group/btn">
+              <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/btn:bg-white/10 transition-all">
+                <Icon name="ph:chat-circle" class="text-2xl text-white" />
+              </div>
+              <span class="text-[10px] font-bold text-white">{{ t("shorts.comment") }}</span>
+            </button>
+            <button @click.stop class="flex flex-col items-center gap-1 group/btn">
+              <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center group-hover/btn:bg-white/10 transition-all">
+                <Icon name="ph:share-fat" class="text-2xl text-white" />
+              </div>
+              <span class="text-[10px] font-bold text-white">{{ t("shorts.share") }}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -283,30 +216,7 @@ useSeoMeta({
 </template>
 
 <style scoped>
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-@keyframes progress {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-/* Used dynamically via JS on active short progress bars */
-.animate-progress {
-  animation: progress var(--v-duration, 15s) linear forwards;
-}
-
-/* Vertical feed styles */
-:global(body) {
-  overflow: hidden;
-}
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+:global(body) { overflow: hidden; }
 </style>

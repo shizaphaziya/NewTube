@@ -19,6 +19,14 @@ const authSchema = z.object({
   password: z.string().min(6, t("auth.password_min")),
 });
 
+// Sync Pinia state with Dialog open state
+const isOpen = computed({
+  get: () => appStore.isAuthModalOpen,
+  set: (val) => {
+    if (!val) appStore.closeAuthModal();
+  }
+});
+
 // Handles form submission for both Sign In and Sign Up using Supabase Auth
 const handleAuth = async () => {
   loading.value = true;
@@ -56,7 +64,6 @@ const handleAuth = async () => {
       if (error) throw error;
       success(t("auth.login_success"));
       appStore.closeAuthModal();
-      // Refresh current page context if needed, but session state handles most
     }
   } catch (e: any) {
     showError(e.message);
@@ -67,166 +74,102 @@ const handleAuth = async () => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="modal-backdrop">
-      <div
-        v-if="appStore.isAuthModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-void-950/80 backdrop-blur-2xl"
-        @click.self="appStore.closeAuthModal"
-      >
-        <Transition name="modal-card" appear>
+  <Dialog v-model:open="isOpen">
+    <DialogContent class="sm:max-w-[420px] p-0 overflow-hidden border-none bg-transparent shadow-none">
+      <div class="glass-card w-full p-10 relative overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px]"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-[80px]"></div>
+
+        <div class="text-center mb-10 relative z-10">
           <div
-            v-if="appStore.isAuthModalOpen"
-            class="glass-card w-full max-w-[400px] p-8 relative overflow-hidden"
+            class="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/20 rotate-3 transition-transform hover:rotate-0 duration-500"
           >
-            <button
-              @click="appStore.closeAuthModal"
-              class="absolute top-4 right-4 btn-icon !w-8 !h-8"
-            >
-              <Icon name="ph:x" class="text-sm" />
-            </button>
+            <Icon
+              name="ph:play-fill"
+              class="text-primary-foreground text-2xl translate-x-0.5"
+            />
+          </div>
+          <h2
+            class="text-3xl font-display font-900 tracking-tight text-foreground mb-2"
+          >
+            {{ isRegister ? t("auth.join") : t("auth.welcome") }}
+          </h2>
+          <p
+            class="text-[11px] font-700 text-muted-foreground uppercase tracking-[0.2em]"
+          >
+            {{ t("auth.required_action") }}
+          </p>
+        </div>
 
-            <div class="text-center mb-8">
-              <div
-                class="w-12 h-12 rounded-sm bg-white flex items-center justify-center mx-auto mb-6 shadow-2xl"
-              >
-                <Icon
-                  name="ph:play-fill"
-                  class="text-black text-xl translate-x-px"
-                />
-              </div>
-              <h2
-                class="text-2xl font-sans font-bold tracking-tight text-white mb-2"
-              >
-                {{ isRegister ? t("auth.join") : t("auth.welcome") }}
-              </h2>
-              <p
-                class="text-[10px] font-mono font-medium text-void-500 uppercase tracking-widest"
-              >
-                {{ t("auth.required_action") }}
-              </p>
+        <form @submit.prevent="handleAuth" class="space-y-5 relative z-10">
+          <div
+            v-if="validationError"
+            class="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-[12px] font-600 text-center animate-shake"
+          >
+            {{ validationError }}
+          </div>
+
+          <div class="space-y-4">
+            <div class="relative group">
+              <Icon
+                name="ph:envelope-simple-duotone"
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors text-xl z-10"
+              />
+              <Input
+                v-model="email"
+                type="email"
+                required
+                :placeholder="t('auth.email')"
+                class="w-full pl-12 h-12 text-[14px] bg-background/50 border-border/40 focus-visible:ring-primary/20"
+              />
             </div>
-
-            <form @submit.prevent="handleAuth" class="space-y-4">
-              <div
-                v-if="validationError"
-                class="p-2 rounded-sm bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] text-center"
-              >
-                {{ validationError }}
-              </div>
-
-              <div class="space-y-3">
-                <div class="relative group">
-                  <Icon
-                    name="ph:envelope-simple"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 text-void-500 group-focus-within:text-white transition-colors"
-                  />
-                  <input
-                    v-model="email"
-                    type="email"
-                    required
-                    :placeholder="t('auth.email')"
-                    class="glass-input w-full pl-11 h-11"
-                  />
-                </div>
-                <div class="relative group">
-                  <Icon
-                    name="ph:lock-key"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 text-void-500 group-focus-within:text-white transition-colors"
-                  />
-                  <input
-                    v-model="password"
-                    type="password"
-                    required
-                    :placeholder="t('auth.password')"
-                    class="glass-input w-full pl-11 h-11"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                :disabled="loading"
-                class="btn-primary w-full h-11 mt-2"
-              >
-                <span v-if="!loading">{{
-                  isRegister ? t("auth.create_account") : t("auth.sign_in")
-                }}</span>
-                <Icon
-                  name="ph:circle-notch"
-                  class="animate-spin text-lg"
-                  v-else
-                />
-              </button>
-            </form>
-
-            <div class="mt-6 text-center">
-              <button
-                @click="isRegister = !isRegister"
-                class="text-[11px] font-medium text-void-500 hover:text-white transition-colors"
-              >
-                {{
-                  isRegister
-                    ? t("auth.already_have_account")
-                    : t("auth.no_account")
-                }}
-              </button>
+            <div class="relative group">
+              <Icon
+                name="ph:lock-key-duotone"
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors text-xl z-10"
+              />
+              <Input
+                v-model="password"
+                type="password"
+                required
+                :placeholder="t('auth.password')"
+                class="w-full pl-12 h-12 text-[14px] bg-background/50 border-border/40 focus-visible:ring-primary/20"
+              />
             </div>
           </div>
-        </Transition>
+
+          <Button
+            type="submit"
+            :disabled="loading"
+            class="w-full h-12 mt-4 text-[15px] shadow-lg shadow-primary/20 press-effect bg-primary hover:bg-primary/90"
+          >
+            <span v-if="!loading">{{ isRegister ? t("auth.create_account") : t("auth.sign_in") }}</span>
+            <Icon name="ph:circle-notch" class="animate-spin text-xl" v-else />
+          </Button>
+        </form>
+
+        <div class="mt-8 text-center relative z-10">
+          <Button
+            variant="link"
+            @click="isRegister = !isRegister"
+            class="text-[13px] font-600 text-muted-foreground hover:text-primary transition-all p-0 h-auto"
+          >
+            {{ isRegister ? t("auth.already_have_account") : t("auth.no_account") }}
+          </Button>
+        </div>
       </div>
-    </Transition>
-  </Teleport>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <style scoped>
-/* Backdrop */
-/* noinspection CssUnusedSymbol */
-.modal-backdrop-enter-active,
-.modal-backdrop-leave-active {
-  transition:
-    opacity 0.35s ease,
-    backdrop-filter 0.35s ease;
-}
-/* noinspection CssUnusedSymbol */
-.modal-backdrop-enter-from,
-.modal-backdrop-leave-to {
-  opacity: 0;
-}
-
-/* Card — clip-path iris open from center */
-/* noinspection CssUnusedSymbol */
-.modal-card-enter-active {
-  animation: modal-iris-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-/* noinspection CssUnusedSymbol */
-.modal-card-leave-active {
-  animation: modal-iris-out 0.3s cubic-bezier(0.4, 0, 1, 1) both;
-}
-
-@keyframes modal-iris-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.92) translateY(12px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes modal-iris-out {
-  0% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.94) translateY(8px);
-    filter: blur(4px);
-  }
+.glass-card {
+  background: var(--nt-glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: var(--nt-shadow-xl);
 }
 </style>
