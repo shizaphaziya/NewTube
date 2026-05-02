@@ -1,8 +1,8 @@
 <template>
   <div>
     <NuxtLayout>
-    <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
-  </NuxtLayout>
+      <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
+    </NuxtLayout>
     <ToastContainer />
     <AuthModal />
   </div>
@@ -22,13 +22,33 @@
 }
 
 @keyframes nt-page-out {
-  0%   { opacity: 1; filter: blur(0px); transform: scale(1); clip-path: inset(0% 0% 0% 0% round 0px); }
-  100% { opacity: 0; filter: blur(6px); transform: scale(0.97); clip-path: inset(2% 2% 2% 2% round 16px); }
+  0% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+    clip-path: inset(0% 0% 0% 0% round 0px);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(0.97);
+    clip-path: inset(2% 2% 2% 2% round 16px);
+  }
 }
 
 @keyframes nt-page-in {
-  0%   { opacity: 0; filter: blur(10px); transform: scale(1.03); clip-path: inset(4% 4% 4% 4% round 32px); }
-  100% { opacity: 1; filter: blur(0px);  transform: scale(1);    clip-path: inset(0% 0% 0% 0% round 0px); }
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(1.03);
+    clip-path: inset(4% 4% 4% 4% round 32px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+    clip-path: inset(0% 0% 0% 0% round 0px);
+  }
 }
 
 /* Shared element: video thumbnail — morphing card-to-hero */
@@ -56,11 +76,20 @@
 }
 
 @keyframes nt-title-out {
-  to { opacity: 0; transform: translateY(-8px); }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 }
 @keyframes nt-title-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .scrollbar-none::-webkit-scrollbar {

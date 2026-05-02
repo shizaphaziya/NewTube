@@ -1,35 +1,40 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useAppStore = defineStore('app', {
+export const useAppStore = defineStore("app", {
   state: () => ({
     isAuthModalOpen: false,
-    activePipVideo: null as { id: string, title: string, url: string, user_id: string } | null,
+    activePipVideo: null as {
+      id: string;
+      title: string;
+      url: string;
+      user_id: string;
+    } | null,
     guestHistory: [] as string[],
   }),
   actions: {
     openAuthModal() {
-      this.isAuthModalOpen = true
+      this.isAuthModalOpen = true;
     },
     closeAuthModal() {
-      this.isAuthModalOpen = false
+      this.isAuthModalOpen = false;
     },
     setPipVideo(video: any) {
-      this.activePipVideo = video
+      this.activePipVideo = video;
     },
     clearPipVideo() {
-      this.activePipVideo = null
+      this.activePipVideo = null;
     },
     addToHistory(videoId: string) {
       if (!this.guestHistory.includes(videoId)) {
-        this.guestHistory.unshift(videoId)
+        this.guestHistory.unshift(videoId);
         if (this.guestHistory.length > 50) {
-          this.guestHistory.pop()
+          this.guestHistory.pop();
         }
       }
-    }
+    },
   },
   persist: {
     storage: persistedState.localStorage,
-    pick: ['guestHistory']
-  }
-})
+    pick: ["guestHistory"],
+  },
+});

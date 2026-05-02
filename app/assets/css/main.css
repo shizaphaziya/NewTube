@@ -12,7 +12,7 @@
   --nt-glass-bg: rgba(255, 255, 255, 0.65);
   --nt-glass-border: rgba(15, 23, 42, 0.1);
   --nt-selection: rgba(239, 68, 68, 0.12);
-  
+
   /* Brand colors */
   --nt-primary: #ef4444;
   --nt-primary-hover: #dc2626;
@@ -34,7 +34,9 @@
 }
 
 /* --- Reset & Base --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -44,7 +46,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  font-feature-settings: "cv02","cv03","cv04","cv11";
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   scroll-behavior: smooth;
   background-color: var(--nt-bg);
   transition: background-color 0.5s ease;
@@ -54,7 +56,9 @@ body {
   background-color: var(--nt-bg);
   color: var(--nt-text);
   min-height: 100vh;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
   /* Reduced noise opacity for better text clarity in light mode */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
 }
@@ -98,18 +102,26 @@ a {
 /* --- Shadows --- */
 :root {
   --nt-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --nt-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-  --nt-shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
-  --nt-shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --nt-shadow:
+    0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --nt-shadow-md:
+    0 10px 15px -3px rgba(15, 23, 42, 0.1),
+    0 4px 6px -4px rgba(15, 23, 42, 0.05);
+  --nt-shadow-lg:
+    0 20px 25px -5px rgba(15, 23, 42, 0.1),
+    0 8px 10px -6px rgba(15, 23, 42, 0.05);
   --nt-shadow-xl: 0 25px 50px -12px rgba(15, 23, 42, 0.2);
   --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.15);
 }
 
 .dark {
   --nt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --nt-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
-  --nt-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-  --nt-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+  --nt-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --nt-shadow-md:
+    0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --nt-shadow-lg:
+    0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
   --nt-shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   --nt-shadow-primary: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
 }
@@ -129,7 +141,9 @@ img {
 }
 /* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-active {
-  transition: opacity 0.35s ease, filter 0.35s ease;
+  transition:
+    opacity 0.35s ease,
+    filter 0.35s ease;
 }
 /* noinspection CssUnusedSymbol -- Vue page transition classes (applied by Nuxt router) */
 .page-leave-to {
@@ -157,12 +171,19 @@ img {
 }
 
 @keyframes ambient-drift {
-  0%   { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(2%, 1.5%) scale(1.03); }
-  66%  { transform: translate(-1%, 2%) scale(0.98); }
-  100% { transform: translate(1.5%, -1%) scale(1.02); }
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(2%, 1.5%) scale(1.03);
+  }
+  66% {
+    transform: translate(-1%, 2%) scale(0.98);
+  }
+  100% {
+    transform: translate(1.5%, -1%) scale(1.02);
+  }
 }
-
 
 /* ============================================================
    Glass Surfaces
@@ -187,8 +208,12 @@ img {
    Advanced Shimmer skeleton animation
    ============================================================ */
 @keyframes shimmer-sweep {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* noinspection CssUnusedSymbol -- Skeleton loader utility, used via dynamic class bindings */
@@ -204,9 +229,10 @@ img {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent 0%,
-    rgba(255,255,255,0.06) 50%,
+    rgba(255, 255, 255, 0.06) 50%,
     transparent 100%
   );
   animation: shimmer-sweep 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -235,10 +261,14 @@ img {
 }
 /* noinspection CssUnusedSymbol */
 .glow-on-hover::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -1px;
-  background: linear-gradient(to bottom right, rgba(255,255,255,0.25), transparent);
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
@@ -257,19 +287,28 @@ img {
   border: solid 1px transparent;
 }
 .animated-border::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   margin: -1px;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--nt-border-strong), var(--nt-text-faint), var(--nt-border-strong));
+  background: linear-gradient(
+    90deg,
+    var(--nt-border-strong),
+    var(--nt-text-faint),
+    var(--nt-border-strong)
+  );
   background-size: 200% 100%;
   animation: border-dance 4s linear infinite;
   opacity: 0.5;
 }
 
 @keyframes border-dance {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
