@@ -8,17 +8,23 @@ export default defineNuxtConfig({
 
   srcDir: 'app',
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/tailwind.css', '~/assets/css/main.css'],
 
   modules: [
+    '@nuxtjs/tailwindcss',
+    'shadcn-nuxt',
+    '@nuxt/icon',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/supabase',
-    '@unocss/nuxt',
-    '@vueuse/motion/nuxt',
     '@nuxtjs/i18n',
     '@vueuse/nuxt'
   ],
+
+  shadcn: {
+    prefix: '',
+    componentDir: './app/components/ui'
+  },
 
   // i18n configuration (Nuxt 4 / v10 standards)
   i18n: {
@@ -41,15 +47,6 @@ export default defineNuxtConfig({
     }
   },
 
-  // Motion One configuration
-  motion: {
-    directives: {
-      'pop-in': {
-        initial: { scale: 0.8, opacity: 0 },
-        enter: { scale: 1, opacity: 1, transition: { duration: 400, ease: 'easeOut' } }
-      }
-    }
-  },
 
   // Nitro configuration
   nitro: {
@@ -64,5 +61,5 @@ export default defineNuxtConfig({
     viewTransition: true
   },
 
-  devtools: { enabled: true }
+  devtools: { enabled: false }
 })

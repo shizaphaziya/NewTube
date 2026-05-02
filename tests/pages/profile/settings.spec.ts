@@ -9,8 +9,9 @@ global.watchEffect = watchEffect
 
 // Create spy functions for console and alert
 const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-window.alert = vi.fn()
-const alertSpy = vi.spyOn(window, 'alert')
+if (typeof window !== 'undefined') window.alert = vi.fn();
+else global.alert = vi.fn();
+const alertSpy = vi.spyOn(typeof window !== 'undefined' ? window : global, 'alert');
 
 // Mock Supabase
 const mockUpload = vi.fn()
@@ -71,6 +72,7 @@ describe('settings.vue', () => {
       global: {
         stubs: {
           NuxtLink: true,
+          Icon: true,
           Transition: false
         }
       }

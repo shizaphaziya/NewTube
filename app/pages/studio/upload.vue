@@ -1,187 +1,210 @@
 <script setup>
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const { t } = useI18n()
-const { error: showError, success: showSuccess } = useToast()
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const { t } = useI18n();
+const { error: showError, success: showSuccess } = useToast();
 
 const form = ref({
-  title: '',
-  description: '',
+  title: "",
+  description: "",
   videoFile: null,
   thumbnailFile: null,
   isShort: false,
-  thumbnailBlob: null
-})
+  thumbnailBlob: null,
+});
 
-const isUploading = ref(false)
+const isUploading = ref(false);
 const progress = ref({
-  status: '',
-  percent: 0
-})
-const uploadSuccess = ref(false)
+  status: "",
+  percent: 0,
+});
+const uploadSuccess = ref(false);
 
 const handleVideoSelect = async (e) => {
-  const file = e.target.files[0]
-  if (!file) return
-  form.value.videoFile = file
+  const file = e.target.files[0];
+  if (!file) return;
+  form.value.videoFile = file;
 
   // Extract duration, resolution and generate thumbnail
-  const videoUrl = URL.createObjectURL(file)
-  const video = document.createElement('video')
-  video.src = videoUrl
+  const videoUrl = URL.createObjectURL(file);
+  const video = document.createElement("video");
+  video.src = videoUrl;
 
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     video.onloadedmetadata = () => {
-      const isVertical = video.videoHeight > video.videoWidth
-      const isShortDuration = video.duration <= 60
-      form.value.isShort = isVertical && isShortDuration
-      resolve()
-    }
-  })
+      const isVertical = video.videoHeight > video.videoWidth;
+      const isShortDuration = video.duration <= 60;
+      form.value.isShort = isVertical && isShortDuration;
+      resolve();
+    };
+  });
 
   // Generate thumbnail from 5th second (or middle if shorter than 5s)
-  const targetTime = Math.min(5, video.duration / 2)
-  video.currentTime = targetTime
+  const targetTime = Math.min(5, video.duration / 2);
+  video.currentTime = targetTime;
 
   try {
     await new Promise((resolve, reject) => {
       video.onseeked = () => {
         try {
-          const canvas = document.createElement('canvas')
-          canvas.width = video.videoWidth
-          canvas.height = video.videoHeight
-          const ctx = canvas.getContext('2d')
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-          canvas.toBlob(blob => {
-            if (blob) {
-                form.value.thumbnailBlob = blob
-            }
-            URL.revokeObjectURL(videoUrl)
-            resolve()
-          }, 'image/jpeg', 0.8)
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                form.value.thumbnailBlob = blob;
+              }
+              URL.revokeObjectURL(videoUrl);
+              resolve();
+            },
+            "image/jpeg",
+            0.8,
+          );
         } catch (e) {
-          reject(e)
+          reject(e);
         }
-      }
-      video.onerror = () => reject(new Error('Video loading failed'))
-    })
+      };
+      video.onerror = () => reject(new Error("Video loading failed"));
+    });
   } catch (e) {
     // Gracefully handle thumbnail generation failure without warning
-    URL.revokeObjectURL(videoUrl)
+    URL.revokeObjectURL(videoUrl);
   }
-}
+};
 
 const handleThumbnailSelect = (e) => {
-  form.value.thumbnailFile = e.target.files[0]
-}
+  form.value.thumbnailFile = e.target.files[0];
+};
 
 const uploadVideo = async () => {
-  if (!form.value.videoFile || !form.value.title || !user.value) return
-  isUploading.value = true
-  uploadSuccess.value = false
+  if (!form.value.videoFile || !form.value.title || !user.value) return;
+  isUploading.value = true;
+  uploadSuccess.value = false;
 
   // Auto-title logic
-  const finalTitle = form.value.title.trim() || new Date().toLocaleString()
+  const finalTitle = form.value.title.trim() || new Date().toLocaleString();
 
   try {
-    const videoExt = form.value.videoFile.name.split('.').pop()
-    const allowedExtensions = ['mp4', 'mov', 'webm']
+    const videoExt = form.value.videoFile.name.split(".").pop();
+    const allowedExtensions = ["mp4", "mov", "webm"];
 
     if (!videoExt || !allowedExtensions.includes(videoExt.toLowerCase())) {
-        throw new Error(t('auth.invalid_video_format'))
+      throw new Error(t("auth.invalid_video_format"));
     }
 
-    const videoFileName = `${Math.random()}.${videoExt}`
-    const videoPath = `${user.value.id}/${videoFileName}`
+    const videoFileName = `${Math.random()}.${videoExt}`;
+    const videoPath = `${user.value.id}/${videoFileName}`;
 
-    progress.value = { status: t('studio.uploading_storage'), percent: 20 }
+    progress.value = { status: t("studio.uploading_storage"), percent: 20 };
 
     const { error: uploadError } = await supabase.storage
-      .from('videos')
-      .upload(videoPath, form.value.videoFile)
+      .from("videos")
+      .upload(videoPath, form.value.videoFile);
 
-    if (uploadError) throw uploadError
+    if (uploadError) throw uploadError;
 
-    const { data: { publicUrl: videoUrl } } = supabase.storage
-      .from('videos')
-      .getPublicUrl(videoPath)
+    const {
+      data: { publicUrl: videoUrl },
+    } = supabase.storage.from("videos").getPublicUrl(videoPath);
 
-    let thumbnailUrl = null
+    let thumbnailUrl = null;
     if (form.value.thumbnailFile || form.value.thumbnailBlob) {
-      progress.value = { status: t('studio.uploading_thumbnail'), percent: 60 }
+      progress.value = { status: t("studio.uploading_thumbnail"), percent: 60 };
 
-      const fileToUpload = form.value.thumbnailFile || form.value.thumbnailBlob
-      const thumbExt = form.value.thumbnailFile ? form.value.thumbnailFile.name.split('.').pop() : 'jpg'
-      const thumbFileName = `${Math.random()}.${thumbExt}`
-      const thumbPath = `${user.value.id}/${thumbFileName}`
+      const fileToUpload = form.value.thumbnailFile || form.value.thumbnailBlob;
+      const thumbExt = form.value.thumbnailFile
+        ? form.value.thumbnailFile.name.split(".").pop()
+        : "jpg";
+      const thumbFileName = `${Math.random()}.${thumbExt}`;
+      const thumbPath = `${user.value.id}/${thumbFileName}`;
 
       await supabase.storage
-        .from('thumbnails')
+        .from("thumbnails")
         .upload(thumbPath, fileToUpload, {
-            contentType: form.value.thumbnailFile ? form.value.thumbnailFile.type : 'image/jpeg'
-        })
+          contentType: form.value.thumbnailFile
+            ? form.value.thumbnailFile.type
+            : "image/jpeg",
+        });
 
-      const { data: { publicUrl: tUrl } } = supabase.storage
-        .from('thumbnails')
-        .getPublicUrl(thumbPath)
-      
-      thumbnailUrl = tUrl
+      const {
+        data: { publicUrl: tUrl },
+      } = supabase.storage.from("thumbnails").getPublicUrl(thumbPath);
+
+      thumbnailUrl = tUrl;
     }
 
-    progress.value = { status: t('studio.finalizing'), percent: 90 }
+    progress.value = { status: t("studio.finalizing"), percent: 90 };
 
-    const { error: dbError } = await supabase.from('videos').insert({
-
+    const { error: dbError } = await supabase.from("videos").insert({
       user_id: user.value.id,
       title: finalTitle,
       description: form.value.description,
       video_url: videoUrl,
       thumbnail_url: thumbnailUrl,
       is_short: form.value.isShort,
-      status: 'published'
-    })
+      status: "published",
+    });
 
-    if (dbError) throw dbError
+    if (dbError) throw dbError;
 
-    progress.value = { status: t('studio.done'), percent: 100 }
-    uploadSuccess.value = true
-    form.value = { title: '', description: '', videoFile: null, thumbnailFile: null, isShort: false, thumbnailBlob: null }
+    progress.value = { status: t("studio.done"), percent: 100 };
+    uploadSuccess.value = true;
+    form.value = {
+      title: "",
+      description: "",
+      videoFile: null,
+      thumbnailFile: null,
+      isShort: false,
+      thumbnailBlob: null,
+    };
   } catch (error) {
     showError({
-      title: t('studio.failed_upload'),
-      description: error.message
-    })
+      title: t("studio.failed_upload"),
+      description: error.message,
+    });
   } finally {
-    isUploading.value = false
+    isUploading.value = false;
   }
-}
+};
 </script>
 
 <template>
   <div class="px-4 md:px-8 py-12 relative max-w-4xl mx-auto min-h-screen">
     <!-- Cinematic Aura -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary-500/5 blur-[120px] rounded-full animate-ambient" style="animation-delay: 0s"></div>
-      <div class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary-500/3 blur-[100px] rounded-full animate-ambient" style="animation-delay: -5s; animation-direction: alternate-reverse"></div>
+      <div
+        class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/5 blur-[120px] rounded-full animate-ambient"
+        style="animation-delay: 0s"
+      ></div>
+      <div
+        class="absolute top-[40%] -right-[10%] w-[40%] h-[40%] bg-primary/3 blur-[100px] rounded-full animate-ambient"
+        style="animation-delay: -5s; animation-direction: alternate-reverse"
+      ></div>
     </div>
 
     <div class="relative z-10 space-y-10">
-      
-      <div v-motion-fade-in class="text-center md:text-left">
-        <h1 class="text-4xl md:text-5xl font-black text-white mb-2 uppercase tracking-tighter italic">
-          {{ t('studio.upload') }}
+      <div class="text-center md:text-left">
+        <h1
+          class="text-4xl md:text-5xl font-black text-foreground mb-2 uppercase tracking-tighter italic"
+        >
+          {{ t("studio.upload") }}
         </h1>
         <div class="flex items-center justify-center md:justify-start gap-3">
-          <div class="h-px w-8 bg-primary-500/40"></div>
-          <p class="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-            {{ t('studio.uploading_content_hint') }}
+          <div class="h-px w-8 bg-primary/40"></div>
+          <p
+            class="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em]"
+          >
+            {{ t("studio.uploading_content_hint") }}
           </p>
         </div>
       </div>
 
       <!-- Success State -->
-      <Transition 
+      <Transition
         enter-active-class="transition duration-500 ease-out"
         enter-from-class="transform scale-95 opacity-0"
         enter-to-class="transform scale-100 opacity-100"
@@ -189,32 +212,57 @@ const uploadVideo = async () => {
         leave-from-class="transform scale-100 opacity-100"
         leave-to-class="transform scale-95 opacity-0"
       >
-        <div v-if="uploadSuccess" class="glass-card border-primary-500/20 p-12 flex flex-col items-center text-center space-y-6 shadow-[0_0_50px_-12px_rgba(239,68,68,0.15)]">
-          <div class="w-20 h-20 rounded-3xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-500">
-            <div class="i-ph-check-circle-duotone text-5xl"></div>
+        <Card
+          v-if="uploadSuccess"
+          class="glass-card border-primary/20 p-12 flex flex-col items-center text-center space-y-6 shadow-[0_0_50px_-12px_rgba(239,68,68,0.15)] bg-background/80 backdrop-blur-3xl"
+        >
+          <div
+            class="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary"
+          >
+            <Icon name="ph:check-circle-duotone" class="text-5xl" />
           </div>
           <div class="space-y-2">
-            <h3 class="text-2xl font-black text-white uppercase tracking-tight">{{ t('studio.success') }}</h3>
-            <p class="text-white/40 text-sm font-medium">{{ t('studio.success_subtitle') }}</p>
+            <h3 class="text-2xl font-black text-foreground uppercase tracking-tight">
+              {{ t("studio.success") }}
+            </h3>
+            <p class="text-muted-foreground text-sm font-medium">
+              {{ t("studio.success_subtitle") }}
+            </p>
           </div>
           <div class="pt-4 flex gap-4">
-            <button @click="uploadSuccess = false" class="btn-primary rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs">
-              {{ t('studio.upload_another') }}
-            </button>
-            <NuxtLink to="/studio" class="glass-button rounded-xl px-10 py-4 font-bold uppercase tracking-widest text-xs">
-              {{ t('studio.go_dashboard') }}
-            </NuxtLink>
+            <Button
+              @click="uploadSuccess = false"
+              size="lg"
+              class="rounded-xl px-10 py-7 font-bold uppercase tracking-widest text-xs h-auto"
+            >
+              {{ t("studio.upload_another") }}
+            </Button>
+            <Button
+              as-child
+              variant="secondary"
+              size="lg"
+              class="rounded-xl px-10 py-7 font-bold uppercase tracking-widest text-xs h-auto bg-muted/50 border-border/10"
+            >
+              <NuxtLink to="/studio">
+                {{ t("studio.go_dashboard") }}
+              </NuxtLink>
+            </Button>
           </div>
-        </div>
+        </Card>
 
         <form v-else @submit.prevent="uploadVideo" class="space-y-8">
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <!-- Left Column: Media -->
             <div class="lg:col-span-2 space-y-6">
               <!-- Video Dropzone -->
-              <div v-motion-slide-visible-left class="space-y-3">
-                <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ t('studio.video_file') }}</label>
-                <div class="group relative aspect-[9/16] lg:aspect-square rounded-[2rem] overflow-hidden border-2 border-dashed border-white/5 hover:border-primary-500/40 transition-all duration-500 bg-white/[0.02]">
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
+                  >{{ t("studio.video_file") }}</label
+                >
+                <div
+                  class="group relative aspect-[9/16] lg:aspect-square rounded-[2.5rem] overflow-hidden border-2 border-dashed border-border/10 hover:border-primary/40 transition-all duration-500 bg-muted/20"
+                >
                   <input
                     type="file"
                     accept="video/*"
@@ -222,46 +270,99 @@ const uploadVideo = async () => {
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     required
                   />
-                  
-                  <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4 pointer-events-none transition-colors duration-500">
-                    <div class="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center text-white/20 group-hover:text-primary-500 group-hover:bg-primary-500/10 group-hover:border-primary-500/20 transition-all duration-500 shadow-2xl">
-                      <div class="i-ph-upload-simple-duotone text-4xl"></div>
+
+                  <div
+                    class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4 pointer-events-none transition-colors duration-500"
+                  >
+                    <div
+                      class="w-20 h-20 rounded-[2rem] bg-muted/50 border border-border/10 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-500 shadow-2xl"
+                    >
+                      <Icon name="ph:upload-simple-duotone" class="text-4xl" />
                     </div>
-                    
+
                     <div v-if="form.videoFile" class="space-y-1">
-                      <div class="text-white font-black uppercase tracking-tight text-sm line-clamp-1 px-4">{{ form.videoFile.name }}</div>
-                      <div class="text-primary-500 text-[10px] font-bold uppercase tracking-widest">{{ (form.videoFile.size / 1024 / 1024).toFixed(1) }} {{ t('studio.mb_ready') }}</div>
+                      <div
+                        class="text-foreground font-black uppercase tracking-tight text-sm line-clamp-1 px-4"
+                      >
+                        {{ form.videoFile.name }}
+                      </div>
+                      <div
+                        class="text-primary text-[10px] font-bold uppercase tracking-widest"
+                      >
+                        {{ (form.videoFile.size / 1024 / 1024).toFixed(1) }}
+                        {{ t("studio.mb_ready") }}
+                      </div>
                     </div>
                     <div v-else class="space-y-2">
-                      <div class="text-white/60 text-xs font-bold uppercase tracking-widest">{{ t('studio.drop_source') }}</div>
-                      <div class="text-white/20 text-[9px] uppercase tracking-tighter">{{ t('studio.video_formats') }}</div>
+                      <div
+                        class="text-muted-foreground text-xs font-bold uppercase tracking-widest"
+                      >
+                        {{ t("studio.drop_source") }}
+                      </div>
+                      <div
+                        class="text-muted-foreground/30 text-[9px] uppercase tracking-tighter"
+                      >
+                        {{ t("studio.video_formats") }}
+                      </div>
                     </div>
                   </div>
 
                   <!-- Hover Glow -->
-                  <div class="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/[0.02] transition-colors duration-500"></div>
+                  <div
+                    class="absolute inset-0 bg-primary/0 group-hover:bg-primary/[0.02] transition-colors duration-500"
+                  ></div>
                 </div>
               </div>
 
               <!-- Thumbnail Dropzone -->
-              <div v-motion-slide-visible-left :delay="100" class="space-y-3">
-                <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ t('studio.cover_artwork') }}</label>
-                <div class="group relative rounded-3xl overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300 bg-white/[0.02] p-4 flex items-center gap-4">
+              <div class="space-y-3">
+                <label
+                  class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
+                  >{{ t("studio.cover_artwork") }}</label
+                >
+                <div
+                  class="group relative rounded-3xl overflow-hidden border border-border/10 hover:border-border/30 transition-all duration-300 bg-muted/20 p-4 flex items-center gap-4"
+                >
                   <input
                     type="file"
                     accept="image/*"
                     @change="handleThumbnailSelect"
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
-                  <div class="w-24 aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-white/10 relative group-hover:border-white/20">
-                    <div v-if="!form.thumbnailFile" class="i-ph-image-duotone text-2xl text-white/10"></div>
-                    <div v-else class="text-[8px] text-primary-500 font-black uppercase tracking-widest">{{ t('studio.selected') }}</div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div
+                    class="w-24 aspect-video bg-background rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-border/10 relative group-hover:border-border/20"
+                  >
+                    <Icon
+                      name="ph:image-duotone"
+                      class="text-2xl text-muted-foreground/20"
+                      v-if="!form.thumbnailFile"
+                    />
+                    <div
+                      v-else
+                      class="text-[8px] text-primary font-black uppercase tracking-widest"
+                    >
+                      {{ t("studio.selected") }}
+                    </div>
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                    ></div>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <div v-if="form.thumbnailFile" class="text-white text-xs font-bold truncate uppercase tracking-tight">{{ form.thumbnailFile.name }}</div>
-                    <div v-else class="text-white/40 text-xs font-bold uppercase tracking-widest">{{ t('studio.select_image') }}</div>
-                    <p class="text-[9px] text-white/20 uppercase mt-1">{{ t('studio.recommended_ratio') }}</p>
+                    <div
+                      v-if="form.thumbnailFile"
+                      class="text-foreground text-xs font-bold truncate uppercase tracking-tight"
+                    >
+                      {{ form.thumbnailFile.name }}
+                    </div>
+                    <div
+                      v-else
+                      class="text-muted-foreground text-xs font-bold uppercase tracking-widest"
+                    >
+                      {{ t("studio.select_image") }}
+                    </div>
+                    <p class="text-[9px] text-muted-foreground/30 uppercase mt-1">
+                      {{ t("studio.recommended_ratio") }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -269,73 +370,103 @@ const uploadVideo = async () => {
 
             <!-- Right Column: Metadata -->
             <div class="lg:col-span-3 space-y-8">
-              <div v-motion-slide-visible-right class="glass-card p-8 space-y-8 shadow-2xl">
+              <Card class="glass-card p-8 space-y-8 shadow-2xl bg-muted/10">
                 <!-- Metadata Fields -->
                 <div class="space-y-6">
                   <div class="space-y-3">
-                    <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ t('studio.title') }}</label>
-                    <input
+                    <label
+                      class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
+                      >{{ t("studio.title") }}</label
+                    >
+                    <Input
                       v-model="form.title"
                       type="text"
                       required
-                      class="glass-input w-full rounded-2xl py-4 px-6 text-sm font-medium placeholder:text-white/10"
+                      class="w-full rounded-2xl py-6 px-6 text-sm font-medium bg-background/50 border-border/40 focus-visible:ring-primary/20 h-auto"
                       :placeholder="t('studio.entry_name_placeholder')"
                     />
                   </div>
                   <div class="space-y-3">
-                    <label class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] ml-2">{{ t('studio.description') }}</label>
-                    <textarea
+                    <label
+                      class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-2"
+                      >{{ t("studio.description") }}</label
+                    >
+                    <Textarea
                       v-model="form.description"
-                      class="glass-input w-full min-h-[200px] resize-none rounded-[2rem] py-5 px-6 text-sm font-medium placeholder:text-white/10"
+                      class="w-full min-h-[200px] resize-none rounded-[2rem] py-5 px-6 text-sm font-medium bg-background/50 border-border/40 focus-visible:ring-primary/20"
                       :placeholder="t('studio.description_placeholder')"
-                    ></textarea>
+                    />
                   </div>
                 </div>
 
                 <!-- Footer Actions -->
-                <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-white/5">
+                <div
+                  class="pt-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-border/5"
+                >
                   <div class="flex-1 w-full md:pr-8">
-                    <div v-if="isUploading" class="space-y-3">
+                    <div v-if="isUploading" class="space-y-4">
                       <div class="flex justify-between items-end">
-                        <span class="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] animate-pulse">{{ progress.status }}</span>
-                        <span class="text-lg font-black text-white tabular-nums">{{ progress.percent }}%</span>
+                        <span
+                          class="text-[10px] font-black text-primary uppercase tracking-[0.2em] animate-pulse"
+                          >{{ progress.status }}</span
+                        >
+                        <span class="text-lg font-black text-foreground tabular-nums"
+                          >{{ progress.percent }}%</span
+                        >
                       </div>
-                      <div class="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
-                        <div class="h-full bg-gradient-to-r from-primary-600 to-primary-400 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(239,68,68,0.5)]" :style="{ width: `${progress.percent}%` }"></div>
-                      </div>
+                      <Progress :model-value="progress.percent" class="h-2 bg-muted border border-border/5" />
                     </div>
-                    <div v-else class="flex items-center gap-2 text-white/20">
-                      <div class="i-ph-info text-sm"></div>
-                      <p class="text-[9px] font-bold uppercase tracking-widest">{{ t('studio.safety_protocols') }}</p>
+                    <div v-else class="flex items-center gap-2 text-muted-foreground/30">
+                      <Icon name="ph:info" class="text-sm" />
+                      <p class="text-[9px] font-bold uppercase tracking-widest">
+                        {{ t("studio.safety_protocols") }}
+                      </p>
                     </div>
                   </div>
-                  <button 
-                    type="submit" 
+                  <Button
+                    type="submit"
+                    size="lg"
                     :disabled="isUploading || !form.videoFile || !form.title"
-                    class="btn-primary w-full md:w-auto shrink-0 rounded-2xl px-12 py-5 font-black uppercase tracking-[0.2em] text-xs shadow-2xl transition-all disabled:opacity-50 disabled:grayscale"
+                    class="w-full md:w-auto shrink-0 rounded-2xl px-12 py-7 font-black uppercase tracking-[0.2em] text-xs shadow-2xl transition-all disabled:opacity-50 disabled:grayscale h-auto"
                   >
                     <div class="flex items-center justify-center gap-3">
-                      <div v-if="isUploading" class="i-ph-circle-notch animate-spin text-lg"></div>
-                      <span>{{ isUploading ? t('studio.uploading') : t('studio.publish') }}</span>
+                      <Icon
+                        name="ph:circle-notch"
+                        class="animate-spin text-lg"
+                        v-if="isUploading"
+                      />
+                      <span>{{
+                        isUploading
+                          ? t("studio.uploading")
+                          : t("studio.publish")
+                      }}</span>
                     </div>
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </Card>
 
               <!-- Content Guidelines Card -->
-              <div v-motion-slide-visible-right :delay="200" class="glass-card p-6 border-white/5 opacity-60 hover:opacity-100 transition-opacity">
+              <Card
+                class="glass-card p-6 border-border/5 opacity-60 hover:opacity-100 transition-opacity bg-muted/20"
+              >
                 <div class="flex gap-4">
-                  <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 shrink-0">
-                    <div class="i-ph-warning-diamond text-xl"></div>
+                  <div
+                    class="w-10 h-10 rounded-xl bg-muted border border-border/10 flex items-center justify-center text-muted-foreground shrink-0"
+                  >
+                    <Icon name="ph:warning-diamond" class="text-xl" />
                   </div>
                   <div class="space-y-1">
-                    <h4 class="text-[10px] font-black text-white uppercase tracking-widest">{{ t('studio.safety_protocols') }}</h4>
-                    <p class="text-[11px] text-white/40 leading-relaxed">
-                      {{ t('studio.safety_protocols_hint') }}
+                    <h4
+                      class="text-[10px] font-black text-foreground uppercase tracking-widest"
+                    >
+                      {{ t("studio.safety_protocols") }}
+                    </h4>
+                    <p class="text-[11px] text-muted-foreground leading-relaxed">
+                      {{ t("studio.safety_protocols_hint") }}
                     </p>
                   </div>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         </form>
@@ -345,7 +476,6 @@ const uploadVideo = async () => {
 </template>
 
 <style scoped>
-
 .glass-button {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -358,4 +488,3 @@ const uploadVideo = async () => {
   border-color: rgba(255, 255, 255, 0.2);
 }
 </style>
-
