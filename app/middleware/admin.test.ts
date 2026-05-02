@@ -1,75 +1,75 @@
-import { describe, it, expect, mock, beforeEach } from 'bun:test'
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const navigateToMock = mock()
+const navigateToMock = vi.fn();
 // @ts-ignore
-globalThis.navigateTo = navigateToMock
+globalThis.navigateTo = navigateToMock;
 // @ts-ignore
-globalThis.defineNuxtRouteMiddleware = (fn) => fn
+globalThis.defineNuxtRouteMiddleware = (fn) => fn;
 
-const fetchProfileMock = mock()
-const useProfileMock = mock()
+const fetchProfileMock = vi.fn();
+const useProfileMock = vi.fn();
 // @ts-ignore
-globalThis.useProfile = useProfileMock
+globalThis.useProfile = useProfileMock;
 
-const adminMiddleware = (await import('./admin.ts')).default
+const adminMiddleware = (await import("./admin.ts")).default;
 
-describe('admin middleware', () => {
+describe("admin middleware", () => {
   beforeEach(() => {
-    navigateToMock.mockClear()
-    fetchProfileMock.mockClear()
-    useProfileMock.mockClear()
-  })
+    navigateToMock.mockClear();
+    fetchProfileMock.mockClear();
+    useProfileMock.mockClear();
+  });
 
-  it('should fetch profile if profile is not loaded', async () => {
+  it("should fetch profile if profile is not loaded", async () => {
     useProfileMock.mockReturnValue({
       profile: { value: null },
       fetchProfile: fetchProfileMock,
-      isAdmin: { value: true }
-    })
+      isAdmin: { value: true },
+    });
 
-    await adminMiddleware('to', 'from')
+    await adminMiddleware("to", "from");
 
-    expect(useProfileMock).toHaveBeenCalled()
-    expect(fetchProfileMock).toHaveBeenCalled()
-    expect(navigateToMock).not.toHaveBeenCalled()
-  })
+    expect(useProfileMock).toHaveBeenCalled();
+    expect(fetchProfileMock).toHaveBeenCalled();
+    expect(navigateToMock).not.toHaveBeenCalled();
+  });
 
-  it('should redirect to / if not admin (profile loaded)', async () => {
+  it("should redirect to / if not admin (profile loaded)", async () => {
     useProfileMock.mockReturnValue({
       profile: { value: { id: 1 } },
       fetchProfile: fetchProfileMock,
-      isAdmin: { value: false }
-    })
+      isAdmin: { value: false },
+    });
 
-    await adminMiddleware('to', 'from')
+    await adminMiddleware("to", "from");
 
-    expect(fetchProfileMock).not.toHaveBeenCalled()
-    expect(navigateToMock).toHaveBeenCalledWith('/')
-  })
+    expect(fetchProfileMock).not.toHaveBeenCalled();
+    expect(navigateToMock).toHaveBeenCalledWith("/");
+  });
 
-  it('should fetch profile and redirect if not admin', async () => {
+  it("should fetch profile and redirect if not admin", async () => {
     useProfileMock.mockReturnValue({
       profile: { value: null },
       fetchProfile: fetchProfileMock,
-      isAdmin: { value: false }
-    })
+      isAdmin: { value: false },
+    });
 
-    await adminMiddleware('to', 'from')
+    await adminMiddleware("to", "from");
 
-    expect(fetchProfileMock).toHaveBeenCalled()
-    expect(navigateToMock).toHaveBeenCalledWith('/')
-  })
+    expect(fetchProfileMock).toHaveBeenCalled();
+    expect(navigateToMock).toHaveBeenCalledWith("/");
+  });
 
-  it('should not redirect if admin', async () => {
+  it("should not redirect if admin", async () => {
     useProfileMock.mockReturnValue({
       profile: { value: { id: 1 } },
       fetchProfile: fetchProfileMock,
-      isAdmin: { value: true }
-    })
+      isAdmin: { value: true },
+    });
 
-    await adminMiddleware('to', 'from')
+    await adminMiddleware("to", "from");
 
-    expect(fetchProfileMock).not.toHaveBeenCalled()
-    expect(navigateToMock).not.toHaveBeenCalled()
-  })
-})
+    expect(fetchProfileMock).not.toHaveBeenCalled();
+    expect(navigateToMock).not.toHaveBeenCalled();
+  });
+});

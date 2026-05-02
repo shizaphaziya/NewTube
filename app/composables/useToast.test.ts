@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach } from "bun:test";
+import { expect, test, describe, beforeEach } from "vitest";
 import { useToast } from "./useToast";
 
 describe("useToast", () => {
@@ -83,7 +83,7 @@ describe("useToast", () => {
     toastManager.addToast("Auto remove", "info", 10);
     expect(toastManager.toasts.value).toHaveLength(1);
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(toastManager.toasts.value).toHaveLength(0);
   });
@@ -92,7 +92,7 @@ describe("useToast", () => {
     toastManager.addToast("Stay forever", "info", 0);
     expect(toastManager.toasts.value).toHaveLength(1);
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(toastManager.toasts.value).toHaveLength(1);
   });

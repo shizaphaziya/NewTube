@@ -14,18 +14,25 @@
     "you": "You",
     "settings": "Settings",
     "status_pro": "Pro",
-    "status_user": "User"
+    "status_user": "User",
+    "trending": "Trending",
+    "history": "History",
+    "theme_light": "Light Mode",
+    "theme_dark": "Dark Mode"
   },
   "home": {
     "quick_actions": "Quick Access",
     "trending": "Trending",
-    "latest": "New Videos",
+    "latest": "Latest",
     "subscriptions": "Subscriptions",
     "library": "Library",
     "no_videos": "No videos found",
     "no_videos_subtitle": "Upload your first video to get started.",
     "view_all": "View all",
-    "syncing": "Loading..."
+    "syncing": "Loading...",
+    "sort_newest": "Newest",
+    "sort_popular": "Popular",
+    "sort_alphabetical": "Alphabetical"
   },
   "watch": {
     "likes": "likes",
@@ -154,35 +161,8 @@
     "failed_update": "Update failed"
   },
   "admin": {
-    "moderation": "Moderation",
-    "status": "Status",
-    "actions": "Actions",
-    "publish": "Publish",
-    "hide": "Hide",
-    "block": "Block",
-    "access_denied": "Access Denied",
-    "clearance_required": "You do not have permission to view this page.",
-    "back_to_home": "Back Home",
-    "title": "Admin Panel",
     "panel": "Admin Panel",
-    "node": "Node",
-    "signal": "Signal",
-    "imps": "Views",
-    "no_signals": "No content yet",
-    "video_moderation_terminal": "Content Moderation",
-    "total_assets": "Total Videos",
-    "active": "Active",
-    "blocked": "Blocked",
-    "video_author": "Video / Author",
-    "anonymous": "Anonymous",
-    "views": "Views",
-    "users_management": "Users",
-    "role": "Role",
-    "role_admin": "Admin",
-    "role_user": "User",
-    "promote": "Promote",
-    "demote": "Demote",
-    "toggle_18_plus": "18+"
+    "title": "Admin Dashboard"
   },
   "auth": {
     "welcome_back": "Welcome Back",
@@ -292,5 +272,11 @@
     "art": "Art",
     "nature": "Nature",
     "shorts": "Shorts"
+  },
+  "footer": {
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "copyright": "© 2026 NewTube"
   }
 }

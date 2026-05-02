@@ -4,8 +4,8 @@
     "studio": "Студия",
     "admin": "Админ",
     "users": "Пользователи",
-    "login": "Вход",
-    "logout": "Выход",
+    "login": "Войти",
+    "logout": "Выйти",
     "upload": "Загрузить",
     "search": "Поиск...",
     "shorts": "Shorts",
@@ -14,18 +14,25 @@
     "you": "Вы",
     "settings": "Настройки",
     "status_pro": "Pro",
-    "status_user": "Пользователь"
+    "status_user": "Пользователь",
+    "trending": "В тренде",
+    "history": "История",
+    "theme_light": "Светлая тема",
+    "theme_dark": "Темная тема"
   },
   "home": {
     "quick_actions": "Быстрый доступ",
     "trending": "В тренде",
-    "latest": "Новые видео",
+    "latest": "Новинки",
     "subscriptions": "Подписки",
     "library": "Библиотека",
     "no_videos": "Видео не найдены",
     "no_videos_subtitle": "Загрузите первое видео, чтобы начать.",
-    "view_all": "Смотреть все",
-    "syncing": "Загрузка..."
+    "view_all": "Все",
+    "syncing": "Загрузка...",
+    "sort_newest": "Сначала новые",
+    "sort_popular": "Популярные",
+    "sort_alphabetical": "По алфавиту"
   },
   "watch": {
     "likes": "лайков",
@@ -154,35 +161,8 @@
     "failed_update": "Ошибка обновления"
   },
   "admin": {
-    "moderation": "Модерация",
-    "status": "Статус",
-    "actions": "Действия",
-    "publish": "Опубликовать",
-    "hide": "Скрыть",
-    "block": "Заблокировать",
-    "access_denied": "Доступ запрещён",
-    "clearance_required": "Недостаточно прав для просмотра.",
-    "back_to_home": "На главную",
-    "title": "Панель администратора",
-    "panel": "Панель администратора",
-    "node": "Узел",
-    "signal": "Сигнал",
-    "imps": "Просмотры",
-    "no_signals": "Контента ещё нет",
-    "video_moderation_terminal": "Модерация контента",
-    "total_assets": "Всего видео",
-    "active": "Активные",
-    "blocked": "Заблокированные",
-    "video_author": "Видео / Автор",
-    "anonymous": "Аноним",
-    "views": "Просмотры",
-    "users_management": "Пользователи",
-    "role": "Роль",
-    "role_admin": "Админ",
-    "role_user": "Пользователь",
-    "promote": "Повысить",
-    "demote": "Понизить",
-    "toggle_18_plus": "18+"
+    "panel": "Панель управления",
+    "title": "Панель администратора"
   },
   "auth": {
     "welcome_back": "С возвращением",
@@ -292,5 +272,11 @@
     "art": "Искусство",
     "nature": "Природа",
     "shorts": "Shorts"
+  },
+  "footer": {
+    "about": "О сервисе",
+    "terms": "Условия",
+    "privacy": "Конфиденциальность",
+    "copyright": "© 2026 NewTube"
   }
 }
