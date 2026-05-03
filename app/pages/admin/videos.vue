@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Database } from "~/types/database.types";
 
+definePageMeta({
+  middleware: ["admin"],
+});
+
 type VideoWithProfile = Database["public"]["Tables"]["videos"]["Row"] & {
   profiles: {
     display_name: string | null;
@@ -11,9 +15,6 @@ const supabase = useSupabaseClient<Database>();
 const { t, locale } = useI18n();
 const { confirm: showConfirm } = useConfirm();
 const { profile } = useProfile();
-
-// Security check: Only admins allowed
-const isAdmin = computed(() => profile.value?.role === "admin");
 
 const { data: videos, refresh } = await useAsyncData(
   "admin-videos",
@@ -50,40 +51,11 @@ const deleteVideo = async (id: string) => {
   const { error } = await supabase.from("videos").delete().eq("id", id);
   if (!error) refresh();
 };
-
-// Redirect if not admin (handled in template for now, but usually middleware is better)
-watchEffect(() => {
-  if (profile.value && profile.value.role !== "admin") {
-    // navigateTo('/')
-  }
-});
 </script>
 
 <template>
   <div class="px-4 md:px-10 py-6 md:py-10 relative">
-    <!-- Admin Shield -->
-    <div
-      v-if="!isAdmin"
-      class="glass-card p-20 text-center max-w-2xl mx-auto space-y-8"
-    >
-      <Icon
-        name="ph:shield-warning-bold"
-        class="text-6xl text-red-500 mx-auto opacity-50"
-      />
-      <div class="space-y-2">
-        <h1 class="text-3xl font-brand font-black text-white">
-          {{ $t("admin.access_denied") }}
-        </h1>
-        <p class="text-white/30 text-sm uppercase tracking-widest font-bold">
-          {{ $t("admin.clearance_required") }}
-        </p>
-      </div>
-      <NuxtLink to="/" class="btn-primary inline-flex">{{
-        $t("admin.back_to_home")
-      }}</NuxtLink>
-    </div>
-
-    <div v-else class="space-y-16">
+    <div class="space-y-16">
       <!-- Header -->
       <div class="space-y-2">
         <h1
