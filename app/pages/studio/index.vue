@@ -45,16 +45,26 @@ if (asyncError.value) {
 }
 
 const stats = computed(() => {
-  if (!videos.value) return { views: 0, videos: 0, engagement: 0 };
+  const rawVideos = toRaw(videos.value);
+  if (!rawVideos) return { views: 0, videos: 0, engagement: 0 };
   let views = 0;
   let engagement = 0;
-  for (const v of videos.value) {
+
+  for (let i = 0; i < rawVideos.length; i++) {
+    const v = rawVideos[i];
     views += v.view_count || 0;
-    engagement += (v.likes?.[0]?.count || 0) + (v.comments?.[0]?.count || 0);
+
+    const likes = v.likes;
+    const comments = v.comments;
+
+    engagement +=
+      (likes && likes[0] ? (likes[0].count || 0) : 0) +
+      (comments && comments[0] ? (comments[0].count || 0) : 0);
   }
+
   return {
     views,
-    videos: videos.value.length,
+    videos: rawVideos.length,
     engagement,
   };
 });
