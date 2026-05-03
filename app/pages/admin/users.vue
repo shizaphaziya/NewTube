@@ -1,4 +1,8 @@
 <script setup>
+definePageMeta({
+  middleware: ["admin"],
+});
+
 const supabase = useSupabaseClient();
 const { error: showError } = useToast();
 const { confirm: showConfirm } = useConfirm();
@@ -44,42 +48,7 @@ const updateUserRole = async (userId, newRole) => {
 
 <template>
   <div class="px-4 md:px-10 py-10 relative min-h-screen">
-    <!-- Admin Protection Overlay -->
-    <Transition name="fade">
-      <div
-        v-if="!isAdmin"
-        class="absolute inset-0 z-[100] flex items-center justify-center p-6 text-center"
-      >
-        <div
-          class="glass-card p-16 max-w-md space-y-8 ring-1 ring-white/10 relative z-10"
-        >
-          <div
-            class="w-14 h-14 mx-auto rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center"
-          >
-            <Icon name="ph:shield-warning-bold" class="text-2xl text-red-500" />
-          </div>
-          <div class="space-y-3">
-            <h2
-              class="text-2xl font-brand font-black tracking-tighter text-white"
-            >
-              {{ t("admin.access_denied") }}
-            </h2>
-            <p class="text-white/30 text-sm leading-relaxed">
-              {{ t("admin.clearance_required") }}
-            </p>
-          </div>
-          <NuxtLink to="/" class="btn-primary inline-flex">{{
-            t("admin.back_to_home")
-          }}</NuxtLink>
-        </div>
-        <div class="absolute inset-0 bg-void/90 backdrop-blur-3xl"></div>
-      </div>
-    </Transition>
-
-    <div
-      class="space-y-16"
-      :class="{ 'opacity-10 blur-sm pointer-events-none': !isAdmin }"
-    >
+    <div class="space-y-16">
       <!-- Header -->
       <div class="space-y-2">
         <div class="flex items-center gap-3 mb-4">
