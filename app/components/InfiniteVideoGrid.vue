@@ -57,11 +57,10 @@ const fetchVideos = async () => {
             duration: 0.8,
             stagger: 0.05,
             ease: "expo.out",
-            onComplete: (self) => {
-              // Remove the opacity-0 class to prevent disappearing after clearProps
-              gsap.set(itemsToAnimate, { clearProps: "all" });
-              itemsToAnimate.forEach(el => el.classList.remove('opacity-0'));
-            }
+            clearProps: "all",
+            onStart: () => {
+              itemsToAnimate.forEach((el) => el.classList.remove("opacity-0"));
+            },
           }
         );
       }
