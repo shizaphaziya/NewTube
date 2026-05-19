@@ -41,6 +41,24 @@ const togglePlay = () => {
   }
 };
 
+const updateActiveVideo = (index: number) => {
+  if (index === activeIndex.value) return;
+
+  const oldIndex = activeIndex.value;
+  activeIndex.value = index;
+  isPlaying.value = true;
+
+  // Pause previous video
+  if (videoRefs.value[oldIndex]) {
+    videoRefs.value[oldIndex].pause();
+  }
+
+  // Play new video
+  if (videoRefs.value[index]) {
+    videoRefs.value[index].play();
+  }
+};
+
 const scrollToVideo = (index: number) => {
   if (index < 0 || index >= videos.value.length) return;
   const container = document.getElementById("shorts-container");
@@ -49,22 +67,14 @@ const scrollToVideo = (index: number) => {
       top: index * window.innerHeight,
       behavior: "smooth"
     });
-    activeIndex.value = index;
+    updateActiveVideo(index);
   }
 };
 
 const onScroll = (e: any) => {
   const container = e.target;
   const index = Math.round(container.scrollTop / window.innerHeight);
-  if (activeIndex.value !== index) {
-    activeIndex.value = index;
-    isPlaying.value = true;
-    // Play the current video, pause others
-    videoRefs.value.forEach((v, i) => {
-      if (i === index) v.play();
-      else v.pause();
-    });
-  }
+  updateActiveVideo(index);
 };
 
 // Keyboard navigation
@@ -150,7 +160,7 @@ useSeoMeta({
         >
           <!-- Video Element -->
           <video
-            ref="videoRefs"
+            :ref="(el) => videoRefs[index] = (el as HTMLVideoElement)"
             :src="video.video_url"
             class="w-full h-full object-cover"
             loop
