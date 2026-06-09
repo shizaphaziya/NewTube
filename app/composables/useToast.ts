@@ -1,4 +1,4 @@
-import { useToast as useShadcnToast } from "~/components/ui/toast/use-toast";
+import { useToast as useShadcnToast } from "@/components/ui/toast/use-toast";
 
 export const useToast = () => {
   const { toast } = useShadcnToast();
