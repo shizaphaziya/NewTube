@@ -70,7 +70,7 @@ describe('settings.vue', () => {
 
     const wrapper = mount(Settings, {
       global: {
-        stubs: {
+        stubs: { Avatar: true, AvatarImage: true, AvatarFallback: true, Button: true, Separator: true, Card: true, CardTitle: true, CardDescription: true,
           NuxtLink: true,
           Icon: true,
           Transition: false

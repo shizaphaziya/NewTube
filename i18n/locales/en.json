@@ -68,7 +68,13 @@
     "upgrade_now": "Get Premium",
     "sort_by": "Sort by",
     "join_collective": "Join",
-    "membership_active": "Member"
+    "membership_active": "Member",
+    "share_video": "Share Video",
+    "copy_link": "Copy Link",
+    "embed_code": "Embed Code",
+    "copy": "Copy",
+    "link_copied": "Link copied to clipboard",
+    "embed_copied": "Embed code copied to clipboard"
   },
   "studio": {
     "dashboard": "Dashboard",

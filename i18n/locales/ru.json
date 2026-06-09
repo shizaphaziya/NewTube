@@ -68,7 +68,13 @@
     "upgrade_now": "Подключить",
     "sort_by": "Сортировать по",
     "join_collective": "Присоединиться",
-    "membership_active": "Участник"
+    "membership_active": "Участник",
+    "share_video": "Поделиться видео",
+    "copy_link": "Копировать ссылку",
+    "embed_code": "Код для встраивания",
+    "copy": "Копировать",
+    "link_copied": "Ссылка скопирована в буфер обмена",
+    "embed_copied": "Код скопирован в буфер обмена"
   },
   "studio": {
     "dashboard": "Панель управления",
