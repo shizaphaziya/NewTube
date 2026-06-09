@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useToast } from "@/components/ui/toast/use-toast";
+import { useToast } from "~/components/ui/toast/use-toast";
 import { useClipboard } from "@vueuse/core";
 
 const props = defineProps({
