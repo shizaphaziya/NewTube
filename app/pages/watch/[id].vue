@@ -17,6 +17,7 @@ const newComment = ref("");
 const isPosting = ref(false);
 const relatedVideos = ref<any[]>([]);
 const isCinemaMode = ref(false);
+const isShareModalOpen = ref(false);
 const isLiked = ref(false);
 const commentsPage = ref(0);
 const hasMoreComments = ref(true);
@@ -325,6 +326,7 @@ useSeoMeta({
                 <Button
                   variant="secondary"
                   class="h-14 px-8 rounded-2xl border-border/10 hover:border-border/30 hover:bg-accent transition-all text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-3"
+                  @click="isShareModalOpen = true"
                 >
                   <Icon
                     name="ph:share-network-duotone"
@@ -619,6 +621,7 @@ useSeoMeta({
         </div>
       </div>
     </div>
+    <ShareModal v-if="video" :video-id="videoId" v-model:isOpen="isShareModalOpen" />
   </div>
 </template>
 

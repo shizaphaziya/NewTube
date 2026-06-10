@@ -37,8 +37,5 @@ export const useAppStore = defineStore("app", {
       }
     },
   },
-  persist: {
-    storage: persistedState.localStorage,
-    pick: ["guestHistory"],
-  },
+  persist: true,
 });
