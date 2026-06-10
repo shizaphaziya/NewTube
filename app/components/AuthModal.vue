@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAppStore } from "~/store/app";
-import { z } from "zod";
+import * as z from "zod";
 
 const appStore = useAppStore();
 const client = useSupabaseClient();
